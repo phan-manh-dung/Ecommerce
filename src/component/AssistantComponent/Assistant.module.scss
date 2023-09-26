@@ -1,0 +1,43 @@
+.container_assistant {
+    cursor: pointer;
+    height: 62px;
+    background-color: #fff;
+    margin: 15px 0;
+    border-radius: 8px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+
+    .wrapper_assistant {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+
+        .wrapper_div {
+            display: flex;
+            align-items: center;
+            margin-left: 25px;
+
+            .assistant_title {
+                gap: 8px;
+                margin-left: 10px;
+                font-size: 14px;
+                font-style: normal;
+                font-weight: 500;
+                line-height: 150%;
+                color: rgb(39, 39, 42);
+            }
+        }
+    }
+}
+
+.assurance {
+    margin-right: 10px;
+    display: flex;
+    align-items: center;
+    color: rgb(10, 104, 255);
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 150%;
+    text-overflow: ellipsis;
+}

@@ -1,0 +1,29 @@
+.container_header {
+    max-width: 100%;
+    width: 100%;
+}
+
+.wrapper_row {
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+.wrapper_header {
+    background-color: #fff;
+    height: 90px;
+}
+
+.row_left {
+    justify-content: center;
+    display: flex;
+}
+
+.row_right-list {
+    display: flex;
+}
+
+.row_right {
+    display: flex;
+    justify-content: space-around;
+}
