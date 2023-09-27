@@ -6,7 +6,7 @@ import classNames from 'classnames/bind';
 
 const cx = classNames.bind(styles);
 
-const SliderComponent = ({ arrImages }) => {
+const SliderComponent = ({ arrImages, width, height }) => {
     const settings = {
         dots: false,
         infinite: true,
@@ -24,7 +24,13 @@ const SliderComponent = ({ arrImages }) => {
                 {arrImages.map((image, index) => {
                     return (
                         <div key={index}>
-                            <Image className={cx('wrapper_image')} src={image} alt="img" preview={false} />
+                            <Image
+                                style={{ width: width, height: height }}
+                                className={cx('wrapper_image')}
+                                src={image}
+                                alt="img"
+                                preview={false}
+                            />
                         </div>
                     );
                 })}

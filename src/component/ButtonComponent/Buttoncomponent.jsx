@@ -9,11 +9,17 @@ const ButtonComponent = ({
     styleTextButton,
     textButton,
     disabled,
+    height,
+    border,
+    width,
     ...rests
 }) => {
     return (
         <Button
             style={{
+                width,
+                height,
+                border,
                 color,
                 backgroundColor,
                 ...styleButton,
