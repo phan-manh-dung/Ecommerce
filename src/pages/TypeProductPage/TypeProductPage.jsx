@@ -4,7 +4,7 @@ import styles from './TypeProduct.module.scss';
 import classNames from 'classnames/bind';
 
 import img_right_arrow from '~/assets/img_Global/right_arrow.png';
-import { Checkbox, Col, Input, Radio, Row } from 'antd';
+import { Checkbox, Col, InputNumber, Radio, Row } from 'antd';
 
 import img_location from '~/assets/img_Global/location.png';
 import img_now from '~/assets/img_Global/now.png';
@@ -18,9 +18,11 @@ import slide10 from '~/assets/img_Global/slide10.jpg';
 import slide11 from '~/assets/img_Global/slide11.png';
 import img_tulanh from '~/assets/img_Global/tulanh.png';
 import img_tulanh2 from '~/assets/img_Global/tulanh2.jpg';
+import img_now_red from '~/assets/img_Global/now_red.png';
 
 import { CaretDownOutlined, CaretUpOutlined, StarFilled } from '@ant-design/icons';
 import ButtonComponent from '~/component/ButtonComponent/Buttoncomponent';
+import CardComponent from '~/component/CardComponent/CardComponent';
 
 const cx = classNames.bind(styles);
 
@@ -70,7 +72,7 @@ const TypeProductPage = () => {
             <Row>
                 <Col xs={0} sm={5}>
                     <div className={cx('wrapper_left')}>
-                        <div className={cx('wrapper-category')}>
+                        <div className={cx('wrapper-category', 'scrollable-content')}>
                             <div className={cx('category')}>Danh mục sản phẩm</div>
                             <div className={cx('list_category')}>
                                 {arr.map((item, index) => {
@@ -90,18 +92,18 @@ const TypeProductPage = () => {
                             <div className={cx('wrapper_service')}>
                                 <span className={cx('title')}>Dịch vụ</span>
                                 <div className={cx('wrapper_ship')}>
-                                    <Checkbox value="Giao siêu tốc">Giao siêu tốc</Checkbox>
+                                    <Checkbox defaultChecked={false}>Giao siêu tốc</Checkbox>
                                     <img alt="now" src={img_now} width={26} height={12} />
                                 </div>
                                 <div className={cx('wrapper_ship')}>
-                                    <Checkbox value="Thưởng thêm Astra">Thưởng thêm Astra</Checkbox>
+                                    <Checkbox defaultChecked={false}>Thưởng thêm Astra</Checkbox>
                                     <img alt="now" src={img_astra} width={26} height={12} />
                                 </div>
                                 <div className={cx('wrapper_ship')}>
-                                    <Checkbox value="Trả góp 0%">Trả góp 0%</Checkbox>
+                                    <Checkbox defaultChecked={false}>Trả góp 0%</Checkbox>
                                 </div>
                                 <div className={cx('wrapper_ship')}>
-                                    <Checkbox value="Giảm sâu">Giảm sâu</Checkbox>
+                                    <Checkbox defaultChecked={false}>Giảm sâu</Checkbox>
                                 </div>
                             </div>
                             <div className={cx('wrapper_vote')}>
@@ -158,7 +160,7 @@ const TypeProductPage = () => {
                                 <span className={cx('title')}>Thương hiệu</span>
                                 {supplierBrands.slice(0, visibleCheckboxes).map((current, index) => (
                                     <div key={index} className={cx('wrapper_ship')}>
-                                        <Checkbox value={current}>{current}</Checkbox>
+                                        <Checkbox defaultChecked={false}>{current}</Checkbox>
                                     </div>
                                 ))}
                                 {visibleCheckboxes < supplierBrands.length && (
@@ -193,9 +195,9 @@ const TypeProductPage = () => {
                                     <span className={cx('price_choose')}>Chọn khoảng giá</span>
                                     <div>
                                         <div className={cx('input')}>
-                                            <Input defaultValue={0} style={{ width: '35%', height: '30px' }} />
+                                            <InputNumber defaultValue={0} style={{ width: '35%', height: '30px' }} />
                                             <span> - </span>
-                                            <Input defaultValue={0} style={{ width: '35%', height: '30px' }} />
+                                            <InputNumber defaultValue={0} style={{ width: '35%', height: '30px' }} />
                                         </div>
                                         <div style={{ textAlign: 'center', paddingTop: '5px' }}>
                                             <ButtonComponent
@@ -211,7 +213,7 @@ const TypeProductPage = () => {
                                 <span className={cx('title')}>Nhà cung cấp</span>
                                 {supplierDataSupplier.slice(0, visibleCheckboxes).map((supplier, index) => (
                                     <div className={cx('wrapper_ship')} key={index}>
-                                        <Checkbox value={supplier}>{supplier}</Checkbox>
+                                        <Checkbox defaultChecked={false}>{supplier}</Checkbox>
                                     </div>
                                 ))}
                                 {visibleCheckboxes < supplierDataSupplier.length && (
@@ -315,6 +317,23 @@ const TypeProductPage = () => {
                                     <div className={cx('sort_div')}>
                                         <a src="/">Giá cao đến thấp</a>
                                     </div>
+                                </div>
+                            </div>
+                            <div className={cx('wrapper_now-red')}>
+                                <div className={cx('now_red')}>
+                                    <div style={{ display: 'flex' }} className="icon">
+                                        <img alt="now_red" src={img_now_red} width={24} height={12} />
+                                    </div>
+                                </div>
+                            </div>
+                            <div className={cx('container_product1')}>
+                                <div className={cx('product1')}>
+                                    <CardComponent />
+                                    <CardComponent />
+                                    <CardComponent />
+                                    <CardComponent />
+                                    <CardComponent />
+                                    <CardComponent />
                                 </div>
                             </div>
                         </div>

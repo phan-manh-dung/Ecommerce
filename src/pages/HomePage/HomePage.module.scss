@@ -5,6 +5,27 @@
     background-color: var(--primary-color-body);
 }
 
+.scrollable-content {
+    max-height: 600px; /* Điều chỉnh chiều cao tối đa của phần nội dung */
+    overflow-y: auto; /* Cho phép lăn cuộn dọc khi cần */
+}
+
+/* Ẩn thanh cuộn */
+.scrollable-content::-webkit-scrollbar {
+    width: 0.5em; /* Độ rộng của thanh cuộn (có thể điều chỉnh) */
+}
+
+/* Đường kích thước thanh cuộn */
+.scrollable-content::-webkit-scrollbar-track {
+    background: transparent; /* Màu nền của thanh cuộn */
+}
+
+/* Đường thanh cuộn chưa được cuộn */
+.scrollable-content::-webkit-scrollbar-thumb {
+    background-color: transparent; /* Màu của thanh cuộn */
+    border-radius: 1em; /* Độ cong của thanh cuộn (có thể điều chỉnh) */
+}
+
 .container_main {
     display: flex;
 }

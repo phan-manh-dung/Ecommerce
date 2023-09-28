@@ -34,7 +34,7 @@ const HomePage = () => {
             </div>
             <Row>
                 <Col xs={0} sm={5}>
-                    <div className={cx('wrapper_home-left')}>
+                    <div className={cx('wrapper_home-left', 'scrollable-content')}>
                         <div className={cx('home-left')}>
                             <div className={cx('wrapper-title')}>
                                 <span className={cx('left-title')}>Danh mục</span>
