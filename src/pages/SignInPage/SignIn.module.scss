@@ -184,7 +184,7 @@ button:active {
     display: flex;
     justify-content: center;
 }
-.login .sign-up a {
+.login .sign-up span {
     text-decoration: none;
     color: #fff;
     font-weight: 700;
@@ -192,7 +192,7 @@ button:active {
 .login .sign-up p {
     color: #fff;
 }
-.sign-up a:hover {
+.sign-up span:hover {
     text-decoration: underline;
 }
 

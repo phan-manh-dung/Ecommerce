@@ -1,15 +1,30 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styles from './SignUp.module.scss';
 import classNames from 'classnames/bind';
 import logo_shop from '../../assets/img_Global/logoshop.png';
 
 import { Input } from 'antd';
 import ButtonComponent from '~/component/ButtonComponent/Buttoncomponent';
-import { FacebookOutlined, GithubOutlined, HomeOutlined, InstagramOutlined, LinkedinOutlined } from '@ant-design/icons';
+import {
+    EyeInvisibleOutlined,
+    EyeOutlined,
+    FacebookOutlined,
+    GithubOutlined,
+    HomeOutlined,
+    InstagramOutlined,
+    LinkedinOutlined,
+} from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
 
 const SignInPage = () => {
+    const [isShowPassword, setIsShowPassword] = useState(false);
+    const [isShowConfirmPassword, setIsShowConfirmPassword] = useState(false);
+    const navigate = useNavigate();
+    const handleNavigate = () => {
+        navigate('/sign-in');
+    };
     return (
         <div className={cx('container_wrapper')}>
             <header className={cx('header')}>
@@ -53,18 +68,44 @@ const SignInPage = () => {
                     <div className={cx('input')}>
                         <Input placeholder="Nhập email" />
                     </div>
-                    <div className={cx('input')}>
-                        <Input placeholder="Nhập password" />
+                    <div
+                        className={cx('input')}
+                        style={{
+                            display: 'flex',
+                            position: 'relative',
+                            alignItems: 'center',
+                        }}
+                    >
+                        <Input placeholder="Nhập password" type={isShowPassword ? 'text' : 'password'} />
+                        <span
+                            style={{ position: 'absolute', left: '90%' }}
+                            onClick={() => setIsShowPassword(!isShowPassword)}
+                        >
+                            {isShowPassword ? <EyeOutlined /> : <EyeInvisibleOutlined />}
+                        </span>
                     </div>
-                    <div className={cx('input')}>
-                        <Input placeholder="Nhập lại password" />
+                    <div
+                        className={cx('input')}
+                        style={{
+                            display: 'flex',
+                            position: 'relative',
+                            alignItems: 'center',
+                        }}
+                    >
+                        <Input placeholder="Nhập lại password" type={isShowConfirmPassword ? 'text' : 'password'} />
+                        <span
+                            style={{ position: 'absolute', left: '90%' }}
+                            onClick={() => setIsShowConfirmPassword(!isShowConfirmPassword)}
+                        >
+                            {isShowConfirmPassword ? <EyeOutlined /> : <EyeInvisibleOutlined />}
+                        </span>
                     </div>
                     <div className={cx('button')}>
                         <ButtonComponent className={cx('btn')} textButton={'Login'} backgroundColor="rgb(254,67,79)" />
                     </div>
-                    <div className={cx('sign-up')}>
+                    <div className={cx('sign-up')} onClick={handleNavigate}>
                         <p> Already have an account?</p>
-                        <a href="#"> Sign in</a>
+                        <span> Sign in</span>
                     </div>
                 </div>
             </section>

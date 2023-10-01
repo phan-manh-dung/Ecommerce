@@ -8,10 +8,17 @@ import logo_home from '../../assets/img_Global/home.png';
 import logo_user from '../../assets/img_Global/user.png';
 import logo_cart from '../../assets/img_Global/cart.png';
 import logo_astra from '../../assets/img_Global/astra.png';
+import { useNavigate } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
 
 function HeaderComponent() {
+    const navigate = useNavigate();
+
+    const handleNavigate = () => {
+        navigate('/sign-in');
+    };
+
     return (
         <div className={cx('container_header')}>
             <div className={cx('wrapper_header')}>
@@ -30,7 +37,7 @@ function HeaderComponent() {
                                     Trang chủ
                                 </span>
                             </div>
-                            <div className={cx('row_right-list')}>
+                            <div className={cx('row_right-list')} onClick={handleNavigate}>
                                 <img src={logo_user} alt="user" style={{ width: '24px', height: '24px' }} />
                                 <span style={{ fontSize: '14px', color: 'rgb(128, 128, 137)', paddingLeft: '5px' }}>
                                     Đăng nhập
