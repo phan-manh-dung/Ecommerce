@@ -21,10 +21,11 @@ const ButtonComponent = ({
                 height,
                 border,
                 color,
-                backgroundColor,
                 ...styleButton,
+                backgroundColor,
             }}
             size={size}
+            disabled={disabled}
             {...rests}
         >
             <span style={styleTextButton}>{textButton}</span>

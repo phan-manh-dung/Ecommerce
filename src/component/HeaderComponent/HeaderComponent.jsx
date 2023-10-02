@@ -9,15 +9,17 @@ import logo_user from '../../assets/img_Global/user.png';
 import logo_cart from '../../assets/img_Global/cart.png';
 import logo_astra from '../../assets/img_Global/astra.png';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 const cx = classNames.bind(styles);
 
 function HeaderComponent() {
     const navigate = useNavigate();
-
+    const user = useSelector((state) => state.user);
     const handleNavigate = () => {
         navigate('/sign-in');
     };
+    console.log('user', user);
 
     return (
         <div className={cx('container_header')}>
@@ -37,12 +39,16 @@ function HeaderComponent() {
                                     Trang chủ
                                 </span>
                             </div>
-                            <div className={cx('row_right-list')} onClick={handleNavigate}>
-                                <img src={logo_user} alt="user" style={{ width: '24px', height: '24px' }} />
-                                <span style={{ fontSize: '14px', color: 'rgb(128, 128, 137)', paddingLeft: '5px' }}>
-                                    Đăng nhập
-                                </span>
-                            </div>
+                            {user?.name ? (
+                                <div>{user.name}</div>
+                            ) : (
+                                <div className={cx('row_right-list')} onClick={handleNavigate}>
+                                    <img src={logo_user} alt="user" style={{ width: '24px', height: '24px' }} />
+                                    <span style={{ fontSize: '14px', color: 'rgb(128, 128, 137)', paddingLeft: '5px' }}>
+                                        Đăng nhập
+                                    </span>
+                                </div>
+                            )}
                             <div className={cx('row_right-list')}>
                                 <img src={logo_astra} alt="astra" style={{ width: '24px', height: '24px' }} />
                                 <span style={{ fontSize: '14px', color: 'rgb(128, 128, 137)', paddingLeft: '5px' }}>

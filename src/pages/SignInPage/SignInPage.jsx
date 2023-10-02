@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './SignIn.module.scss';
 import classNames from 'classnames/bind';
 
 import { Checkbox, Input } from 'antd';
 import ButtonComponent from '~/component/ButtonComponent/Buttoncomponent';
+import * as UserService from '~/service/UserService';
+import jwt_decoded from 'jwt-decode';
+import { useDispatch } from 'react-redux';
 import {
     EyeInvisibleOutlined,
     EyeOutlined,
@@ -14,6 +17,9 @@ import {
     LinkedinOutlined,
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
+import { useMutationHook } from '~/hook/useMutationHook';
+import Loading from '~/component/LoadingComponent/Loading';
+import { updateUser } from '~/redux/slide/userSlide';
 
 const cx = classNames.bind(styles);
 
@@ -22,16 +28,11 @@ const SignInPage = () => {
     const [password, setPassword] = useState('');
     const [isShowPassword, setIsShowPassword] = useState(false);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+
     const handleNavigate = () => {
         navigate('/sign-up');
     };
-    // const handleEmailChange = (value) => {
-    //     setEmail(value);
-    // };
-    // const handlePasswordChange = (value) => {
-    //     // Kiểm tra giá trị password ở đây nếu cần
-    //     setPassword(value);
-    // };
 
     const handleEmailChange = (event) => {
         const value = event.target.value;
@@ -44,9 +45,40 @@ const SignInPage = () => {
         setPassword(value);
     };
 
-    const handleLogin = () => {
-        console.log('sign-in', email, password);
+    const mutation = useMutationHook((data) => UserService.loginUser(data));
+    const { data, isLoading, isSuccess, isError } = mutation;
+
+    useEffect(() => {
+        if (isSuccess) {
+            navigate('/');
+            localStorage.setItem('access_token', data?.access_token);
+            if (data?.access_token) {
+                const decoded = jwt_decoded(data?.access_token);
+                if (decoded?.id) {
+                    handleGetDetailUser(decoded?.id, data?.access_token);
+                }
+            }
+        }
+    }, [isSuccess]);
+
+    const handleGetDetailUser = async (id, token) => {
+        const res = await UserService.getDetailUser(id, token);
+        dispatch(updateUser({ ...res?.data, access_token: token }));
+        console.log('res', res);
     };
+
+    const handleLogin = () => {
+        if (mutation) {
+            mutation.mutate({
+                email,
+                password,
+            });
+        }
+    };
+
+    if (!mutation) {
+        return null;
+    }
 
     return (
         <div className={cx('container_wrapper')}>
@@ -83,7 +115,7 @@ const SignInPage = () => {
                 <div className={cx('login')}>
                     <h2> Login </h2>
                     <div className={cx('input')}>
-                        <Input placeholder="Nhập email" onChange={handleEmailChange} />
+                        <Input placeholder="Nhập email" onChange={handleEmailChange} value={email} />
                     </div>
                     <div
                         className={cx('input')}
@@ -97,6 +129,7 @@ const SignInPage = () => {
                             placeholder="Nhập password"
                             type={isShowPassword ? 'text' : 'password'}
                             onChange={handlePasswordChange}
+                            value={password}
                         />
                         <span
                             style={{ position: 'absolute', left: '90%' }}
@@ -105,6 +138,7 @@ const SignInPage = () => {
                             {isShowPassword ? <EyeOutlined /> : <EyeInvisibleOutlined />}
                         </span>
                     </div>
+                    {data?.status === 'ERR' && <span style={{ color: 'red' }}>{data?.message}</span>}
                     <div className={cx('check')}>
                         <label>
                             <Checkbox />
@@ -112,14 +146,16 @@ const SignInPage = () => {
                         </label>
                         <a href="#"> Forgot Password?</a>
                     </div>
-                    <div className={cx('button')} onClick={handleLogin}>
-                        <ButtonComponent
-                            disabled={!email.length || !password.length}
-                            className={cx('btn')}
-                            textButton={'Login'}
-                            backgroundColor="rgb(254,67,79)"
-                        />
-                    </div>
+                    <Loading isLoading={isLoading}>
+                        <div className={cx('button')} onClick={handleLogin}>
+                            <ButtonComponent
+                                disabled={!email.length || !password.length}
+                                className={cx('btn')}
+                                textButton={'Login'}
+                                backgroundColor="rgb(254,67,79)"
+                            />
+                        </div>
+                    </Loading>
                     <div className={cx('sign-up')}>
                         <p> Don't have an account?</p>
                         <div onClick={handleNavigate}>
