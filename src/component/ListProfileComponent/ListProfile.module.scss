@@ -1,0 +1,14 @@
+.left_list {
+    padding: 7px 18px;
+
+    a {
+        color: rgb(2, 2, 7);
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+    }
+    &:hover {
+        background-color: rgb(235, 235, 240);
+        border-radius: 4px;
+    }
+}

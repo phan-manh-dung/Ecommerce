@@ -28,3 +28,14 @@
     display: flex;
     justify-content: space-around;
 }
+
+.content-header {
+    padding: 0;
+    margin: 0;
+    p {
+        padding: 5px 0;
+        &:hover {
+            background-color: rgb(233, 233, 237);
+        }
+    }
+}

@@ -1,5 +1,6 @@
 import NotFoundPage from '~/pages/NotFoundPage/NotFoundPage';
 import ProductDetailPage from '~/pages/ProductDetailPage/ProductDetailPage';
+import ProfilePage from '~/pages/ProfilePage/ProfilePage';
 import SignInPage from '~/pages/SignInPage/SignInPage';
 import SignUpPage from '~/pages/SignUpPage/SignUpPage';
 import TypeProductPage from '~/pages/TypeProductPage/TypeProductPage';
@@ -44,6 +45,12 @@ export const routes = [
     {
         path: '/product-detail',
         page: ProductDetailPage,
+        isShowHeader: true,
+        isShowFooter: true,
+    },
+    {
+        path: '/profile-user',
+        page: ProfilePage,
         isShowHeader: true,
         isShowFooter: true,
     },
