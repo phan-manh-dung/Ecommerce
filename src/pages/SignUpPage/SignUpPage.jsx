@@ -37,7 +37,6 @@ const SignInPage = () => {
 
     const onChangePassword = (event) => {
         const value = event.target.value;
-        // Kiểm tra giá trị password ở đây nếu cần
         setPassword(value);
     };
     const onchangeConfirmPassword = (event) => {

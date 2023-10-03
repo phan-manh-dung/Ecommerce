@@ -32,3 +32,11 @@ export const logOutUser = async () => {
     const res = await axios.post(`${process.env.REACT_APP_API_URL}/user/log-out`);
     return res.data;
 };
+export const updateUser = async (id, data, access_token) => {
+    const res = await axiosJWT.put(`${process.env.REACT_APP_API_URL}/user/update-user/${id}`, data, {
+        headers: {
+            token: `Bearer ${access_token}`,
+        },
+    }); // data của req.body
+    return res.data;
+};

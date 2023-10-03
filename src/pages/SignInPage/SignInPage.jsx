@@ -64,7 +64,6 @@ const SignInPage = () => {
     const handleGetDetailUser = async (id, token) => {
         const res = await UserService.getDetailUser(id, token);
         dispatch(updateUser({ ...res?.data, access_token: token }));
-        console.log('res', res);
     };
 
     const handleLogin = () => {

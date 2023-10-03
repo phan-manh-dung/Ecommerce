@@ -66,10 +66,10 @@ function HeaderComponent() {
                                     Astra
                                 </span>
                             </div>
-                            {user?.name ? (
+                            {user?.access_token ? (
                                 <>
                                     <Popover content={content} trigger="hover">
-                                        <div style={{ cursor: 'pointer' }}>{user.name}</div>
+                                        <div style={{ cursor: 'pointer' }}>{user?.nickname || user?.name}</div>
                                     </Popover>
                                 </>
                             ) : (
