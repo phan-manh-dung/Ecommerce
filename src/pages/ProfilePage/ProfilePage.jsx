@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styles from './Profile.module.scss';
 import classNames from 'classnames/bind';
-import { Col, Radio, Row } from 'antd';
+import { Col, Popover, Radio, Row, Upload } from 'antd';
 import {
     faBell,
     faBox,
@@ -38,6 +38,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useMutationHook } from '~/hook/useMutationHook';
 import Loading from '~/component/LoadingComponent/Loading';
 import { updateUser } from '~/redux/slide/userSlide';
+import { getBase64 } from '~/utils';
 
 const cx = classNames.bind(styles);
 
@@ -81,7 +82,7 @@ const ProfilePage = () => {
             const date = new Date(user?.dateOfBirth);
             const day = Number(date.getDate());
             const month = Number(date.getMonth());
-            const year = Number(date.getFullYear() + 99);
+            const year = Number(date.getUTCFullYear());
 
             // Gán giá trị vào các select box
             setDateOfBirth({
@@ -126,9 +127,12 @@ const ProfilePage = () => {
         const value = event.target.value;
         setAddress(value);
     };
-    const handleOnchangeAvatar = (event) => {
-        const value = event.target.value;
-        setAvatar(value);
+    const handleOnchangeAvatar = async ({ fileList }) => {
+        const file = fileList[0];
+        if (!file.url && !file.preview) {
+            file.preview = await getBase64(file.originFileObj);
+        }
+        setAvatar(file.preview);
     };
     const handleOnChangeDate = (e, type) => {
         const value = e.target.value;
@@ -163,10 +167,23 @@ const ProfilePage = () => {
             nickname,
             dateOfBirth: convertDate,
             sex,
+            avatar,
             country,
             access_token: user?.access_token,
         });
-        console.log('date', dateOfBirth);
+    };
+
+    const handleSubmitPhone = () => {
+        mutation.mutate({
+            id: user?.id,
+            phone,
+        });
+    };
+    const handleSubmitEmail = () => {
+        mutation.mutate({
+            id: user?.id,
+            email,
+        });
     };
 
     const arrImage = [
@@ -270,10 +287,34 @@ const ProfilePage = () => {
                                                     </div>
                                                     <div className={cx('form-info')}>
                                                         <div className={cx('wrapper_form')}>
-                                                            <img alt="img" src={avatar_blue} width={50} height={50} />
-                                                            <div className={cx('pen')}>
+                                                            {avatar ? (
+                                                                <div>
+                                                                    <img
+                                                                        className={cx('wrapper_form')}
+                                                                        alt="img"
+                                                                        src={avatar}
+                                                                        width={50}
+                                                                        height={50}
+                                                                    />
+                                                                </div>
+                                                            ) : (
+                                                                <img
+                                                                    alt="img"
+                                                                    src={avatar_blue}
+                                                                    width={50}
+                                                                    height={50}
+                                                                />
+                                                            )}
+                                                            {/* avatar */}
+
+                                                            <Upload
+                                                                maxCount={1}
+                                                                showUploadList={false}
+                                                                className={cx('pen')}
+                                                                onChange={handleOnchangeAvatar}
+                                                            >
                                                                 <img alt="pen" width={10} height={10} src={img_pen} />
-                                                            </div>
+                                                            </Upload>
                                                         </div>
                                                         <div className={cx('wrapper_input')}>
                                                             {/* name */}
@@ -359,7 +400,7 @@ const ProfilePage = () => {
                                                             >
                                                                 <option value="0">Năm</option>
                                                                 {Array.from({ length: 200 }, (_, index) => (
-                                                                    <option key={index + 1} value={index + 1}>
+                                                                    <option key={index + 1} value={index + 1900}>
                                                                         {index + 1900}
                                                                     </option>
                                                                 ))}
@@ -443,10 +484,17 @@ const ProfilePage = () => {
                                                                 />
                                                                 <div className={cx('detail')}>
                                                                     <span>Số điện thoại</span>
-                                                                    <span>0383383</span>
+                                                                    <div>
+                                                                        <Input
+                                                                            onInput={handleOnchangePhone}
+                                                                            value={phone}
+                                                                            style={{ width: '100%', border: 'none' }}
+                                                                        />
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                            <div className={cx('status')}>
+
+                                                            <div onClick={handleSubmitPhone}>
                                                                 <ButtonComponent
                                                                     className={cx('status-button')}
                                                                     textButton="Cập nhật"
@@ -465,10 +513,16 @@ const ProfilePage = () => {
                                                                 />
                                                                 <div className={cx('detail')}>
                                                                     <span>Địa chỉ Email</span>
-                                                                    <span>{user?.email}</span>
+                                                                    <div>
+                                                                        <Input
+                                                                            onInput={handleOnchangeEmail}
+                                                                            value={email}
+                                                                            style={{ width: '100%', border: 'none' }}
+                                                                        />
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                            <div className={cx('status')}>
+                                                            <div className={cx('status')} onClick={handleSubmitEmail}>
                                                                 <ButtonComponent
                                                                     className={cx('status-button')}
                                                                     textButton="Cập nhật"

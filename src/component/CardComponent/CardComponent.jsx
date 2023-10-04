@@ -8,11 +8,17 @@ import img_genuine from '../../assets/img_Global/genuine.png';
 
 import styles from './Card.module.scss';
 import classNames from 'classnames/bind';
+import { useNavigate } from 'react-router-dom';
 const cx = classNames.bind(styles);
 
-const CardComponent = () => {
+const CardComponent = (props) => {
+    const { key, countInStock, description, image, name, price, rating, type, sold, discount, id } = props;
+    const navigate = useNavigate();
+    const handleDetailsProduct = (id) => {
+        navigate(`/product-details/${id}`);
+    };
     return (
-        <div>
+        <div onClick={() => handleDetailsProduct(id)}>
             <Card
                 hoverable
                 bodyStyle={{ padding: '10px' }}
@@ -22,17 +28,15 @@ const CardComponent = () => {
                 <div className={cx('genuine')}>
                     <img alt="genuine" src={img_genuine} width={89} height={20} />
                 </div>
-                <div className={cx('product_name')}>
-                    Laptop LG Gram 2023 14ZD90R-G.AX52A5 (i5-1340P | 8GB | 256GB | 14) Hàng chính hãng
-                </div>
+                <div className={cx('product_name')}>{name}</div>
                 <div className={cx('product_sold')}>
-                    4 <StarFilled style={{ fontSize: '10px', color: '#ffce3d' }} /> | Đã bán
+                    {rating} <StarFilled style={{ fontSize: '10px', color: '#ffce3d' }} /> | Đã bán: {sold}
                 </div>
                 <div className={cx('product_wrapper-price')}>
-                    <div className={cx('product_price')}>23.450.000</div>
+                    <div className={cx('product_price')}>{price}</div>
 
                     <div className={cx('product_discount')}>
-                        <span>-30%</span>
+                        <span>{discount}%</span>
                     </div>
                 </div>
                 <div className={cx('product_speed')}>

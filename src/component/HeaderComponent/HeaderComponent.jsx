@@ -15,7 +15,7 @@ import { resetUser } from '~/redux/slide/userSlide';
 
 const cx = classNames.bind(styles);
 
-function HeaderComponent() {
+function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
@@ -31,7 +31,6 @@ function HeaderComponent() {
     };
     const content = (
         <div className={cx('content-header')}>
-            <p onClick={handleLogOut}>Log out</p>
             <p
                 onClick={() => {
                     navigate('profile-user');
@@ -39,6 +38,16 @@ function HeaderComponent() {
             >
                 Thông tin người dùng
             </p>
+            {user?.isAdmin && (
+                <p
+                    onClick={() => {
+                        navigate('system/admin');
+                    }}
+                >
+                    Quản lí hệ thống
+                </p>
+            )}
+            <p onClick={handleLogOut}>Log out</p>
         </div>
     );
 
@@ -49,9 +58,11 @@ function HeaderComponent() {
                     <Col span={6} className={cx('row_left')}>
                         <img style={{ width: '20%', height: '100%' }} src={logo_shop} alt="logo" />
                     </Col>
-                    <Col span={8}>
-                        <InputSearch />
-                    </Col>
+                    {!isHiddenSearch && (
+                        <Col span={8}>
+                            <InputSearch />
+                        </Col>
+                    )}
                     <Col span={10}>
                         <div className={cx('row_right')}>
                             <div className={cx('row_right-list')}>
@@ -80,13 +91,16 @@ function HeaderComponent() {
                                     </span>
                                 </div>
                             )}
-
-                            <div className={cx('row_right-list')}>
-                                <span style={{ fontSize: '14px', color: 'rgb(128, 128, 137)', paddingRight: '5px' }}>
-                                    Giỏ hàng
-                                </span>
-                                <img src={logo_cart} alt="cart" style={{ width: '24px', height: '24px' }} />
-                            </div>
+                            {!isHiddenCart && (
+                                <div className={cx('row_right-list')}>
+                                    <span
+                                        style={{ fontSize: '14px', color: 'rgb(128, 128, 137)', paddingRight: '5px' }}
+                                    >
+                                        Giỏ hàng
+                                    </span>
+                                    <img src={logo_cart} alt="cart" style={{ width: '24px', height: '24px' }} />
+                                </div>
+                            )}
                         </div>
                     </Col>
                 </Row>

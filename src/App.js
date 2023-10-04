@@ -10,21 +10,23 @@ import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import { isJsonString } from './utils';
 import { updateUser } from './redux/slide/userSlide';
+import Loading from './component/LoadingComponent/Loading';
 function App() {
     const dispatch = useDispatch();
-    // const [isLoading, setIsLoading] = useState(false);
-    // const user = useSelector((state) => state.user);
+    const [isLoading, setIsLoading] = useState(false);
+    const user = useSelector((state) => state.user);
     useEffect(() => {
+        setIsLoading(true);
         const { storageData, decoded } = handleDecoded();
         if (decoded?.id) {
             handleGetDetailUser(decoded?.id, storageData);
         }
+        setIsLoading(false);
     }, []);
 
     const handleGetDetailUser = async (id, token) => {
         const res = await UserService.getDetailUser(id, token);
         dispatch(updateUser({ ...res?.data, access_token: token }));
-        console.log('res', res);
     };
 
     // const handleDecoded = () => {
@@ -66,32 +68,34 @@ function App() {
     );
 
     return (
-        <div>
-            <Router>
-                <Routes>
-                    {routes.map((route) => {
-                        const Page = route.page;
-                        const isShowHeader = route.isShowHeader;
-                        const isShowFooter = route.isShowFooter;
-                        const Layout = isShowHeader && isShowFooter ? DefaultComponent : Fragment;
-                        return (
-                            <Route
-                                key={route.path}
-                                path={route.path}
-                                element={
-                                    <>
-                                        <Layout>
-                                            {' '}
-                                            <Page />
-                                        </Layout>
-                                    </>
-                                }
-                            />
-                        );
-                    })}
-                </Routes>
-            </Router>
-        </div>
+        <Loading isLoading={isLoading}>
+            <div>
+                <Router>
+                    <Routes>
+                        {routes.map((route) => {
+                            const Page = route.page;
+                            const isCheckAuth = !route?.isPrivate || user?.isAdmin;
+                            const isShowHeader = route.isShowHeader;
+                            const isShowFooter = route.isShowFooter;
+                            const Layout = isShowHeader && isShowFooter ? DefaultComponent : Fragment;
+                            return (
+                                <Route
+                                    key={route?.path}
+                                    path={route?.path}
+                                    element={
+                                        <>
+                                            <Layout>
+                                                <Page />
+                                            </Layout>
+                                        </>
+                                    }
+                                />
+                            );
+                        })}
+                    </Routes>
+                </Router>
+            </div>
+        </Loading>
     );
 }
 

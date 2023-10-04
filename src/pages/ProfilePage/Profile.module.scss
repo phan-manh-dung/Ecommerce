@@ -96,6 +96,7 @@
                 -webkit-box-align: center;
                 align-items: center;
                 position: relative;
+                object-fit: cover;
 
                 .pen {
                     position: absolute;
@@ -111,6 +112,7 @@
                     -webkit-box-pack: center;
                     justify-content: center;
                     display: flex;
+                    cursor: pointer;
                 }
             }
             .wrapper-date {
@@ -162,6 +164,7 @@
         }
     }
 }
+
 .information {
     font-size: 18px;
     line-height: 32px;
@@ -217,3 +220,5 @@
         }
     }
 }
+
+//

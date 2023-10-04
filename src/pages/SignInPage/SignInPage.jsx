@@ -80,72 +80,73 @@ const SignInPage = () => {
     }
 
     return (
-        <div className={cx('container_wrapper')}>
-            <header className={cx('header')}></header>
-            <div className={cx('background')}></div>
-            <section className={cx('home')}>
-                <div className={cx('content')}>
-                    <h2> Welcome!</h2>
-                    <h3> To Our Manh Dung Website </h3>
-                    <pre>Wishing you a pleasant visit to the website</pre>
-                    <div className={cx('icon')}>
-                        <a className={cx('icon_brand')} href="https://www.facebook.com/jas.murad.353">
-                            <FacebookOutlined style={{ width: '20px', height: '20px' }} />
-                        </a>
+        <Loading isLoading={isLoading}>
+            <div className={cx('container_wrapper')}>
+                <header className={cx('header')}></header>
+                <div className={cx('background')}></div>
+                <section className={cx('home')}>
+                    <div className={cx('content')}>
+                        <h2> Welcome!</h2>
+                        <h3> To Our Manh Dung Website </h3>
+                        <pre>Wishing you a pleasant visit to the website</pre>
+                        <div className={cx('icon')}>
+                            <a className={cx('icon_brand')} href="https://www.facebook.com/jas.murad.353">
+                                <FacebookOutlined style={{ width: '20px', height: '20px' }} />
+                            </a>
 
-                        <a href="/" className={cx('icon_brand')}>
-                            <GithubOutlined style={{ width: '20px', height: '20px' }} />
-                        </a>
+                            <a href="/" className={cx('icon_brand')}>
+                                <GithubOutlined style={{ width: '20px', height: '20px' }} />
+                            </a>
 
-                        <a href="/" className={cx('icon_brand')}>
-                            <InstagramOutlined style={{ width: '20px', height: '20px' }} />
-                        </a>
+                            <a href="/" className={cx('icon_brand')}>
+                                <InstagramOutlined style={{ width: '20px', height: '20px' }} />
+                            </a>
 
-                        <a href="/" className={cx('icon_brand')}>
-                            <LinkedinOutlined style={{ width: '20px', height: '20px' }} />
-                        </a>
+                            <a href="/" className={cx('icon_brand')}>
+                                <LinkedinOutlined style={{ width: '20px', height: '20px' }} />
+                            </a>
+                        </div>
+                        <div className={cx('home_back')}>
+                            <a href="/">
+                                <HomeOutlined style={{ color: '#fff', fontSize: '30px' }} />
+                            </a>
+                        </div>
                     </div>
-                    <div className={cx('home_back')}>
-                        <a href="/">
-                            <HomeOutlined style={{ color: '#fff', fontSize: '30px' }} />
-                        </a>
-                    </div>
-                </div>
-                <div className={cx('login')}>
-                    <h2> Login </h2>
-                    <div className={cx('input')}>
-                        <Input placeholder="Nhập email" onChange={handleEmailChange} value={email} />
-                    </div>
-                    <div
-                        className={cx('input')}
-                        style={{
-                            display: 'flex',
-                            position: 'relative',
-                            alignItems: 'center',
-                        }}
-                    >
-                        <Input
-                            placeholder="Nhập password"
-                            type={isShowPassword ? 'text' : 'password'}
-                            onChange={handlePasswordChange}
-                            value={password}
-                        />
-                        <span
-                            style={{ position: 'absolute', left: '90%' }}
-                            onClick={() => setIsShowPassword(!isShowPassword)}
+                    <div className={cx('login')}>
+                        <h2> Login </h2>
+                        <div className={cx('input')}>
+                            <Input placeholder="Nhập email" onChange={handleEmailChange} value={email} />
+                        </div>
+                        <div
+                            className={cx('input')}
+                            style={{
+                                display: 'flex',
+                                position: 'relative',
+                                alignItems: 'center',
+                            }}
                         >
-                            {isShowPassword ? <EyeOutlined /> : <EyeInvisibleOutlined />}
-                        </span>
-                    </div>
-                    {data?.status === 'ERR' && <span style={{ color: 'red' }}>{data?.message}</span>}
-                    <div className={cx('check')}>
-                        <label>
-                            <Checkbox />
-                            <span> Remember me</span>
-                        </label>
-                        <a href="#"> Forgot Password?</a>
-                    </div>
-                    <Loading isLoading={isLoading}>
+                            <Input
+                                placeholder="Nhập password"
+                                type={isShowPassword ? 'text' : 'password'}
+                                onChange={handlePasswordChange}
+                                value={password}
+                            />
+                            <span
+                                style={{ position: 'absolute', left: '90%' }}
+                                onClick={() => setIsShowPassword(!isShowPassword)}
+                            >
+                                {isShowPassword ? <EyeOutlined /> : <EyeInvisibleOutlined />}
+                            </span>
+                        </div>
+                        {data?.status === 'ERR' && <span style={{ color: 'red' }}>{data?.message}</span>}
+                        <div className={cx('check')}>
+                            <label>
+                                <Checkbox />
+                                <span> Remember me</span>
+                            </label>
+                            <a href="#"> Forgot Password?</a>
+                        </div>
+
                         <div className={cx('button')} onClick={handleLogin}>
                             <ButtonComponent
                                 disabled={!email.length || !password.length}
@@ -154,16 +155,17 @@ const SignInPage = () => {
                                 backgroundColor="rgb(254,67,79)"
                             />
                         </div>
-                    </Loading>
-                    <div className={cx('sign-up')}>
-                        <p> Don't have an account?</p>
-                        <div onClick={handleNavigate}>
-                            <span className={cx('')}> Sign up</span>
+
+                        <div className={cx('sign-up')}>
+                            <p> Don't have an account?</p>
+                            <div onClick={handleNavigate}>
+                                <span className={cx('')}> Sign up</span>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </section>
-        </div>
+                </section>
+            </div>
+        </Loading>
     );
 };
 

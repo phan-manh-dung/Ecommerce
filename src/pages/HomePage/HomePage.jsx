@@ -18,6 +18,8 @@ import img_store from '../../assets/img_Global/store.png';
 import CardComponent from '~/component/CardComponent/CardComponent';
 import AssistantComponent from '~/component/AssistantComponent/AssistantComponent';
 import ButtonComponent from '~/component/ButtonComponent/Buttoncomponent';
+import { useQuery } from '@tanstack/react-query';
+import * as ProductService from '~/service/ProductService';
 
 const cx = classNames.bind(styles);
 
@@ -25,6 +27,15 @@ const HomePage = () => {
     const arr = ['TV', 'Laptop', 'Điện thoại', 'Cái khác'];
     const arrImg = [img1, img2, img3, img4, img5];
     const arr2 = ['Đồ chơi trẻ em ', 'Máy tính bảng', 'Laptop', 'Thời trang nam', 'Túi xách'];
+
+    const fetchProductAll = async () => {
+        const res = await ProductService.getAllProduct();
+        console.log('resnew', res);
+        return res;
+    };
+    const { isLoading, data: products } = useQuery(['products'], fetchProductAll, { retry: 3, retryDelay: 1000 });
+    console.log('data', products);
+
     return (
         <div className={cx('container_home')}>
             <div className={cx('container_main')}>
@@ -90,12 +101,22 @@ const HomePage = () => {
                     </div>
 
                     <div className={cx('wrapper_card')}>
-                        <CardComponent />
-                        <CardComponent />
-                        <CardComponent />
-                        <CardComponent />
-                        <CardComponent />
-                        <CardComponent />
+                        {products?.data?.map((product) => {
+                            return (
+                                <CardComponent
+                                    key={product._id}
+                                    countInStock={product.countInStock}
+                                    description={product.description}
+                                    image={product.image}
+                                    name={product.name}
+                                    price={product.price}
+                                    rating={product.rating}
+                                    type={product.type}
+                                    discount={product.discount}
+                                    sold={product.sold}
+                                />
+                            );
+                        })}
                     </div>
 
                     <div className={cx('see_more')}>
