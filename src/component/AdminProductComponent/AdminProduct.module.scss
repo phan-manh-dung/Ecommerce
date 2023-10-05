@@ -16,4 +16,13 @@
     .wrapper-table {
         margin-top: 20px;
     }
+    .custom-modal {
+        .ant-btn-primary {
+            display: none;
+        }
+    }
+}
+
+.ant-btn {
+    display: none;
 }

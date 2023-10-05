@@ -5,27 +5,20 @@ import Loading from '~/component/LoadingComponent/Loading';
 import { useMemo } from 'react';
 
 const TableComponent = (props) => {
-    const {
-        selectionType = 'checkbox',
-        data: dataSource = [],
-        isLoading = false,
-        columns = [],
-        handleDelteMany,
-    } = props;
+    const { selectionType = 'checkbox', data = [], columns = [], products = [], isLoading = false } = props;
     const [rowSelectedKeys, setRowSelectedKeys] = useState([]);
-    const newColumnExport = useMemo(() => {
-        const arr = columns?.filter((col) => col.dataIndex !== 'action');
-        return arr;
-    }, [columns]);
 
     const rowSelection = {
-        onChange: (selectedRowKeys, selectedRows) => {
-            setRowSelectedKeys(selectedRowKeys);
-        },
+        onChange: (selectedRowKeys, selectedRows) => {},
+        getCheckboxProps: (record) => ({
+            disabled: record.name === 'User',
+            name: record.name,
+        }),
     };
-    const handleDeleteAll = () => {
-        handleDelteMany(rowSelectedKeys);
-    };
+
+    // const handleDeleteAll = () => {
+    //     handleDelteMany(rowSelectedKeys);
+    // };
     // const exportExcel = () => {
     //     const excel = new Excel();
     //     excel
@@ -39,28 +32,13 @@ const TableComponent = (props) => {
 
     return (
         <Loading isLoading={isLoading}>
-            {!!rowSelectedKeys.length && (
-                <div
-                    style={{
-                        background: '#1d1ddd',
-                        color: '#fff',
-                        fontWeight: 'bold',
-                        padding: '10px',
-                        cursor: 'pointer',
-                    }}
-                    onClick={handleDeleteAll}
-                >
-                    Xóa tất cả
-                </div>
-            )}
-            {/* <button onClick={exportExcel}>Export Excel</button> */}
             <Table
                 rowSelection={{
                     type: selectionType,
                     ...rowSelection,
                 }}
                 columns={columns}
-                dataSource={dataSource}
+                dataSource={data}
                 {...props}
             />
         </Loading>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styles from './Profile.module.scss';
 import classNames from 'classnames/bind';
-import { Col, Popover, Radio, Row, Upload } from 'antd';
+import { Col, Radio, Row, Upload } from 'antd';
 import {
     faBell,
     faBox,
