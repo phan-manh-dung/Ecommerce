@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styles from './AdminProduct.module.scss';
 import classNames from 'classnames/bind';
-import { Button, Form, Input, Modal, Upload } from 'antd';
-import { DeleteOutlined, EditOutlined, PlusCircleFilled } from '@ant-design/icons';
+import { Button, Form, Input, Space, Upload } from 'antd';
+import { DeleteOutlined, EditOutlined, PlusCircleFilled, SearchOutlined } from '@ant-design/icons';
 import TableComponent from '~/component/TableComponent/TableComponent';
 import { getBase64 } from '~/utils';
 import { useMutationHook } from '~/hook/useMutationHook';
@@ -18,10 +18,13 @@ const cx = classNames.bind(styles);
 
 const AdminProductComponent = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [rowSelected, setRowSelected] = useState('');
+    const [rowSelected, setRowSelected] = useState(''); // lấy id
     const [isOpenDrawer, setIsOpenDrawer] = useState(false);
     const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
     const [isModalOpenDelete, setIsModalOpenDelete] = useState(false);
+    const [searchText, setSearchText] = useState('');
+    const [searchChedColumn, setSearchedColumn] = useState('');
+    const searchInput = useRef(null);
     const user = useSelector((state) => state?.user);
 
     const initial = () => ({
@@ -42,6 +45,7 @@ const AdminProductComponent = () => {
     const [form] = Form.useForm();
 
     const mutation = useMutationHook((data) => {
+        // tương tác với store cập nhật data
         const { name, price, description, rating, image, type, countInStock, discount, color } = data;
         const res = ProductService.createProduct({
             name,
@@ -71,7 +75,7 @@ const AdminProductComponent = () => {
     const queryProduct = useQuery({ queryKey: ['products'], queryFn: getAllProducts });
 
     const fetchGetDetailProduct = async (rowSelected) => {
-        const res = await ProductService.getDetailProduct(rowSelected);
+        const res = await ProductService.getDetailProduct(rowSelected); // rowselected là id
         if (res?.data) {
             setStateProductDetails({
                 name: res?.data?.name,
@@ -124,7 +128,7 @@ const AdminProductComponent = () => {
         );
     };
 
-    const { data, isLoading, isSuccess, isError } = mutation;
+    const { data, isLoading, isSuccess, isError } = mutation; // tác vụ thay đổi dữ liệu
 
     const handleDeleteProduct = () => {
         mutationDeleted.mutate(
@@ -217,48 +221,198 @@ const AdminProductComponent = () => {
         });
     };
 
+    const handleSearch = (selectedKeys, confirm, dataIndex) => {
+        confirm();
+    };
+    const handleReset = (clearFilters) => {
+        clearFilters();
+    };
+
+    const getColumnSearchProps = (dataIndex) => ({
+        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+            <div
+                style={{
+                    padding: 8,
+                }}
+                onKeyDown={(e) => e.stopPropagation()}
+            >
+                <Input
+                    ref={searchInput}
+                    placeholder={`Search ${dataIndex}`}
+                    value={selectedKeys[0]}
+                    onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+                    onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+                    style={{
+                        marginBottom: 8,
+                        display: 'block',
+                    }}
+                />
+                <Space>
+                    <Button
+                        type="primary"
+                        onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+                        icon={<SearchOutlined />}
+                        size="small"
+                        style={{
+                            width: 90,
+                        }}
+                    >
+                        Search
+                    </Button>
+                    <Button
+                        onClick={() => clearFilters && handleReset(clearFilters)}
+                        size="small"
+                        style={{
+                            width: 90,
+                        }}
+                    >
+                        Reset
+                    </Button>
+                </Space>
+            </div>
+        ),
+    });
+
     const columns = [
         {
             title: 'Name',
             dataIndex: 'name',
             render: (text) => <a>{text}</a>,
+            sorter: (a, b) => a.name.localeCompare(b.name),
+            sortDirections: ['ascend', 'descend'],
+            ...getColumnSearchProps('name'),
         },
         {
             title: 'Price',
             dataIndex: 'price',
             render: (text) => <a>{text}</a>,
+            sorter: (a, b) => a.price - b.price,
+            sortDirections: ['ascend', 'descend'],
+            filters: [
+                {
+                    text: '>= 50',
+                    value: '>=',
+                },
+                {
+                    text: '<= 50',
+                    value: '<=',
+                },
+            ],
+
+            onFilter: (value, record) => {
+                if (value === '>=') {
+                    return record.price >= 50;
+                }
+                return record.price <= 50;
+            },
         },
         {
             title: 'Rating',
             dataIndex: 'rating',
             render: (text) => <a>{text}</a>,
+            sorter: (a, b) => a.rating - b.rating,
+            sortDirections: ['ascend', 'descend'],
+            filters: [
+                {
+                    text: '>= 3',
+                    value: '>=',
+                },
+                {
+                    text: '<= 3',
+                    value: '<=',
+                },
+            ],
+            onFilter: (value, record) => {
+                if (value === '>=') {
+                    return Number(record.rating) >= 3;
+                }
+                return Number(record.rating) <= 3;
+            },
         },
         {
             title: 'Color',
             dataIndex: 'color',
             render: (text) => <a>{text}</a>,
+            sorter: (a, b) => a.name.localeCompare(b.name),
+            sortDirections: ['ascend', 'descend'],
         },
 
         {
             title: 'Type',
             dataIndex: 'type',
             render: (text) => <a>{text}</a>,
+            sorter: (a, b) => a.name.localeCompare(b.name),
+            sortDirections: ['ascend', 'descend'],
         },
 
         {
             title: 'Sold',
             dataIndex: 'sold',
             render: (text) => <a>{text}</a>,
+            sorter: (a, b) => a.sold - b.sold,
+            sortDirections: ['ascend', 'descend'],
+            filters: [
+                {
+                    text: '>= 3',
+                    value: '>=',
+                },
+                {
+                    text: '<= 3',
+                    value: '<=',
+                },
+            ],
+            onFilter: (value, record) => {
+                if (value === '>=') {
+                    return Number(record.sold) >= 3;
+                }
+                return Number(record.sold) <= 3;
+            },
         },
         {
             title: 'Discount',
             dataIndex: 'discount',
             render: (text) => <a>{text}</a>,
+            sorter: (a, b) => a.discount - b.discount,
+            sortDirections: ['ascend', 'descend'],
+            filters: [
+                {
+                    text: '>= 50',
+                    value: '>=50',
+                },
+                {
+                    text: '<= 50',
+                    value: '<=',
+                },
+            ],
+            onFilter: (value, record) => {
+                if (value === '>=') {
+                    return Number(record.discount) >= 50;
+                }
+                return Number(record.discount) <= 50;
+            },
         },
         {
-            title: 'CounInStock',
+            title: 'Inventory',
             dataIndex: 'countInStock',
             render: (text) => <a>{text}</a>,
+            sorter: (a, b) => a.countInStock - b.countInStock,
+            sortDirections: ['ascend', 'descend'],
+            filters: [
+                {
+                    text: '>= 100',
+                    value: '>=',
+                },
+                {
+                    text: '<= 100',
+                    value: '<=',
+                },
+            ],
+            onFilter: (value, record) => {
+                if (value === '>=') {
+                    return Number(record.countInStock) >= 100;
+                }
+                return Number(record.countInStock) <= 100;
+            },
         },
         {
             title: 'Action',
