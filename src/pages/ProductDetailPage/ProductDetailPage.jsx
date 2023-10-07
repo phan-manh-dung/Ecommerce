@@ -6,14 +6,14 @@ import img_right_arrow from '~/assets/img_Global/right_arrow.png';
 import img_pay from '~/assets/img_Global/pay.png';
 import img_khien from '~/assets/img_Global/khien.png';
 import img1 from '~/assets/img_Global/slide10.jpg';
-import product1 from '~/assets/img_products/dongu1.jpg';
-import product2 from '~/assets/img_products/dongu2.jpg';
-import product3 from '~/assets/img_products/dongu3.jpg';
-import product4 from '~/assets/img_products/dongu4.jpg';
-import product5 from '~/assets/img_products/dongu5.jpg';
-import product6 from '~/assets/img_products/donu6.jpg';
-import product7 from '~/assets/img_products/donu7.jpg';
-import product8 from '~/assets/img_products/donu8.jpg';
+import User1 from '~/assets/img_products/dongu1.jpg';
+import User2 from '~/assets/img_products/dongu2.jpg';
+import User3 from '~/assets/img_products/dongu3.jpg';
+import User4 from '~/assets/img_products/dongu4.jpg';
+import User5 from '~/assets/img_products/dongu5.jpg';
+import User6 from '~/assets/img_products/donu6.jpg';
+import User7 from '~/assets/img_products/donu7.jpg';
+import User8 from '~/assets/img_products/donu8.jpg';
 
 import { Col, InputNumber, Row } from 'antd';
 import { CaretLeftOutlined, MinusOutlined, PlusOutlined, StarFilled } from '@ant-design/icons';
@@ -21,17 +21,17 @@ import ButtonComponent from '~/component/ButtonComponent/Buttoncomponent';
 
 const cx = classNames.bind(styles);
 
-const ProductDetailPage = () => {
+const UserDetailPage = () => {
     const [addState, setAddState] = useState(1);
-    const arrImageProducts = [product2, product3, product4, product5, product6, product7, product8];
+    const arrImageUsers = [User2, User3, User4, User5, User6, User7, User8];
     const [startIndex, setStartIndex] = useState(0);
     const imagesToShow = 6;
-    const visibleImages = arrImageProducts.slice(startIndex, startIndex + imagesToShow);
+    const visibleImages = arrImageUsers.slice(startIndex, startIndex + imagesToShow);
 
-    const addValueProduct = () => {
+    const addValueUser = () => {
         setAddState(addState + 1);
     };
-    const backValueProduct = () => {
+    const backValueUser = () => {
         if (addState > 1) {
             setAddState(addState - 1);
         }
@@ -39,7 +39,7 @@ const ProductDetailPage = () => {
 
     const showNextImages = () => {
         const nextIndex = startIndex + imagesToShow;
-        if (nextIndex < arrImageProducts.length) {
+        if (nextIndex < arrImageUsers.length) {
             setStartIndex(nextIndex);
         }
     };
@@ -51,8 +51,8 @@ const ProductDetailPage = () => {
     };
 
     return (
-        <div className={cx('container_product')}>
-            <div className={cx('wrapper_product')}>
+        <div className={cx('container_User')}>
+            <div className={cx('wrapper_User')}>
                 <div className={cx('wrapper-type')}>
                     <div className={cx('type-home')}>Trang chủ</div>
                     <img alt="right_arrow" src={img_right_arrow} width={18} height={18} />
@@ -61,9 +61,9 @@ const ProductDetailPage = () => {
                 <div className={cx('wrapper_row')}>
                     <Row>
                         <Col xs={0} sm={8}>
-                            <div className={cx('product_left')}>
+                            <div className={cx('User_left')}>
                                 <div className={cx('left')}>
-                                    <img alt="donu1" src={product1} width={368} height={368} />
+                                    <img alt="donu1" src={User1} width={368} height={368} />
                                 </div>
 
                                 <div>
@@ -87,7 +87,7 @@ const ProductDetailPage = () => {
                                                 </div>
                                             </div>
                                         )}
-                                        {startIndex + imagesToShow < arrImageProducts.length && (
+                                        {startIndex + imagesToShow < arrImageUsers.length && (
                                             <div onClick={showNextImages} className={cx('button_right')}>
                                                 <div className={cx('button')}>
                                                     <img
@@ -142,13 +142,13 @@ const ProductDetailPage = () => {
                                             <div className={cx('color')}>Màu sắc</div>
                                             <div className={cx('choose_color')}>
                                                 <div className={cx('choose')}>
-                                                    <img alt="img" src={product1} width={38} height={38} />
+                                                    <img alt="img" src={User1} width={38} height={38} />
                                                 </div>
                                                 <div className={cx('choose_name')}>Hồng N85</div>
                                             </div>
                                             <div className={cx('choose_color')}>
                                                 <div className={cx('choose')}>
-                                                    <img alt="img" src={product1} width={38} height={38} />
+                                                    <img alt="img" src={User1} width={38} height={38} />
                                                 </div>
                                                 <div className={cx('choose_name')}>Hồng N85</div>
                                             </div>
@@ -194,9 +194,9 @@ const ProductDetailPage = () => {
                         <Col xs={0} sm={8}>
                             <div className={cx('container_right')}>
                                 <div className={cx('wrapper_right')}>
-                                    <div className={cx('right_product')}>
+                                    <div className={cx('right_User')}>
                                         <div>
-                                            <img alt="" src={product1} width={40} height={40} />
+                                            <img alt="" src={User1} width={40} height={40} />
                                         </div>
                                         <div className={cx('title_right')}>Đỏ 89 free size</div>
                                     </div>
@@ -205,13 +205,13 @@ const ProductDetailPage = () => {
                                             <span style={{ fontWeight: '500' }}>Số lượng</span>
                                         </div>
                                         <div className={cx('wrapper_add')}>
-                                            <div className={cx('add')} onClick={backValueProduct}>
+                                            <div className={cx('add')} onClick={backValueUser}>
                                                 <MinusOutlined />
                                             </div>
                                             <div className={cx('input')}>
                                                 <InputNumber readOnly value={addState} style={{ width: '90%' }} />
                                             </div>
-                                            <div className={cx('add')} onClick={addValueProduct}>
+                                            <div className={cx('add')} onClick={addValueUser}>
                                                 <PlusOutlined />
                                             </div>
                                         </div>
@@ -249,4 +249,4 @@ const ProductDetailPage = () => {
     );
 };
 
-export default ProductDetailPage;
+export default UserDetailPage;

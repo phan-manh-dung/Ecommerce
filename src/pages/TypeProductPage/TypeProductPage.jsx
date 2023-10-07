@@ -26,7 +26,7 @@ import CardComponent from '~/component/CardComponent/CardComponent';
 
 const cx = classNames.bind(styles);
 
-const TypeProductPage = () => {
+const TypeUserPage = () => {
     const [visibleCheckboxes, setVisibleCheckboxes] = useState(4);
     const [showMore, setShowMore] = useState(false);
     const dataShip = ['Hàng nội địa', 'Hàng quốc tế'];
@@ -63,7 +63,7 @@ const TypeProductPage = () => {
         'Sản phẩm thiên nhiên & Khác',
     ];
     return (
-        <div className={cx('container_type-product')}>
+        <div className={cx('container_type-User')}>
             <div className={cx('wrapper-type')}>
                 <div className={cx('type-home')}>Trang chủ</div>
                 <img alt="right_arrow" src={img_right_arrow} width={18} height={18} />
@@ -326,8 +326,8 @@ const TypeProductPage = () => {
                                     </div>
                                 </div>
                             </div>
-                            <div className={cx('container_product1')}>
-                                <div className={cx('product1')}>
+                            <div className={cx('container_User1')}>
+                                <div className={cx('User1')}>
                                     <CardComponent />
                                     <CardComponent />
                                     <CardComponent />
@@ -344,4 +344,4 @@ const TypeProductPage = () => {
     );
 };
 
-export default TypeProductPage;
+export default TypeUserPage;

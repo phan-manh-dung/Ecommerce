@@ -5,7 +5,7 @@ import Loading from '~/component/LoadingComponent/Loading';
 import { useMemo } from 'react';
 
 const TableComponent = (props) => {
-    const { selectionType = 'checkbox', data = [], columns = [], products = [], isLoading = false } = props;
+    const { selectionType = 'checkbox', data = [], columns = [], Users = [], isLoading = false } = props;
     const [rowSelectedKeys, setRowSelectedKeys] = useState([]);
 
     const rowSelection = {

@@ -33,7 +33,7 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
         <div className={cx('content-header')}>
             <p
                 onClick={() => {
-                    navigate('profile-user');
+                    navigate('/profile-user');
                 }}
             >
                 Thông tin người dùng
@@ -41,7 +41,7 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
             {user?.isAdmin && (
                 <p
                     onClick={() => {
-                        navigate('system/admin');
+                        navigate('/system/admin');
                     }}
                 >
                     Quản lí hệ thống

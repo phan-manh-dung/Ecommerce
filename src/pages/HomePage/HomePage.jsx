@@ -2,13 +2,13 @@ import React from 'react';
 import styles from './HomePage.module.scss';
 import classNames from 'classnames/bind';
 
-import TypeProductComponent from '~/component/TypeProductComponent/TypeProductComponent';
 import SliderComponent from '~/component/SliderComponent/SliderComponent';
 import slider1 from '~/assets/img_Global/slide1.png';
 import slider2 from '~/assets/img_Global/slide2.png';
 import slider3 from '~/assets/img_Global/slide3.png';
 import { Col, Row } from 'antd';
 import CategoryComponent from '~/component/CategoryComponent/CategoryComponent';
+import TypeProductComponent from '~/component/TypeProductComponent/TypeProductComponent';
 import img1 from '../../assets/img_category/img1.png';
 import img2 from '../../assets/img_category/img2.png';
 import img3 from '../../assets/img_category/img3.png';
@@ -28,13 +28,11 @@ const HomePage = () => {
     const arrImg = [img1, img2, img3, img4, img5];
     const arr2 = ['Đồ chơi trẻ em ', 'Máy tính bảng', 'Laptop', 'Thời trang nam', 'Túi xách'];
 
-    const fetchProductAll = async () => {
+    const fetchUserAll = async () => {
         const res = await ProductService.getAllProduct();
-        console.log('resnew', res);
         return res;
     };
-    const { isLoading, data: products } = useQuery(['products'], fetchProductAll, { retry: 3, retryDelay: 1000 });
-    console.log('data', products);
+    const { isLoading, data: products } = useQuery(['product'], fetchUserAll, { retry: 3, retryDelay: 1000 });
 
     return (
         <div className={cx('container_home')}>

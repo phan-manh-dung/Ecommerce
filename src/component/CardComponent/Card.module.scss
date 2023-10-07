@@ -1,4 +1,4 @@
-.product_name {
+.user_name {
     font-weight: 400;
     font-size: 12px;
     line-height: 150%;
@@ -7,12 +7,12 @@
     padding-top: 2px;
 }
 
-.product_wrapper-price {
+.user_wrapper-price {
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin-bottom: 5px;
-    .product_price {
+    .user_price {
         text-align: left;
         font-size: 16px;
         line-height: 150%;
@@ -20,7 +20,7 @@
         color: rgb(39, 39, 42);
     }
 
-    .product_discount {
+    .user_discount {
         margin-left: 10px;
         background-color: rgb(245, 245, 250);
         border-radius: 20px;
@@ -31,7 +31,7 @@
     }
 }
 
-.product_speed {
+.user_speed {
     border-top: 1px solid #999;
     display: flex;
     align-items: center;

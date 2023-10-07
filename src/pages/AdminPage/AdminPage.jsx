@@ -2,24 +2,24 @@ import { AppstoreOutlined, ShoppingCartOutlined, UserOutlined } from '@ant-desig
 import { Menu } from 'antd';
 import React, { useState } from 'react';
 import AdminOrderComponent from '~/component/AdminOrderComponent/AdminOrderComponent';
-import AdminProductComponent from '~/component/AdminProductComponent/AdminProductComponent';
 import AdminUserComponent from '~/component/AdminUserComponent/AdminUserComponent';
+import AdminProductComponent from '~/component/AdminProductComponent/AdminProductComponent';
 import HeaderComponent from '~/component/HeaderComponent/HeaderComponent';
 import { getItem } from '~/utils';
 
 const AdminPage = () => {
     const items = [
         getItem('Người dùng', 'users', <UserOutlined />),
-        getItem('Sản phẩm', 'products', <AppstoreOutlined />),
+        getItem('Sản phẩm', 'Users', <AppstoreOutlined />),
         getItem('Đơn hàng', 'orders', <ShoppingCartOutlined />),
     ];
-    const rootSubmenuKeys = ['user', 'product'];
+    const rootSubmenuKeys = ['user', 'User'];
     const [keySelected, setKeySelected] = useState('');
     const renderPage = (key) => {
         switch (key) {
             case 'users':
                 return <AdminUserComponent />;
-            case 'products':
+            case 'Users':
                 return <AdminProductComponent />;
             case 'orders':
                 return <AdminOrderComponent />;
