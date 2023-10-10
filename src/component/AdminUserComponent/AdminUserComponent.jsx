@@ -48,7 +48,7 @@ const AdminUserComponent = () => {
 
     const mutation = useMutationHook((data) => {
         // tương tác với store cập nhật data
-        const { name, email, isAdmin, phone, address, city, dateOfBirth, sex, country, nickname } = data;
+        const { name, email, isAdmin, phone, address, city, dateOfBirth, sex, country, nickname, avatar } = data;
         const res = UserService.signUpUser({
             name,
             email,
@@ -60,6 +60,7 @@ const AdminUserComponent = () => {
             sex,
             country,
             nickname,
+            avatar,
         });
         return res;
     });
@@ -91,6 +92,7 @@ const AdminUserComponent = () => {
                 sex: res?.data?.sex,
                 country: res?.data?.country,
                 nickname: res?.data?.nickname,
+                avatar: res?.data?.avatar,
             });
         }
         setIsLoadingUpdate(false);
@@ -410,16 +412,6 @@ const AdminUserComponent = () => {
         }
     }, [isSuccessUpdated]);
 
-    const handleOnchangeAvatar = async ({ fileList }) => {
-        const file = fileList[0];
-        if (!file.url && !file.preview) {
-            file.preview = await getBase64(file.originFileObj);
-        }
-        setStateUser({
-            ...stateUser,
-            image: file.preview,
-        });
-    };
     const handleOnchangeAvatarDetail = async ({ fileList }) => {
         const file = fileList[0];
         if (!file.url && !file.preview) {
@@ -427,7 +419,7 @@ const AdminUserComponent = () => {
         }
         setStateUserDetails({
             ...stateUserDetails,
-            image: file.preview,
+            avatar: file.preview,
         });
     };
 
@@ -440,7 +432,6 @@ const AdminUserComponent = () => {
                 },
             },
         );
-        console.log('click');
     };
     return (
         <div className={cx('container_user')}>
@@ -685,6 +676,33 @@ const AdminUserComponent = () => {
                                     onChange={handleOnChangeDetail}
                                     name="country"
                                 />
+                            </Form.Item>
+
+                            <Form.Item
+                                label="Avatar"
+                                name="avatar"
+                                rules={[{ required: true, message: 'Please input your Avatar!' }]}
+                            >
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around' }}>
+                                    <div>
+                                        <Button>Select File</Button>
+                                    </div>
+                                    <div>
+                                        {stateUserDetails?.avatar && (
+                                            <img
+                                                src={stateUserDetails?.avatar}
+                                                style={{
+                                                    height: '60px',
+                                                    width: '60px',
+                                                    borderRadius: '50%',
+                                                    objectFit: 'cover',
+                                                    marginLeft: '10px',
+                                                }}
+                                                alt="avatar"
+                                            />
+                                        )}
+                                    </div>
+                                </div>
                             </Form.Item>
 
                             <Button type="primary" htmlType="submit">
