@@ -102,6 +102,23 @@ const AdminUserComponent = () => {
         return res;
     });
 
+    const mutationDeletedMany = useMutationHook((data) => {
+        const { token, ...ids } = data;
+        const res = UserService.deleteManyUser(ids, token);
+        return res;
+    });
+
+    const handleDeleteManyUser = (ids) => {
+        mutationDeletedMany.mutate(
+            { ids: ids, token: user?.access_token },
+            {
+                onSettled: () => {
+                    queryUser.refetch();
+                },
+            },
+        ); // xử lí tác vụ bất đồng bộ backend
+    };
+
     useEffect(() => {
         if (!isModalOpen) {
             form.setFieldsValue(stateUserDetails);
@@ -158,6 +175,12 @@ const AdminUserComponent = () => {
         isSuccess: isSuccessDelected,
         isError: isErrorDeleted,
     } = mutationDeleted;
+    const {
+        data: dataDeletedMany,
+        isLoading: isLoadingDeletedMany,
+        isSuccess: isSuccessDelectedMany,
+        isError: isErrorDeletedMany,
+    } = mutationDeletedMany;
 
     const { isLoading: isLoadingUsers, data: users } = useQuery({
         queryKey: ['user'],
@@ -370,6 +393,15 @@ const AdminUserComponent = () => {
     }, [isSuccessDelected]);
 
     useEffect(() => {
+        if (isSuccessDelectedMany && dataDeletedMany?.status === 'OK') {
+            message.success();
+            handleCancelDelete();
+        } else if (isErrorDeletedMany) {
+            message.error();
+        }
+    }, [isSuccessDelectedMany]);
+
+    useEffect(() => {
         if (isSuccessUpdated && dataUpdated?.status === 'OK') {
             message.success();
             handleCloseDrawer();
@@ -408,6 +440,7 @@ const AdminUserComponent = () => {
                 },
             },
         );
+        console.log('click');
     };
     return (
         <div className={cx('container_user')}>
@@ -426,6 +459,7 @@ const AdminUserComponent = () => {
                         data={dataTable}
                         users={users?.data}
                         isLoading={isLoadingUsers}
+                        handleDeleteMany={handleDeleteManyUser}
                         onRow={(record, rowIndex) => {
                             return {
                                 onClick: (event) => {

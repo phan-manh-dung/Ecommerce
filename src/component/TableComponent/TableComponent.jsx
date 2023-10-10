@@ -8,7 +8,14 @@ import classNames from 'classnames/bind';
 const cx = classNames.bind(styles);
 
 const TableComponent = (props) => {
-    const { selectionType = 'checkbox', data = [], columns = [], users = [], isLoading = false } = props;
+    const {
+        selectionType = 'checkbox',
+        data = [],
+        columns = [],
+        users = [],
+        handleDeleteMany,
+        isLoading = false,
+    } = props;
     const [rowSelectedKeys, setRowSelectedKeys] = useState([]);
 
     const rowSelection = {
@@ -21,11 +28,10 @@ const TableComponent = (props) => {
         }),
     };
 
-    const handleDeleteAll = () => {};
-
-    // const handleDeleteAll = () => {
-    //     handleDelteMany(rowSelectedKeys);
-    // };
+    const handleDeleteAll = () => {
+        console.log('sdd');
+        handleDeleteMany(rowSelectedKeys);
+    };
     // const exportExcel = () => {
     //     const excel = new Excel();
     //     excel

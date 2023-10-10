@@ -98,13 +98,27 @@ const AdminProductComponent = () => {
         return res;
     });
 
-    // const mutationDeletedMany = useMutationHook((data) => {
-    //     const { id, token } = data;
-    //     const res = ProductService.deleteManyProduct(id, token);
-    //     return res;
-    // });
+    const mutationDeletedMany = useMutationHook((data) => {
+        const { token, ...ids } = data;
+        const res = ProductService.deleteManyProduct(ids, token);
+        return res;
+    });
 
-    // const handleDeleteMany
+    const handleDeleteManyProduct = (_id) => {
+        // truyền xuống table
+        mutationDeletedMany.mutate(); // gọi thực hiện tác vụ bất đồng bộ của backend
+    };
+
+    const handleDeleteManyProducts = (ids) => {
+        mutationDeletedMany.mutate(
+            { ids: ids, token: user?.access_token },
+            {
+                onSettled: () => {
+                    queryProduct.refetch();
+                },
+            },
+        );
+    };
 
     useEffect(() => {
         if (!isModalOpen) {
@@ -159,9 +173,16 @@ const AdminProductComponent = () => {
     const {
         data: dataDeleted,
         isLoading: isLoadingDeleted,
-        isSuccess: isSuccessDelected,
+        isSuccess: isSuccessDeleted,
         isError: isErrorDeleted,
     } = mutationDeleted;
+
+    const {
+        data: dataDeletedMany,
+        isLoading: isLoadingDeletedMany,
+        isSuccess: isSuccessDelectedMany,
+        isError: isErrorDeletedMany,
+    } = mutationDeletedMany;
 
     const { isLoading: isLoadingProducts, data: products } = useQuery({
         queryKey: ['products'],
@@ -455,13 +476,22 @@ const AdminProductComponent = () => {
     }, [isSuccess, isError]);
 
     useEffect(() => {
-        if (isSuccessDelected && dataDeleted?.status === 'OK') {
+        if (isSuccessDeleted && dataDeleted?.status === 'OK') {
             message.success();
             handleCancelDelete();
         } else if (isErrorDeleted) {
             message.error();
         }
-    }, [isSuccessDelected]);
+    }, [isSuccessDeleted]);
+
+    useEffect(() => {
+        if (isSuccessDelectedMany && dataDeletedMany?.status === 'OK') {
+            message.success();
+            handleCancelDelete();
+        } else if (isErrorDeletedMany) {
+            message.error();
+        }
+    }, [isSuccessDelectedMany]);
 
     useEffect(() => {
         if (isSuccessUpdated && dataUpdated?.status === 'OK') {
@@ -521,6 +551,7 @@ const AdminProductComponent = () => {
                         data={dataTable}
                         products={products?.data}
                         isLoading={isLoadingProducts}
+                        handleDeleteMany={handleDeleteManyProducts}
                         onRow={(record, rowIndex) => {
                             return {
                                 onClick: (event) => {
@@ -530,14 +561,14 @@ const AdminProductComponent = () => {
                         }}
                     />
                 </div>
-                <Loading isLoading={isLoading}>
+                {/* <Loading isLoading={isLoading}>
                     <ModalComponent
                         forceRender
                         footer={null}
                         className={cx('custom-modal')}
                         title="Tạo sản phẩm"
                         open={isModalOpen}
-                        onOk={handleOk}
+                        //  onOk={handleOk}
                         onCancel={handleCancel}
                         okText="..."
                         okType=""
@@ -657,7 +688,7 @@ const AdminProductComponent = () => {
                             </Button>
                         </Form>
                     </ModalComponent>
-                </Loading>
+                </Loading> */}
                 <DrawerComponent
                     width="50%"
                     title="Chi tiết sản phẩm"
