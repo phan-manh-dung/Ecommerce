@@ -49,7 +49,7 @@ export const userSlide = createSlice({
             state.country = country;
             state.nickname = nickname;
             state.id = _id;
-            state.access_token = access_token;
+            state.access_token = access_token || '';
             state.isAdmin = isAdmin;
         },
         // xóa thông tin reset lại
@@ -66,7 +66,6 @@ export const userSlide = createSlice({
             state.nickname = '';
             state.id = '';
             state.access_token = '';
-            state.access_token = false;
             state.refreshToken = '';
         },
     },

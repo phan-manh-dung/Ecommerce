@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styles from './HomePage.module.scss';
 import classNames from 'classnames/bind';
 
@@ -20,109 +20,138 @@ import AssistantComponent from '~/component/AssistantComponent/AssistantComponen
 import ButtonComponent from '~/component/ButtonComponent/Buttoncomponent';
 import { useQuery } from '@tanstack/react-query';
 import * as ProductService from '~/service/ProductService';
+import { useSelector } from 'react-redux';
+import Loading from '~/component/LoadingComponent/Loading';
+import { useDebounce } from '~/hooks/useDebounce';
 
 const cx = classNames.bind(styles);
 
 const HomePage = () => {
+    const searchProduct = useSelector((state) => state?.product?.search);
+    const [stateProducts, setStateProducts] = useState([]);
+    const searchDebounce = useDebounce(searchProduct, 500);
+    const [loading, setLoading] = useState(false);
+    const refSearch = useRef(); // do useQuery đã gọi r nên thằng này k gọi nx
     const arr = ['TV', 'Laptop', 'Điện thoại', 'Cái khác'];
     const arrImg = [img1, img2, img3, img4, img5];
     const arr2 = ['Đồ chơi trẻ em ', 'Máy tính bảng', 'Laptop', 'Thời trang nam', 'Túi xách'];
 
-    const fetchUserAll = async () => {
-        const res = await ProductService.getAllProduct();
-        return res;
+    const fetchUserAll = async (search) => {
+        const res = await ProductService.getAllProduct(search);
+        if (search.length || refSearch.current) {
+            setStateProducts(res?.data);
+        } else {
+            return res;
+        }
     };
-    const { isLoading, data: products } = useQuery(['product'], fetchUserAll, { retry: 3, retryDelay: 1000 });
+    const { isLoading, data: product } = useQuery(['product'], fetchUserAll, { retry: 3, retryDelay: 1000 });
+
+    useEffect(() => {
+        if (refSearch.current) {
+            setLoading(true);
+            fetchUserAll(searchDebounce);
+        }
+        refSearch.current = true;
+        setLoading(false);
+    }, [searchDebounce]);
+
+    useEffect(() => {
+        if (product?.data?.length) {
+            setStateProducts(product?.data);
+        }
+    }, [product]);
 
     return (
-        <div className={cx('container_home')}>
-            <div className={cx('container_main')}>
-                {arr.map((item) => {
-                    return <TypeProductComponent name={item} key={item} />;
-                })}
+        <Loading isLoading={isLoading || loading}>
+            <div className={cx('container_home')}>
+                <div className={cx('container_main')}>
+                    {arr.map((item) => {
+                        return <TypeProductComponent name={item} key={item} />;
+                    })}
+                </div>
+                <Row>
+                    <Col xs={0} sm={5}>
+                        <div className={cx('wrapper_home-left', 'scrollable-content')}>
+                            <div className={cx('home-left')}>
+                                <div className={cx('wrapper-title')}>
+                                    <span className={cx('left-title')}>Danh mục</span>
+                                </div>
+                                <div>
+                                    <div className={cx('wrapper-left_title')}>
+                                        <div>
+                                            {arrImg.map((img) => {
+                                                return <CategoryComponent width={32} height={32} src={img} key={img} />;
+                                            })}
+                                        </div>
+                                        <div>
+                                            {arr2.map((max) => {
+                                                return <CategoryComponent name={max} key={max} />;
+                                            })}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className={cx('home-left2')}>
+                                <div className={cx('wrapper-title')}>
+                                    <span className={cx('left-title')}>Nổi bật</span>
+                                </div>
+                                <div>
+                                    <div className={cx('wrapper-left_title')}>
+                                        <div>
+                                            {arrImg.map((img) => {
+                                                return <CategoryComponent width={32} height={32} src={img} key={img} />;
+                                            })}
+                                        </div>
+                                        <div>
+                                            {arr2.map((max) => {
+                                                return <CategoryComponent name={max} key={max} />;
+                                            })}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className={cx('home-left2')}>
+                                <div className={cx('wrapper-title2')}>
+                                    <img alt="store" src={img_store} width={32} height={32} />
+                                    <span className={cx('left-title2')}>Bán hàng cùng Dũng</span>
+                                </div>
+                            </div>
+                        </div>
+                    </Col>
+                    <Col xs={0} sm={19}>
+                        <div>
+                            <SliderComponent arrImages={[slider1, slider2, slider3]} />
+                        </div>
+                        <div>
+                            <AssistantComponent />
+                        </div>
+
+                        <div className={cx('wrapper_card')}>
+                            {stateProducts?.map((products) => {
+                                return (
+                                    <CardComponent
+                                        key={products._id}
+                                        countInStock={products.countInStock}
+                                        description={products.description}
+                                        image={products.image}
+                                        name={products.name}
+                                        price={products.price}
+                                        rating={products.rating}
+                                        type={products.type}
+                                        discount={products.discount}
+                                        sold={products.sold}
+                                    />
+                                );
+                            })}
+                        </div>
+
+                        <div className={cx('see_more')}>
+                            <ButtonComponent color="#fff" backgroundColor="#0099FF" textButton="Xem thêm" />
+                        </div>
+                    </Col>
+                </Row>
             </div>
-            <Row>
-                <Col xs={0} sm={5}>
-                    <div className={cx('wrapper_home-left', 'scrollable-content')}>
-                        <div className={cx('home-left')}>
-                            <div className={cx('wrapper-title')}>
-                                <span className={cx('left-title')}>Danh mục</span>
-                            </div>
-                            <div>
-                                <div className={cx('wrapper-left_title')}>
-                                    <div>
-                                        {arrImg.map((img) => {
-                                            return <CategoryComponent width={32} height={32} src={img} key={img} />;
-                                        })}
-                                    </div>
-                                    <div>
-                                        {arr2.map((max) => {
-                                            return <CategoryComponent name={max} key={max} />;
-                                        })}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className={cx('home-left2')}>
-                            <div className={cx('wrapper-title')}>
-                                <span className={cx('left-title')}>Nổi bật</span>
-                            </div>
-                            <div>
-                                <div className={cx('wrapper-left_title')}>
-                                    <div>
-                                        {arrImg.map((img) => {
-                                            return <CategoryComponent width={32} height={32} src={img} key={img} />;
-                                        })}
-                                    </div>
-                                    <div>
-                                        {arr2.map((max) => {
-                                            return <CategoryComponent name={max} key={max} />;
-                                        })}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className={cx('home-left2')}>
-                            <div className={cx('wrapper-title2')}>
-                                <img alt="store" src={img_store} width={32} height={32} />
-                                <span className={cx('left-title2')}>Bán hàng cùng Dũng</span>
-                            </div>
-                        </div>
-                    </div>
-                </Col>
-                <Col xs={0} sm={19}>
-                    <div>
-                        <SliderComponent arrImages={[slider1, slider2, slider3]} />
-                    </div>
-                    <div>
-                        <AssistantComponent />
-                    </div>
-
-                    <div className={cx('wrapper_card')}>
-                        {products?.data?.map((product) => {
-                            return (
-                                <CardComponent
-                                    key={product._id}
-                                    countInStock={product.countInStock}
-                                    description={product.description}
-                                    image={product.image}
-                                    name={product.name}
-                                    price={product.price}
-                                    rating={product.rating}
-                                    type={product.type}
-                                    discount={product.discount}
-                                    sold={product.sold}
-                                />
-                            );
-                        })}
-                    </div>
-
-                    <div className={cx('see_more')}>
-                        <ButtonComponent color="#fff" backgroundColor="#0099FF" textButton="Xem thêm" />
-                    </div>
-                </Col>
-            </Row>
-        </div>
+        </Loading>
     );
 };
 

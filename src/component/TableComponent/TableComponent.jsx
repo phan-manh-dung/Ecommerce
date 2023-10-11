@@ -17,13 +17,13 @@ const TableComponent = (props) => {
         users = [],
         handleDeleteMany,
         isLoading = false,
-        data: dataSource = [],
+        // data: dataSource = [],
     } = props;
     const [rowSelectedKeys, setRowSelectedKeys] = useState([]);
-    const newColumnExport = useMemo(() => {
-        const arr = columns?.filter((col) => col.dataIndex !== 'action');
-        return arr;
-    }, [columns]);
+    // const newColumnExport = useMemo(() => {
+    //     const arr = columns?.filter((col) => col.dataIndex !== 'action');
+    //     return arr;
+    // }, [columns]);
 
     const rowSelection = {
         onChange: (selectedRowKeys, selectedRows) => {
@@ -39,16 +39,16 @@ const TableComponent = (props) => {
         console.log('sdd');
         handleDeleteMany(rowSelectedKeys);
     };
-    const exportExcel = () => {
-        const excel = new Excel();
-        excel
-            .addSheet('test')
-            .addColumns(newColumnExport)
-            .addDataSource(dataSource, {
-                str2Percent: true,
-            })
-            .saveAs('Excel.xlsx');
-    };
+    // const exportExcel = () => {
+    //     const excel = new Excel();
+    //     excel
+    //         .addSheet('test')
+    //         .addColumns(newColumnExport)
+    //         .addDataSource(dataSource, {
+    //             str2Percent: true,
+    //         })
+    //         .saveAs('Excel.xlsx');
+    // };
 
     return (
         <>
@@ -58,14 +58,14 @@ const TableComponent = (props) => {
                         <div>Xóa tất cả</div>
                     </div>
                 )}
-                <div style={{ marginBottom: '10px' }}>
+                {/* <div style={{ marginBottom: '10px' }}>
                     <ButtonComponent
                         textButton="Xuất excel"
                         backgroundColor="green"
                         width="20%"
                         onClick={exportExcel}
                     />
-                </div>
+                </div> */}
                 <Table
                     rowSelection={{
                         type: selectionType,

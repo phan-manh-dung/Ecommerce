@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import * as UserService from '~/service/UserService';
 import { resetUser } from '~/redux/slide/userSlide';
+import { searchProduct } from '../../redux/slide/productSlide';
 
 const cx = classNames.bind(styles);
 
@@ -20,6 +21,7 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const user = useSelector((state) => state.user);
+    const [search, setSearch] = useState('');
     const handleNavigate = () => {
         navigate('/sign-in');
     };
@@ -29,6 +31,12 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
         dispatch(resetUser());
         setLoading(false);
     };
+
+    const onSearch = (e) => {
+        setSearch(e.target.value);
+        dispatch(searchProduct(e.target.value));
+    };
+
     const content = (
         <div className={cx('content-header')}>
             <p
@@ -60,7 +68,7 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
                     </Col>
                     {!isHiddenSearch && (
                         <Col span={8}>
-                            <InputSearch />
+                            <InputSearch onChange={onSearch} />
                         </Col>
                     )}
                     <Col span={10}>
@@ -68,7 +76,9 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
                             <div className={cx('row_right-list')}>
                                 <img src={logo_home} alt="home" style={{ width: '24px', height: '24px' }} />
                                 <span style={{ fontSize: '14px', color: 'rgb(128, 128, 137)', paddingLeft: '5px' }}>
-                                    Trang chủ
+                                    <a href="/" style={{ textDecoration: 'none', color: '#999' }}>
+                                        Trang chủ
+                                    </a>
                                 </span>
                             </div>
                             <div className={cx('row_right-list')}>
