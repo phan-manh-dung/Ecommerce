@@ -14,6 +14,7 @@ const CardComponent = (props) => {
     const { countInStock, description, image, name, price, rating, type, sold, discount, id } = props;
     const navigate = useNavigate();
     const handleDetailsProduct = (id) => {
+        // nhận id của homepage
         navigate(`/product-details/${id}`);
     };
     return (

@@ -131,6 +131,7 @@ const HomePage = () => {
                                         type={products.type}
                                         discount={products.discount}
                                         sold={products.sold}
+                                        id={products._id} // id này truyền qua card component để card truyền qua product  detail
                                     />
                                 );
                             })}
