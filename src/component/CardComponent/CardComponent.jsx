@@ -32,7 +32,7 @@ const CardComponent = (props) => {
                     {rating} <StarFilled style={{ fontSize: '10px', color: '#ffce3d' }} /> | Đã bán: {sold}
                 </div>
                 <div className={cx('user_wrapper-price')}>
-                    <div className={cx('user_price')}>{price}</div>
+                    <div className={cx('user_price')}>{price.toLocaleString()}</div>
 
                     <div className={cx('user_discount')}>
                         <span>{discount}%</span>

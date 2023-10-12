@@ -28,38 +28,29 @@ const cx = classNames.bind(styles);
 
 const HomePage = () => {
     const searchProduct = useSelector((state) => state?.product?.search);
-    const [stateProducts, setStateProducts] = useState([]);
     const searchDebounce = useDebounce(searchProduct, 500);
+    const [limit, setLimit] = useState(6);
     const [loading, setLoading] = useState(false);
-    const refSearch = useRef(); // do useQuery đã gọi r nên thằng này k gọi nx
     const arr = ['TV', 'Laptop', 'Điện thoại', 'Cái khác'];
     const arrImg = [img1, img2, img3, img4, img5];
     const arr2 = ['Đồ chơi trẻ em ', 'Máy tính bảng', 'Laptop', 'Thời trang nam', 'Túi xách'];
 
-    const fetchUserAll = async (search) => {
-        const res = await ProductService.getAllProduct(search);
-        if (search.length || refSearch.current) {
-            setStateProducts(res?.data);
-        } else {
-            return res;
-        }
+    const fetchUserAll = async (context) => {
+        const limit = context?.queryKey && context?.queryKey[1];
+        const search = context?.queryKey && context?.queryKey[2];
+        const res = await ProductService.getAllProduct(search, limit);
+
+        return res;
     };
-    const { isLoading, data: product } = useQuery(['product'], fetchUserAll, { retry: 3, retryDelay: 1000 });
-
-    useEffect(() => {
-        if (refSearch.current) {
-            setLoading(true);
-            fetchUserAll(searchDebounce);
-        }
-        refSearch.current = true;
-        setLoading(false);
-    }, [searchDebounce]);
-
-    useEffect(() => {
-        if (product?.data?.length) {
-            setStateProducts(product?.data);
-        }
-    }, [product]);
+    const {
+        isLoading,
+        data: product,
+        isPreviousData,
+    } = useQuery(['product', limit, searchDebounce], fetchUserAll, {
+        retry: 3,
+        retryDelay: 1000,
+        keepPreviousData: true,
+    });
 
     return (
         <Loading isLoading={isLoading || loading}>
@@ -127,7 +118,7 @@ const HomePage = () => {
                         </div>
 
                         <div className={cx('wrapper_card')}>
-                            {stateProducts?.map((products) => {
+                            {product?.data?.map((products) => {
                                 return (
                                     <CardComponent
                                         key={products._id}
@@ -145,7 +136,7 @@ const HomePage = () => {
                             })}
                         </div>
 
-                        <div className={cx('see_more')}>
+                        <div className={cx('see_more')} onClick={() => setLimit((prev) => prev + 1)}>
                             <ButtonComponent color="#fff" backgroundColor="#0099FF" textButton="Xem thêm" />
                         </div>
                     </Col>
