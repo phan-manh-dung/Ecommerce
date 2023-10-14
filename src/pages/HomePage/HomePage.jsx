@@ -31,32 +31,44 @@ const HomePage = () => {
     const searchDebounce = useDebounce(searchProduct, 500);
     const [limit, setLimit] = useState(6);
     const [loading, setLoading] = useState(false);
-    const arr = ['TV', 'Laptop', 'Điện thoại', 'Cái khác'];
+    const [typeProduct, setTypeProduct] = useState([]);
     const arrImg = [img1, img2, img3, img4, img5];
     const arr2 = ['Đồ chơi trẻ em ', 'Máy tính bảng', 'Laptop', 'Thời trang nam', 'Túi xách'];
 
-    const fetchUserAll = async (context) => {
+    const fetchProductAll = async (context) => {
         const limit = context?.queryKey && context?.queryKey[1];
         const search = context?.queryKey && context?.queryKey[2];
         const res = await ProductService.getAllProduct(search, limit);
 
         return res;
     };
+
+    const fetchAllTypeProduct = async () => {
+        const res = await ProductService.getAllTypeProduct();
+        if (res?.status === 'OK') {
+            setTypeProduct(res?.data);
+        }
+    };
+
     const {
         isLoading,
         data: product,
         isPreviousData,
-    } = useQuery(['product', limit, searchDebounce], fetchUserAll, {
+    } = useQuery(['product', limit, searchDebounce], fetchProductAll, {
         retry: 3,
         retryDelay: 1000,
         keepPreviousData: true,
     });
 
+    useEffect(() => {
+        fetchAllTypeProduct();
+    }, []);
+
     return (
         <Loading isLoading={isLoading || loading}>
             <div className={cx('container_home')}>
                 <div className={cx('container_main')}>
-                    {arr.map((item) => {
+                    {typeProduct.map((item) => {
                         return <TypeProductComponent name={item} key={item} />;
                     })}
                 </div>

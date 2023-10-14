@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './TypeProduct.module.scss';
 import classNames from 'classnames/bind';
 
@@ -23,10 +23,38 @@ import img_now_red from '~/assets/img_Global/now_red.png';
 import { CaretDownOutlined, CaretUpOutlined, StarFilled } from '@ant-design/icons';
 import ButtonComponent from '~/component/ButtonComponent/Buttoncomponent';
 import CardComponent from '~/component/CardComponent/CardComponent';
+import * as ProductService from '~/service/ProductService';
+import { useLocation } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
 
-const TypeUserPage = () => {
+const TypeProductPage = () => {
+    const { state } = useLocation();
+    const [typeProduct, setTypeProduct] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [panigate, setPanigate] = useState({
+        page: 0,
+        limit: 10,
+        total: 1,
+    });
+    const fetchProductType = async (type, page, limit) => {
+        setLoading(true);
+        const res = await ProductService.getProductType(type, page, limit);
+        if (res?.status == 'OK') {
+            setLoading(false);
+            setTypeProduct(res?.data);
+            setPanigate({ ...panigate, total: res?.totalPage });
+        } else {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        if (state) {
+            fetchProductType(state, panigate.page, panigate.limit);
+        }
+    }, [state, panigate.page, panigate.limit]);
+
     const [visibleCheckboxes, setVisibleCheckboxes] = useState(4);
     const [showMore, setShowMore] = useState(false);
     const dataShip = ['Hàng nội địa', 'Hàng quốc tế'];
@@ -326,14 +354,29 @@ const TypeUserPage = () => {
                                     </div>
                                 </div>
                             </div>
-                            <div className={cx('container_User1')}>
-                                <div className={cx('User1')}>
-                                    <CardComponent />
-                                    <CardComponent />
-                                    <CardComponent />
-                                    <CardComponent />
-                                    <CardComponent />
-                                    <CardComponent />
+                            <div className={cx('container_user1')}>
+                                <div className={cx('user1')}>
+                                    {typeProduct?.map((products, index) => {
+                                        return (
+                                            <React.Fragment key={index}>
+                                                <CardComponent
+                                                    key={products._id}
+                                                    //key={index}
+                                                    countInStock={products.countInStock}
+                                                    description={products.description}
+                                                    image={products.image}
+                                                    name={products.name}
+                                                    price={products.price}
+                                                    rating={products.rating}
+                                                    type={products.type}
+                                                    discount={products.discount}
+                                                    sold={products.sold}
+                                                    id={products._id}
+                                                />
+                                                ;
+                                            </React.Fragment>
+                                        );
+                                    })}
                                 </div>
                             </div>
                         </div>
@@ -344,4 +387,4 @@ const TypeUserPage = () => {
     );
 };
 
-export default TypeUserPage;
+export default TypeProductPage;

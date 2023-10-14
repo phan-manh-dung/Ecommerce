@@ -1,3 +1,8 @@
 .wrapper_type {
+    margin-left: 2%;
     padding: 1% 2%;
+    cursor: pointer;
+    &:hover {
+        background-color: rgb(119, 198, 193);
+    }
 }
