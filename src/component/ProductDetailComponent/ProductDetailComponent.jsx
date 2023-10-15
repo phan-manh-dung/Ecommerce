@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './ProductDetail.module.scss';
 import classNames from 'classnames/bind';
 
@@ -21,23 +21,57 @@ import ButtonComponent from '~/component/ButtonComponent/Buttoncomponent';
 import * as ProductService from '~/service/ProductService';
 import { useQuery } from '@tanstack/react-query';
 import Loading from '../LoadingComponent/Loading';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { addOrderProduct } from '~/redux/slide/orderSlide';
 const cx = classNames.bind(styles);
 
 const ProductDetailComponent = ({ idProduct }) => {
-    const [addState, setAddState] = useState(1);
+    const [numProduct, setNumProduct] = useState(1);
+    const [randomNumber, setRandomNumber] = useState('');
     const user = useSelector((state) => state.user);
+    const order = useSelector((state) => state.order);
+    const navigate = useNavigate();
+    const location = useLocation(); // lấy thông tin về đường dẫn hiện tại
+    const dispatch = useDispatch();
     const arrImageUsers = [User2, User3, User4, User5, User6, User7, User8];
     const [startIndex, setStartIndex] = useState(0);
     const imagesToShow = 6;
     const visibleImages = arrImageUsers.slice(startIndex, startIndex + imagesToShow);
 
-    const addValueUser = () => {
-        setAddState(addState + 1);
+    function generateRandom() {
+        return `${Math.floor(Math.random() * 10)}${Math.floor(Math.random() * 10)}`;
+    }
+
+    useEffect(() => {
+        setRandomNumber(generateRandom());
+    }, []);
+
+    const onChange = (value) => {
+        setNumProduct(Number(value));
     };
-    const backValueUser = () => {
-        if (addState > 1) {
-            setAddState(addState - 1);
+
+    useEffect(() => {
+        const orderRedux = order?.orderItems?.find((item) => item.product === productsDetail?._id);
+        if (
+            orderRedux?.amount + numProduct <= orderRedux?.countInstock ||
+            (!orderRedux && productsDetail?.countInStock > 0)
+        ) {
+            //   setErrorLimitOrder(false);
+        } else if (productsDetail?.countInStock === 0) {
+            // setErrorLimitOrder(true);
+        }
+    }, [numProduct]);
+
+    const handleChangeCount = (type, limited) => {
+        if (type === 'increase') {
+            if (!limited) {
+                setNumProduct(numProduct + 1);
+            }
+        } else {
+            if (!limited) {
+                setNumProduct(numProduct - 1);
+            }
         }
     };
 
@@ -64,6 +98,26 @@ const ProductDetailComponent = ({ idProduct }) => {
     const { isLoading, data: productsDetail } = useQuery(['product-details', idProduct], fetchGetDetailProduct, {
         enabled: !!idProduct,
     });
+
+    const handleAddOrderProduct = () => {
+        if (!user?.id) {
+            navigate('/sign-in', { state: location?.pathname });
+        } else {
+            dispatch(
+                addOrderProduct({
+                    orderItem: {
+                        name: productsDetail?.name,
+                        amount: numProduct,
+                        image: productsDetail?.image,
+                        price: productsDetail?.price,
+                        product: productsDetail?._id,
+                        color: productsDetail?.color,
+                    },
+                }),
+            );
+        }
+    };
+
     return (
         <Loading isLoading={isLoading}>
             <div className={cx('container_user')}>
@@ -73,7 +127,7 @@ const ProductDetailComponent = ({ idProduct }) => {
                             <a href="/">Trang chủ</a>
                         </div>
                         <img alt="right_arrow" src={img_right_arrow} width={18} height={18} />
-                        <span className={cx('type-title')}>Làm Đẹp - Sức Khỏe</span>
+                        <span className={cx('type-title')}>{productsDetail?.name}</span>
                     </div>
                     <div className={cx('wrapper_row')}>
                         <Row>
@@ -151,7 +205,7 @@ const ProductDetailComponent = ({ idProduct }) => {
                                                                 }}
                                                             />
                                                         ))}
-                                                    <span className={cx('comment')}>{productsDetail?.sold}</span>
+                                                    <span className={cx('comment')}>Đã bán</span>
                                                     <span className={cx('sold')}>{productsDetail?.sold}</span>
                                                 </div>
                                                 <div className={cx('wrapper_price')}>
@@ -162,13 +216,17 @@ const ProductDetailComponent = ({ idProduct }) => {
                                                     <div className={cx('choose')}>
                                                         <img alt="img" src={User1} width={38} height={38} />
                                                     </div>
-                                                    <div className={cx('choose_name')}>{productsDetail?.color} N85</div>
+                                                    <div className={cx('choose_name')}>
+                                                        {productsDetail?.color} {randomNumber}
+                                                    </div>
                                                 </div>
                                                 <div className={cx('choose_color')}>
                                                     <div className={cx('choose')}>
                                                         <img alt="img" src={User1} width={38} height={38} />
                                                     </div>
-                                                    <div className={cx('choose_name')}>{productsDetail?.color} N85</div>
+                                                    <div className={cx('choose_name')}>
+                                                        {productsDetail?.color} {randomNumber}
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -223,13 +281,32 @@ const ProductDetailComponent = ({ idProduct }) => {
                                                 <span style={{ fontWeight: '500' }}>Số lượng</span>
                                             </div>
                                             <div className={cx('wrapper_add')}>
-                                                <div className={cx('add')} onClick={backValueUser}>
+                                                <div
+                                                    className={cx('add')}
+                                                    onClick={() => handleChangeCount('decrease', numProduct === 1)}
+                                                >
                                                     <MinusOutlined />
                                                 </div>
+                                                <div
+                                                    onChange={onChange}
+                                                    defaultValue={1}
+                                                    max={productsDetail?.countInStock}
+                                                    min={1}
+                                                    value={numProduct}
+                                                    size="small"
+                                                ></div>
                                                 <div className={cx('input')}>
-                                                    <InputNumber readOnly value={addState} style={{ width: '90%' }} />
+                                                    <InputNumber readOnly value={numProduct} style={{ width: '90%' }} />
                                                 </div>
-                                                <div className={cx('add')} onClick={addValueUser}>
+                                                <div
+                                                    className={cx('add')}
+                                                    onClick={() =>
+                                                        handleChangeCount(
+                                                            'increase',
+                                                            numProduct === productsDetail?.countInStock,
+                                                        )
+                                                    }
+                                                >
                                                     <PlusOutlined />
                                                 </div>
                                             </div>
@@ -238,7 +315,7 @@ const ProductDetailComponent = ({ idProduct }) => {
                                         <div className={cx('price')}>225.000</div>
                                         <div className={cx('wrapper_button')}>
                                             <div className={cx('button')}>
-                                                <div style={{ paddingBottom: '10px' }}>
+                                                <div style={{ paddingBottom: '10px' }} onClick={handleAddOrderProduct}>
                                                     <ButtonComponent
                                                         color="#fff"
                                                         backgroundColor="rgb(255, 66, 78)"

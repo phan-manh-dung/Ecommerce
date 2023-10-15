@@ -16,7 +16,7 @@ import {
     InstagramOutlined,
     LinkedinOutlined,
 } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useMutationHook } from '~/hook/useMutationHook';
 import Loading from '~/component/LoadingComponent/Loading';
 import { updateUser } from '~/redux/slide/userSlide';
@@ -29,6 +29,7 @@ const SignInPage = () => {
     const [isShowPassword, setIsShowPassword] = useState(false);
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const location = useLocation();
 
     const handleNavigate = () => {
         navigate('/sign-up');
@@ -50,7 +51,12 @@ const SignInPage = () => {
 
     useEffect(() => {
         if (isSuccess) {
-            navigate('/');
+            if (location?.state) {
+                // state này đang dùng từ trang product detail
+                navigate(location?.state);
+            } else {
+                navigate('/');
+            }
             localStorage.setItem('access_token', JSON.stringify(data?.access_token));
             if (data?.access_token) {
                 const decoded = jwt_decoded(data?.access_token);

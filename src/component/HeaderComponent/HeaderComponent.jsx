@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './HeaderComponent.module.scss';
 import classNames from 'classnames/bind';
-import { Button, Col, Popover, Row } from 'antd';
+import { Badge, Button, Col, Popover, Row } from 'antd';
 import InputSearch from '../InputSearch/InputSearch';
 import logo_shop from '../../assets/img_Global/logoshop.png';
 import logo_home from '../../assets/img_Global/home.png';
@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import * as UserService from '~/service/UserService';
 import { resetUser } from '~/redux/slide/userSlide';
 import { searchProduct } from '../../redux/slide/productSlide';
+import { ShoppingCartOutlined } from '@ant-design/icons';
 
 const cx = classNames.bind(styles);
 
@@ -21,6 +22,7 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const user = useSelector((state) => state.user);
+    const order = useSelector((state) => state.order);
     const [search, setSearch] = useState('');
     const handleNavigate = () => {
         navigate('/sign-in');
@@ -102,13 +104,19 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
                                 </div>
                             )}
                             {!isHiddenCart && (
-                                <div className={cx('row_right-list')}>
+                                <div
+                                    className={cx('row_right-list')}
+                                    onClick={() => navigate('/order')}
+                                    style={{ cursor: 'pointer' }}
+                                >
                                     <span
                                         style={{ fontSize: '14px', color: 'rgb(128, 128, 137)', paddingRight: '5px' }}
                                     >
                                         Giỏ hàng
                                     </span>
-                                    <img src={logo_cart} alt="cart" style={{ width: '24px', height: '24px' }} />
+                                    <Badge count={order?.orderItems?.length} size="small">
+                                        <ShoppingCartOutlined style={{ width: '24px', height: '24px' }} />
+                                    </Badge>
                                 </div>
                             )}
                         </div>

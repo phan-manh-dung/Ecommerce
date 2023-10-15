@@ -37,12 +37,13 @@ const TypeProductPage = () => {
         limit: 10,
         total: 1,
     });
+
     const fetchProductType = async (type, page, limit) => {
         setLoading(true);
         const res = await ProductService.getProductType(type, page, limit);
         if (res?.status == 'OK') {
             setLoading(false);
-            setTypeProduct(res?.data);
+            setTypeProduct(res?.data); // hàm này để sét giá trị vào type
             setPanigate({ ...panigate, total: res?.totalPage });
         } else {
             setLoading(false);
@@ -91,12 +92,13 @@ const TypeProductPage = () => {
         'Sản phẩm thiên nhiên & Khác',
     ];
     return (
-        <div className={cx('container_type-User')}>
+        <div className={cx('container_type-user')}>
             <div className={cx('wrapper-type')}>
                 <div className={cx('type-home')}>Trang chủ</div>
                 <img alt="right_arrow" src={img_right_arrow} width={18} height={18} />
-                <span className={cx('type-title')}>Làm Đẹp - Sức Khỏe</span>
+                <span className={cx('type-title')}> {typeProduct[0] && typeProduct[0].type} </span>
             </div>
+
             <Row>
                 <Col xs={0} sm={5}>
                     <div className={cx('wrapper_left')}>
