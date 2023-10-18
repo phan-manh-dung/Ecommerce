@@ -112,6 +112,8 @@ const ProductDetailComponent = ({ idProduct }) => {
                         price: productsDetail?.price,
                         product: productsDetail?._id,
                         color: productsDetail?.color,
+                        discount: productsDetail?.discount,
+                        type: productsDetail?.type,
                     },
                 }),
             );
