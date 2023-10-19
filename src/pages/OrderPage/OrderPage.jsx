@@ -1,32 +1,56 @@
 import React, { useMemo, useState } from 'react';
 import styles from './Order.module.scss';
 import classNames from 'classnames/bind';
+import User1 from '~/assets/img_products/dongu1.jpg';
 import { Row, Col, Checkbox, InputNumber } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import img_right_arrow from '~/assets/img_Global/right_arrow.png';
 import img_oto from '~/assets/img_Global/oto.png';
 import chart from '~/assets/img_Global/chart.png';
-import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import ButtonComponent from '~/component/ButtonComponent/Buttoncomponent';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { removeAllOrderProduct, removeOrderProduct } from '~/redux/slide/orderSlide';
+
 const cx = classNames.bind(styles);
 
 const OrderPage = () => {
     const order = useSelector((state) => state.order);
-    console.log('order', order);
-    const [numProduct, setNumProduct] = useState(1);
-    const handleChangeCount = (type, limited) => {
-        if (type === 'increase') {
-            if (!limited) {
-                setNumProduct(numProduct + 1);
-            }
+    const [listChecked, setListChecked] = useState([]);
+    const dispatch = useDispatch();
+
+    const handleDeleteOrder = () => {
+        dispatch(removeOrderProduct({ idProduct: order.orderItems[0]?.product }));
+    };
+
+    const onChange = (e) => {
+        if (listChecked.includes(e.target.value)) {
+            // nếu đã check rồi
+            const newListChecked = listChecked.filter((item) => item !== e.target.value);
+            setListChecked(newListChecked);
         } else {
-            if (!limited) {
-                setNumProduct(numProduct - 1);
-            }
+            setListChecked([...listChecked, e.target.value]);
         }
     };
+
+    const handleCheckAll = (e) => {
+        if (e.target.checked) {
+            const newListChecked = [];
+            order?.orderItems?.forEach((item) => {
+                newListChecked.push(item?.product);
+            });
+            setListChecked(newListChecked);
+        } else {
+            setListChecked([]);
+        }
+    };
+
+    const handleRemoveAllOrder = () => {
+        if (listChecked?.length === order?.orderItems?.length) {
+            dispatch(removeAllOrderProduct({ listChecked }));
+        }
+    };
+
     return (
         <div className={cx('container_order')}>
             <div className={cx('wrapper_order')}>
@@ -41,18 +65,22 @@ const OrderPage = () => {
                                 <div style={{ height: '50px', backgroundColor: '#fff' }}>giu</div>
                                 <div className={cx('wrapper_all')}>
                                     <span style={{ width: '36%' }}>
-                                        <Checkbox /> Tất cả ({order?.orderItems?.length}) sản phẩm
+                                        <Checkbox
+                                            onChange={handleCheckAll}
+                                            checked={listChecked?.length === order?.orderItems?.length}
+                                        />{' '}
+                                        Tất cả ({order?.orderItems?.length}) sản phẩm
                                     </span>
                                     <span>Đơn giá</span>
                                     <span>Số lượng</span>
                                     <span>Thành tiền</span>
-                                    <span>
+                                    <span onClick={handleRemoveAllOrder}>
                                         <FontAwesomeIcon icon={faTrash} />
                                     </span>
                                 </div>
-                                {order?.orderItems?.map((orders) => {
+                                {order?.orderItems?.map((orders, index) => {
                                     return (
-                                        <div className={cx('product', 'scrollable-content')}>
+                                        <div key={index} className={cx('product', 'scrollable-content')}>
                                             <div className={cx('type')}>
                                                 <div>
                                                     <Checkbox /> Type
@@ -63,12 +91,17 @@ const OrderPage = () => {
                                             <div className={cx('wrapper_content')}>
                                                 <Row style={{ display: 'flex', alignItems: 'center' }}>
                                                     <Col sm={1}>
-                                                        <Checkbox />
+                                                        <Checkbox
+                                                            onChange={onChange}
+                                                            value={orders.product}
+                                                            checked={listChecked?.includes(orders.product)}
+                                                        />
+                                                        {/* orders của map để lấy ra từng id chứ k phải order chung */}
                                                     </Col>
                                                     <Col sm={10}>
                                                         <div className={cx('img-content')}>
                                                             <div>
-                                                                <img alt="" width={80} height={80} />{' '}
+                                                                <img alt="" width={80} height={80} src={User1} />
                                                             </div>
                                                             <div className={cx('img-title')}>
                                                                 <span className={cx('title_content')}>
@@ -141,7 +174,11 @@ const OrderPage = () => {
                                                         <div style={{ paddingLeft: '2%' }}>{orders?.price}</div>
                                                     </Col>
                                                     <Col sm={1}>
-                                                        <div style={{ paddingLeft: '62%' }}>
+                                                        {/* xóa thì phải truyền đi cái id */}
+                                                        <div
+                                                            style={{ paddingLeft: '62%', cursor: 'pointer' }}
+                                                            onClick={() => handleDeleteOrder(order?.product)}
+                                                        >
                                                             <FontAwesomeIcon icon={faTrash} />
                                                         </div>
                                                     </Col>
