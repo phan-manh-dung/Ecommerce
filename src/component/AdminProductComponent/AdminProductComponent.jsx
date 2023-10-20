@@ -110,11 +110,6 @@ const AdminProductComponent = () => {
         return res;
     });
 
-    const handleDeleteManyProduct = (_id) => {
-        // truyền xuống table
-        mutationDeletedMany.mutate(); // gọi thực hiện tác vụ bất đồng bộ của backend
-    };
-
     const handleDeleteManyProducts = (ids) => {
         mutationDeletedMany.mutate(
             { ids: ids, token: user?.access_token },

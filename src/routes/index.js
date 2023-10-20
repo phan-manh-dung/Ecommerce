@@ -6,6 +6,7 @@ import ProductDetailPage from '~/pages/ProductDetailPage/ProductDetailPage';
 import ProfilePage from '~/pages/ProfilePage/ProfilePage';
 import SignInPage from '~/pages/SignInPage/SignInPage';
 import SignUpPage from '~/pages/SignUpPage/SignUpPage';
+import PaymentPage from '~/pages/PaymentPage/PaymentPage';
 
 const { default: HomePage } = require('~/pages/HomePage/HomePage');
 const { default: OrderPage } = require('~/pages/OrderPage/OrderPage');
@@ -53,6 +54,13 @@ export const routes = [
     {
         path: '/system/admin',
         page: AdminPage,
+        isShowHeader: false,
+        isShowFooter: false,
+        isPrivate: true,
+    },
+    {
+        path: '/payment',
+        page: PaymentPage,
         isShowHeader: false,
         isShowFooter: false,
         isPrivate: true,

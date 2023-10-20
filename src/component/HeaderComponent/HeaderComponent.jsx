@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styles from './HeaderComponent.module.scss';
 import classNames from 'classnames/bind';
-import { Badge, Button, Col, Popover, Row } from 'antd';
+import { Badge, Col, Popover, Row } from 'antd';
 import InputSearch from '../InputSearch/InputSearch';
 import logo_shop from '../../assets/img_Global/logoshop.png';
 import logo_home from '../../assets/img_Global/home.png';
 import logo_user from '../../assets/img_Global/user.png';
-import logo_cart from '../../assets/img_Global/cart.png';
 import logo_astra from '../../assets/img_Global/astra.png';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';

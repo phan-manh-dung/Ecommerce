@@ -8,6 +8,7 @@ import img_genuine from '../../assets/img_Global/genuine.png';
 import styles from './Card.module.scss';
 import classNames from 'classnames/bind';
 import { useNavigate } from 'react-router-dom';
+import { convertPrice } from '~/utils';
 const cx = classNames.bind(styles);
 
 const CardComponent = (props) => {
@@ -33,7 +34,12 @@ const CardComponent = (props) => {
                     {rating} <StarFilled style={{ fontSize: '10px', color: '#ffce3d' }} /> | Đã bán: {sold}
                 </div>
                 <div className={cx('user_wrapper-price')}>
-                    <div className={cx('user_price')}>{price?.toLocaleString()}</div>
+                    <div className={cx('user_price')}>
+                        {convertPrice(price)}
+                        <sup>
+                            <u>đ</u>
+                        </sup>
+                    </div>
 
                     <div className={cx('user_discount')}>
                         <span>{discount}%</span>

@@ -4,7 +4,7 @@ import classNames from 'classnames/bind';
 
 import img_right_arrow from '~/assets/img_Global/right_arrow.png';
 import img_pay from '~/assets/img_Global/pay.png';
-import img_khien from '~/assets/img_Global/khien.png';
+
 import img1 from '~/assets/img_Global/slide10.jpg';
 import User1 from '~/assets/img_products/dongu1.jpg';
 import User2 from '~/assets/img_products/dongu2.jpg';
@@ -24,6 +24,7 @@ import Loading from '../LoadingComponent/Loading';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { addOrderProduct } from '~/redux/slide/orderSlide';
+import { convertPrice } from '~/utils';
 const cx = classNames.bind(styles);
 
 const ProductDetailComponent = ({ idProduct }) => {
@@ -211,7 +212,12 @@ const ProductDetailComponent = ({ idProduct }) => {
                                                     <span className={cx('sold')}>{productsDetail?.sold}</span>
                                                 </div>
                                                 <div className={cx('wrapper_price')}>
-                                                    <div className={cx('price')}>{productsDetail?.price}</div>
+                                                    <div className={cx('price')}>
+                                                        {convertPrice(productsDetail?.price)}
+                                                        <sup>
+                                                            <u>đ</u>
+                                                        </sup>
+                                                    </div>
                                                 </div>
                                                 <div className={cx('color')}>{productsDetail?.color}</div>
                                                 <div className={cx('choose_color')}>
@@ -314,7 +320,7 @@ const ProductDetailComponent = ({ idProduct }) => {
                                             </div>
                                         </div>
                                         <div className={cx('provisional')}>Tạm tính</div>
-                                        <div className={cx('price')}>225.000</div>
+                                        <div className={cx('price')}>{productsDetail?.price * numProduct}</div>
                                         <div className={cx('wrapper_button')}>
                                             <div className={cx('button')}>
                                                 <div style={{ paddingBottom: '10px' }} onClick={handleAddOrderProduct}>
