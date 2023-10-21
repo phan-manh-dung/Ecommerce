@@ -21,6 +21,7 @@ const OrderPage = () => {
     const order = useSelector((state) => state.order);
     const user = useSelector((state) => state.user);
     const [listChecked, setListChecked] = useState([]);
+    const [listCheckedAmount, setListCheckedAmount] = useState(0);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -337,6 +338,7 @@ const OrderPage = () => {
                                             textButton="Mua hàng"
                                             style={{ background: 'rgb(255, 66, 78)', color: '#fff' }}
                                         ></ButtonComponent>
+
                                         <ModalComponent
                                             footer={null}
                                             okText="..."
