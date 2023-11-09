@@ -92,6 +92,7 @@
             }
             .content_left {
                 display: flex;
+                align-items: center;
             }
             .noidung {
                 padding-left: 10px;
@@ -224,4 +225,65 @@
     border-radius: 4px;
     background-color: #fff;
     padding: 16px;
+}
+
+.wrapper_pay-order {
+    background-color: #fff;
+    border-radius: 4px;
+    padding: 16px;
+    margin-top: 3%;
+
+    .order1 {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 1%;
+    }
+    .order2 {
+    }
+    .chung {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1%;
+        .title_chung {
+            color: #999;
+        }
+    }
+}
+
+.total_price {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .wrapper_vat {
+        font-weight: 550;
+        font-size: 20px;
+        line-height: 32px;
+        color: rgb(255, 66, 78);
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+    }
+    .vat {
+        font-size: 12px;
+        line-height: 16px;
+        color: rgb(128, 128, 137);
+    }
+}
+
+.free_ship {
+    padding: 1%;
+    font-weight: 600;
+    margin-top: 1%;
+    display: flex;
+    align-items: center;
+    .title-free_ship {
+        padding-left: 4px;
+    }
+}
+
+.button_success {
+    margin-top: 3%;
 }

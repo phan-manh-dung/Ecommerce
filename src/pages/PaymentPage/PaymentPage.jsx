@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import styles from './Payment.module.scss';
 import classNames from 'classnames/bind';
 
@@ -16,13 +16,97 @@ import manyvisa from '~/assets/img_Global/manyvisa.png';
 import atm from '~/assets/img_Global/atm_noi_dia.png';
 import asa from '~/assets/img_Global/asa.png';
 import chu_t from '~/assets/img_Global/chut.png';
-import { Checkbox, Col, Radio, Row } from 'antd';
+import free_ship from '~/assets/img_Global/free_ship.png';
+import { Checkbox, Col, Radio, Row, message } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronRight, faPlus } from '@fortawesome/free-solid-svg-icons';
+import ButtonComponent from '~/component/ButtonComponent/Buttoncomponent';
+import { useSelector } from 'react-redux';
+import { useMutationHook } from '~/hook/useMutationHook';
+
+import * as OrderService from '~/service/OrderService';
+import { convertPrice } from '~/utils';
 
 const cx = classNames.bind(styles);
 
 const PaymentPage = () => {
+    const order = useSelector((state) => state.order);
+    const user = useSelector((state) => state.user);
+    const [payment, setPayment] = useState('later_money');
+
+    const priceMemo = useMemo(() => {
+        const result = order?.orderItems?.reduce((total, cur) => {
+            return total + cur.price * cur.amount;
+        }, 0);
+        return result;
+    }, [order]);
+
+    const priceDiscountMemo = useMemo(() => {
+        const result = order?.orderItems?.reduce((total, cur) => {
+            const totalDiscount = cur.discount ? cur.discount : 0;
+            return total + (priceMemo * (totalDiscount * cur.amount)) / 100;
+        }, 0);
+        if (Number(result)) {
+            return result;
+        }
+        return 0;
+    }, [order]);
+
+    const deliveryPriceMemo = useMemo(() => {
+        if (priceMemo > 200000) {
+            return 10000;
+        } else if (priceMemo === 0) {
+            return 0;
+        } else {
+            return 20000;
+        }
+    }, [priceMemo]);
+
+    const discountMemo = useMemo(() => {
+        if (order && order.orderItems) {
+            const filteredItems = order.orderItems.filter((item) => {
+                return item.discount > 0;
+            });
+            const result = filteredItems.reduce((total, current) => {
+                return total + current.discount;
+            }, 0);
+
+            return result;
+        }
+        return 0;
+    }, [order]);
+
+    const pricePersent = useMemo(() => {
+        return Number(priceMemo) - Number(priceDiscountMemo) + Number(discountMemo);
+    }, [priceMemo, discountMemo]);
+
+    const totalPriceMemo = useMemo(() => {
+        return Number(pricePersent) - Number(deliveryPriceMemo) - 5000;
+    }, [pricePersent, deliveryPriceMemo]);
+
+    const handleAddOrder = () => {
+        if (user?.access_token && user?.name && user?.address && user?.phone && user?.id) {
+            mutationAddOrder.mutate({
+                token: user?.access_token,
+                fullName: user?.name,
+                address: user?.address,
+                phone: user?.phone,
+                paymentMethod: payment,
+                itemsPrice: priceMemo,
+                shippingPrice: deliveryPriceMemo,
+                totalPrice: pricePersent,
+                user: user?.id,
+                email: user?.email,
+            });
+        }
+    };
+
+    const mutationAddOrder = useMutationHook((data) => {
+        const { token, ...rests } = data;
+        const res = OrderService.createOrder({ ...rests }, token);
+        return res;
+    });
+
     return (
         <div className={cx('container_payment')}>
             <div className={cx('wrapper_payment')}>
@@ -64,30 +148,17 @@ const PaymentPage = () => {
                                                     GIAO TIẾT KIỆM
                                                 </span>
                                                 <span>
-                                                    7.000 <sup>đ</sup>{' '}
+                                                    {order?.orderItems[0].price} <sup>đ</sup>{' '}
                                                 </span>
                                             </div>
                                             <div className={cx('content_left')}>
                                                 <div>
                                                     <img alt="" src="" width={48} height={48} />
                                                 </div>
-                                                <div className={cx('noidung')}>
-                                                    Lorem, ipsum dolor sit amet consectetur adipisicing elit.
-                                                    Consequatur, doloribus!
-                                                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                                        <p>Số lượng: x1</p>
-                                                        <p
-                                                            style={{
-                                                                lineHeight: '20px',
-                                                                fontWeight: '500',
-                                                                fontSize: '14px',
-                                                                color: 'black',
-                                                            }}
-                                                        >
-                                                            117.000
-                                                        </p>
-                                                    </div>
-                                                </div>
+                                                <div className={cx('noidung')}>{order?.orderItems[0]?.name}</div>
+                                            </div>
+                                            <div style={{ float: 'right' }}>
+                                                Số lượng: {order?.orderItems[0].amount}
                                             </div>
                                         </div>
                                         <div className={cx('right-content')}>
@@ -95,10 +166,7 @@ const PaymentPage = () => {
                                                 <div className={cx('icon')}>
                                                     <img alt="xe" src={truck} width={24} height={24} />
                                                 </div>
-                                                <div className={cx('title_icon')}>
-                                                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam,
-                                                    minima?
-                                                </div>
+                                                <div className={cx('title_icon')}>Được giao bởi BEE GEE SHOP </div>
                                             </div>
                                         </div>
                                     </div>
@@ -311,6 +379,49 @@ const PaymentPage = () => {
                                         <span style={{ paddingLeft: '6%' }}>
                                             Yêu cầu hóa đơn <p>Chỉ có hóa đơn điện tự</p>{' '}
                                         </span>
+                                    </div>
+                                    {/* pay order */}
+                                    <div className={cx('wrapper_pay-order')}>
+                                        <div className={cx('order1')}>
+                                            <span style={{ fontSize: '16px', lineHeight: '20px' }}>
+                                                Đơn hàng <p style={{ fontSize: '13px', color: '#999' }}>1 sản phẩm</p>{' '}
+                                            </span>
+                                            <span>Thay đổi </span>
+                                        </div>
+                                        <div className={cx('order2')}>
+                                            <div className={cx('provisional', 'chung')}>
+                                                <div className={cx('title_chung')}>Tạm tính</div>
+                                                <div> {convertPrice(pricePersent)}</div>
+                                            </div>
+                                            <div className={cx('ship', 'chung')}>
+                                                <div className={cx('title_chung')}>Phí vận chuyển</div>
+                                                <div>{convertPrice(deliveryPriceMemo)}</div>
+                                            </div>
+                                            <div className={cx('promotion1', 'chung')}>
+                                                <div className={cx('title_chung')}>Khuyến mãi vận chuyển</div>
+                                                <div style={{ color: 'green' }}>- 5000</div>
+                                            </div>
+                                            <div className={cx('total_price')}>
+                                                <div>Tổng tiền</div>
+                                                <div className={cx('wrapper_vat')}>
+                                                    {10.0
+                                                        ? convertPrice(totalPriceMemo) + 'đ'
+                                                        : 'Vui lòng chọn sản phẩm'}{' '}
+                                                    <p className={cx('vat')}>(Đã bao gồm VAT nếu có)</p>{' '}
+                                                </div>
+                                            </div>
+                                            <div className={cx('free_ship')}>
+                                                <img alt="free_ship" src={free_ship} width={81} />
+                                                <span className={cx('title-free_ship')}> đã được áp dụng</span>
+                                            </div>
+                                            <div className={cx('button_success')} onClick={() => handleAddOrder()}>
+                                                <ButtonComponent
+                                                    textButton="Đặt hàng"
+                                                    backgroundColor="rgb(255, 66, 78)"
+                                                    color="#fff"
+                                                />
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </Col>
