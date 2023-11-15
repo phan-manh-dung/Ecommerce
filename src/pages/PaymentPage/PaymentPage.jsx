@@ -26,6 +26,7 @@ import { useMutationHook } from '~/hook/useMutationHook';
 
 import * as OrderService from '~/service/OrderService';
 import { convertPrice } from '~/utils';
+import { useNavigate } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
 
@@ -33,6 +34,7 @@ const PaymentPage = () => {
     const order = useSelector((state) => state.order);
     const user = useSelector((state) => state.user);
     const [payment, setPayment] = useState('later_money');
+    const navigate = useNavigate();
 
     const priceMemo = useMemo(() => {
         const result = order?.orderItems?.reduce((total, cur) => {
@@ -106,6 +108,24 @@ const PaymentPage = () => {
         const res = OrderService.createOrder({ ...rests }, token);
         return res;
     });
+
+    const { isLoading, data, isSuccess, isError } = mutationAddOrder;
+    const { data: dataAdd, isLoading: isLoadingAddOrder } = mutationAddOrder;
+
+    useEffect(() => {
+        if (isSuccess) {
+            message.success('Đặt hàng thành công');
+            navigate('/orderSuccess', {
+                state: {
+                    payment,
+                    orders: order?.orderItems,
+                    totalPriceMemo: totalPriceMemo,
+                },
+            });
+        } else if (isError) {
+            message.error('Đặt hàng thất bại');
+        }
+    }, [handleAddOrder]); // Chỉ chạy lại khi handleAddOrder thay đổi
 
     return (
         <div className={cx('container_payment')}>
@@ -391,23 +411,26 @@ const PaymentPage = () => {
                                         <div className={cx('order2')}>
                                             <div className={cx('provisional', 'chung')}>
                                                 <div className={cx('title_chung')}>Tạm tính</div>
-                                                <div> {convertPrice(pricePersent)}</div>
+                                                <div>
+                                                    {convertPrice(pricePersent)} <sup>đ</sup>
+                                                </div>
                                             </div>
                                             <div className={cx('ship', 'chung')}>
                                                 <div className={cx('title_chung')}>Phí vận chuyển</div>
-                                                <div>{convertPrice(deliveryPriceMemo)}</div>
+                                                <div>
+                                                    {convertPrice(deliveryPriceMemo)} <sup>đ</sup>
+                                                </div>
                                             </div>
                                             <div className={cx('promotion1', 'chung')}>
                                                 <div className={cx('title_chung')}>Khuyến mãi vận chuyển</div>
-                                                <div style={{ color: 'green' }}>- 5000</div>
+                                                <div style={{ color: 'green' }}>
+                                                    - 5000 <sup>đ</sup>
+                                                </div>
                                             </div>
                                             <div className={cx('total_price')}>
                                                 <div>Tổng tiền</div>
                                                 <div className={cx('wrapper_vat')}>
-                                                    {10.0
-                                                        ? convertPrice(totalPriceMemo) + 'đ'
-                                                        : 'Vui lòng chọn sản phẩm'}{' '}
-                                                    <p className={cx('vat')}>(Đã bao gồm VAT nếu có)</p>{' '}
+                                                    {convertPrice(totalPriceMemo)} VND
                                                 </div>
                                             </div>
                                             <div className={cx('free_ship')}>

@@ -28,7 +28,7 @@ const ButtonComponent = ({
             disabled={disabled}
             {...rests}
         >
-            <span style={styleTextButton}>{textButton}</span>
+            <span style={{ ...styleTextButton }}>{textButton}</span>
         </Button>
     );
 };

@@ -7,10 +7,10 @@ import ProfilePage from '~/pages/ProfilePage/ProfilePage';
 import SignInPage from '~/pages/SignInPage/SignInPage';
 import SignUpPage from '~/pages/SignUpPage/SignUpPage';
 import PaymentPage from '~/pages/PaymentPage/PaymentPage';
+import OrderSuccess from '~/pages/OrderSuccess/OrderSuccess';
 
 const { default: HomePage } = require('~/pages/HomePage/HomePage');
 const { default: OrderPage } = require('~/pages/OrderPage/OrderPage');
-const { default: ProductPage } = require('~/pages/ProductPage/ProductPage');
 
 export const routes = [
     {
@@ -61,6 +61,13 @@ export const routes = [
     {
         path: '/payment',
         page: PaymentPage,
+        isShowHeader: false,
+        isShowFooter: false,
+        isPrivate: true,
+    },
+    {
+        path: '/orderSuccess',
+        page: OrderSuccess,
         isShowHeader: false,
         isShowFooter: false,
         isPrivate: true,

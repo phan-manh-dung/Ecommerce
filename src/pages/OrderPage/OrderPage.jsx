@@ -129,7 +129,6 @@ const OrderPage = () => {
                                 </div>
                                 <div className={cx('scrollable-content')}>
                                     {order?.orderItems?.map((orders, index) => {
-                                        console.log('check', order);
                                         return (
                                             <div key={index} className={cx('product')}>
                                                 <div className={cx('type')}>
