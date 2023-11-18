@@ -24,7 +24,7 @@ const CardComponent = (props) => {
                 hoverable
                 bodyStyle={{ padding: '10px' }}
                 style={{ width: 167, marginRight: '10px' }}
-                cover={<img alt="laptop1" src={laptop1} />}
+                cover={<img alt="laptop1" src={image} />}
             >
                 <div className={cx('genuine')}>
                     <img alt="genuine" src={img_genuine} width={89} height={20} />

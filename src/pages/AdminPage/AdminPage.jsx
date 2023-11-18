@@ -10,16 +10,16 @@ import { getItem } from '~/utils';
 const AdminPage = () => {
     const items = [
         getItem('Người dùng', 'users', <UserOutlined />),
-        getItem('Sản phẩm', 'Users', <AppstoreOutlined />),
+        getItem('Sản phẩm', 'products', <AppstoreOutlined />),
         getItem('Đơn hàng', 'orders', <ShoppingCartOutlined />),
     ];
-    const rootSubmenuKeys = ['user', 'User'];
+    const rootSubmenuKeys = ['user', 'products'];
     const [keySelected, setKeySelected] = useState('');
     const renderPage = (key) => {
         switch (key) {
             case 'users':
                 return <AdminUserComponent />;
-            case 'Users':
+            case 'products':
                 return <AdminProductComponent />;
             case 'orders':
                 return <AdminOrderComponent />;

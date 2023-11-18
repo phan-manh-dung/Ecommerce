@@ -137,7 +137,7 @@ const ProductDetailComponent = ({ idProduct }) => {
                             <Col xs={0} sm={8}>
                                 <div className={cx('user_left')}>
                                     <div className={cx('left')}>
-                                        <img alt="donu1" src={User1} width={368} height={368} />
+                                        <img alt="donu1" src={productsDetail?.image} width={368} height={368} />
                                     </div>
 
                                     <div>

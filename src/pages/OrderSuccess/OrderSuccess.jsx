@@ -6,6 +6,7 @@ import styles from './OrderSuccess.module.scss';
 import classNames from 'classnames/bind';
 import call from '~/assets/img_Global/call.png';
 import { Col, Row } from 'antd';
+import { convertPrice } from '~/utils';
 import ButtonComponent from '~/component/ButtonComponent/Buttoncomponent';
 import donu from '~/assets/img_products/dongu4.jpg';
 import ch_play from '~/assets/img_Global/chplay.png';
@@ -15,7 +16,8 @@ const cx = classNames.bind(styles);
 const OrderSuccess = () => {
     const order = useSelector((state) => state.order);
     const { state } = useLocation();
-
+    const priceProduct = state?.totalPriceMemo;
+    const id = order?.orderItems[0]?.product;
     return (
         <div className={cx('wrapper_order')}>
             <div className={cx('container_order')}>
@@ -28,7 +30,7 @@ const OrderSuccess = () => {
                 {/* main */}
                 <div className={cx('main')}>
                     <Row>
-                        <Col sm={17}>
+                        <Col sm={15}>
                             <div className={cx('title-content')}>
                                 <div className={cx('title-content_top')}>
                                     <div>
@@ -41,7 +43,9 @@ const OrderSuccess = () => {
                                     </div>
                                     <div>
                                         <h1 className={cx('content_1')}>Yay, đặt hàng thành công!</h1>
-                                        <h3 className={cx('content_2')}>Chuẩn bị tiền mặt 20k</h3>
+                                        <h3 className={cx('content_2')}>
+                                            Chuẩn bị tiền mặt {convertPrice(priceProduct)} VND
+                                        </h3>
                                     </div>
                                 </div>
                                 <div className={cx('wrapper-bottom')}>
@@ -51,23 +55,27 @@ const OrderSuccess = () => {
                                     </div>
                                     <div className={cx('content_bottom')}>
                                         <div className={cx('bottom-title')}>Tổng cộng</div>
-                                        <div className={cx('bottom-title', 'price')}>115.000</div>
+                                        <div className={cx('bottom-title', 'price')}>
+                                            {convertPrice(priceProduct)} <sup>đ</sup>
+                                        </div>
                                     </div>
                                 </div>
-                                <div className={cx('back_home')}>
-                                    <ButtonComponent
-                                        textButton="Quay trở về trang chủ"
-                                        styleTextButton={{ color: 'rgb(23,128,231)' }}
-                                    />
-                                </div>
+                                <a href="/">
+                                    <div className={cx('back_home')}>
+                                        <ButtonComponent
+                                            textButton="Quay trở về trang chủ"
+                                            styleTextButton={{ color: 'rgb(23,128,231)' }}
+                                        />
+                                    </div>
+                                </a>
                             </div>
                         </Col>
-                        <Col sm={7}>
+                        <Col sm={9}>
                             <div className={cx('container_wrapper-right')}>
                                 <div className={cx('wrapper_right')}>
                                     <div className={cx('wrapper_1')}>
                                         <div className={cx('container_wrapper')}>
-                                            <span className={cx('id_product')}>Mã đơn hàng: 49303838</span>
+                                            <span className={cx('id_product')}>Mã đơn hàng: {id}</span>
                                             <span
                                                 className={cx('view-product')}
                                                 style={{ color: 'rgb(56,129,230)', cursor: 'pointer' }}
@@ -85,7 +93,12 @@ const OrderSuccess = () => {
                                         </div>
                                         <div className={cx('product_content')}>
                                             <div>
-                                                <img alt="product" src={donu} height={48} width={48} />
+                                                <img
+                                                    alt="product"
+                                                    src={order?.orderItems[0]?.image}
+                                                    height={48}
+                                                    width={48}
+                                                />
                                             </div>
                                             <div
                                                 className={cx('title_child')}

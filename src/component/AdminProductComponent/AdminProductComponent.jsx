@@ -40,9 +40,10 @@ const AdminProductComponent = () => {
         discount: '',
     });
 
-    const [stateProduct, setStateProduct] = useState(initial());
+    const [stateProduct, setStateProduct] = useState(initial()); // khởi tạo state object với initial
+
     const [stateProductDetails, setStateProductDetails] = useState(initial());
-    const [form] = Form.useForm();
+    const [form] = Form.useForm(); // form dữ liệu
 
     const mutation = useMutationHook((data) => {
         // tương tác với store cập nhật data
@@ -61,25 +62,30 @@ const AdminProductComponent = () => {
         return res;
     });
 
+    // update product information
     const mutationUpdate = useMutationHook((data) => {
         const { id, token, ...rests } = data;
         const res = ProductService.updateProduct(id, token, { ...rests });
         return res;
     });
 
+    // get all product
     const getAllProduct = async () => {
         const res = await ProductService.getAllProduct();
         return res;
     };
 
+    // get all type product
     const fetchAllTypeProduct = async () => {
         const res = await ProductService.getAllTypeProduct();
         return res;
     };
 
+    // useQuery
     const queryProduct = useQuery({ queryKey: ['products'], queryFn: getAllProduct });
     const typeProduct = useQuery({ queryKey: ['type-product'], queryFn: fetchAllTypeProduct });
 
+    // get detail product on service
     const fetchGetDetailProduct = async (rowSelected) => {
         const res = await ProductService.getDetailProduct(rowSelected); // rowselected là id
         if (res?.data) {
@@ -89,6 +95,14 @@ const AdminProductComponent = () => {
                 description: res?.data?.description,
                 rating: res?.data?.rating,
                 image: res?.data?.image,
+                image1: res?.data?.image1,
+                image2: res?.data?.image2,
+                image3: res?.data?.image3,
+                image4: res?.data?.image4,
+                image5: res?.data?.image5,
+                image6: res?.data?.image6,
+                image7: res?.data?.image7,
+                image8: res?.data?.image8,
                 type: res?.data?.type,
                 countInStock: res?.data?.countInStock,
                 discount: res?.data?.discount,
@@ -98,18 +112,21 @@ const AdminProductComponent = () => {
         setIsLoadingUpdate(false);
     };
 
+    // delete product id with token
     const mutationDeleted = useMutationHook((data) => {
         const { id, token } = data;
         const res = ProductService.deleteProduct(id, token);
         return res;
     });
 
+    // delete many , data with token on service
     const mutationDeletedMany = useMutationHook((data) => {
         const { token, ...ids } = data;
         const res = ProductService.deleteManyProduct(ids, token);
         return res;
     });
 
+    // delete redux
     const handleDeleteManyProducts = (ids) => {
         mutationDeletedMany.mutate(
             { ids: ids, token: user?.access_token },
@@ -121,6 +138,7 @@ const AdminProductComponent = () => {
         );
     };
 
+    // open modal detail product
     useEffect(() => {
         if (!isModalOpen) {
             form.setFieldsValue(stateProductDetails);
@@ -129,6 +147,7 @@ const AdminProductComponent = () => {
         }
     }, [form, stateProductDetails, isModalOpen]);
 
+    // fetch get detail
     useEffect(() => {
         if (rowSelected && isOpenDrawer) {
             setIsLoadingUpdate(true);
@@ -153,6 +172,7 @@ const AdminProductComponent = () => {
 
     const { data, isLoading, isSuccess, isError } = mutation; // tác vụ thay đổi dữ liệu
 
+    // delete product on redux
     const handleDeleteProduct = () => {
         mutationDeleted.mutate(
             { id: rowSelected, token: user?.access_token },
@@ -164,6 +184,7 @@ const AdminProductComponent = () => {
         );
     };
 
+    // get loading on fun update
     const {
         data: dataUpdated,
         isLoading: isLoadingUpdated,
@@ -171,6 +192,7 @@ const AdminProductComponent = () => {
         isError: isErrorUpdated,
     } = mutationUpdate;
 
+    // get loading on fun delete
     const {
         data: dataDeleted,
         isLoading: isLoadingDeleted,
@@ -185,6 +207,7 @@ const AdminProductComponent = () => {
         isError: isErrorDeletedMany,
     } = mutationDeletedMany;
 
+    // use query
     const { isLoading: isLoadingProducts, data: products } = useQuery({
         queryKey: ['products'],
         queryFn: getAllProduct,
@@ -193,7 +216,6 @@ const AdminProductComponent = () => {
     useEffect(() => {
         if (rowSelected && isOpenDrawer) {
             setIsLoadingUpdate(true);
-            //  handleDetailProduct(rowSelected);
         }
     }, [rowSelected, isOpenDrawer]);
 
@@ -205,6 +227,7 @@ const AdminProductComponent = () => {
         setIsModalOpenDelete(false);
     };
 
+    // cancel
     const handleCancel = () => {
         setIsModalOpen(false);
         setStateProduct({
@@ -221,12 +244,14 @@ const AdminProductComponent = () => {
         form.resetFields();
     };
 
+    // set data table on useQuery
     const dataTable =
         products?.data?.length &&
         products?.data?.map((product) => {
             return { ...product, key: product._id };
         });
 
+    // status finish
     const onFinish = () => {
         const params = {
             name: stateProduct.name,
@@ -245,6 +270,8 @@ const AdminProductComponent = () => {
             },
         });
     };
+
+    // get onchange on initial
     const handleOnChange = (e) => {
         setStateProduct({
             ...stateProduct,
@@ -252,6 +279,7 @@ const AdminProductComponent = () => {
         });
     };
 
+    // get onchange product detail on initial
     const handleOnChangeDetail = (e) => {
         setStateProductDetails({
             ...stateProductDetails,
@@ -266,6 +294,7 @@ const AdminProductComponent = () => {
         clearFilters();
     };
 
+    // filter theo column
     const getColumnSearchProps = (dataIndex) => ({
         filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
             <div
@@ -459,6 +488,7 @@ const AdminProductComponent = () => {
         },
     ];
 
+    // close draw
     const handleCloseDrawer = () => {
         setIsOpenDrawer(false);
         setStateProductDetails({
@@ -467,6 +497,14 @@ const AdminProductComponent = () => {
             description: '',
             rating: '',
             image: '',
+            image1: '',
+            image2: '',
+            image3: '',
+            image4: '',
+            image5: '',
+            image6: '',
+            image7: '',
+            image8: '',
             type: '',
             countInStock: '',
             color: '',
@@ -475,6 +513,7 @@ const AdminProductComponent = () => {
         form.resetFields();
     };
 
+    // effect success and error
     useEffect(() => {
         if (isSuccess && data?.status == 'OK') {
             message.success();
@@ -484,6 +523,7 @@ const AdminProductComponent = () => {
         }
     }, [isSuccess, isError]);
 
+    // effect success delete
     useEffect(() => {
         if (isSuccessDeleted && dataDeleted?.status === 'OK') {
             message.success();
@@ -493,6 +533,7 @@ const AdminProductComponent = () => {
         }
     }, [isSuccessDeleted]);
 
+    // effect success delete many
     useEffect(() => {
         if (isSuccessDelectedMany && dataDeletedMany?.status === 'OK') {
             message.success();
@@ -502,6 +543,7 @@ const AdminProductComponent = () => {
         }
     }, [isSuccessDelectedMany]);
 
+    // effect success update
     useEffect(() => {
         if (isSuccessUpdated && dataUpdated?.status === 'OK') {
             message.success();
@@ -511,6 +553,7 @@ const AdminProductComponent = () => {
         }
     }, [isSuccessUpdated]);
 
+    // handle on change avatar
     const handleOnchangeAvatar = async ({ fileList }) => {
         const file = fileList[0];
         if (!file.url && !file.preview) {
@@ -521,6 +564,8 @@ const AdminProductComponent = () => {
             image: file.preview,
         });
     };
+
+    // handle on change avatar detail
     const handleOnchangeAvatarDetail = async ({ fileList }) => {
         const file = fileList[0];
         if (!file.url && !file.preview) {
@@ -532,6 +577,7 @@ const AdminProductComponent = () => {
         });
     };
 
+    // update product
     const onUpdateProduct = () => {
         mutationUpdate.mutate(
             { id: rowSelected, token: user?.access_token, ...stateProductDetails },
@@ -677,6 +723,7 @@ const AdminProductComponent = () => {
                                 <Input value={stateProduct.discount} onChange={handleOnChange} name="discount" />
                             </Form.Item>
 
+                            {/* image  */}
                             <Form.Item
                                 label="Image"
                                 name="Image"
@@ -712,6 +759,7 @@ const AdminProductComponent = () => {
                                     </Upload>
                                 </div>
                             </Form.Item>
+
                             <Button type="primary" htmlType="submit">
                                 Submit
                             </Button>
@@ -811,7 +859,7 @@ const AdminProductComponent = () => {
                                     name="discount"
                                 />
                             </Form.Item>
-
+                            {/* image */}
                             <Form.Item
                                 label="Image"
                                 name="image"

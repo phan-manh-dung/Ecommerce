@@ -20,16 +20,18 @@ const cx = classNames.bind(styles);
 const OrderPage = () => {
     const order = useSelector((state) => state.order);
     const user = useSelector((state) => state.user);
-    const [listChecked, setListChecked] = useState([]);
-    const [listCheckedAmount, setListCheckedAmount] = useState(0);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
+    const [listChecked, setListChecked] = useState([]); // sét licst check
+    const [isModalOpen, setIsModalOpen] = useState(false); // mở modal
+    const [isModalOpenProduct, setIsModalOpenProduct] = useState(false); // mở modal
+    const dispatch = useDispatch(); // gửi action đến reducer
+    const navigate = useNavigate(); // chuyển trang
 
+    // delete product
     const handleDeleteOrder = () => {
         dispatch(removeOrderProduct({ idProduct: order?.orderItems[0]?.product }));
     };
 
+    // onchange check box
     const onChange = (e) => {
         if (listChecked.includes(e.target.value)) {
             // nếu đã check rồi
@@ -40,6 +42,7 @@ const OrderPage = () => {
         }
     };
 
+    // onchange check all
     const handleCheckAll = (e) => {
         if (e.target.checked) {
             const newListChecked = [];
@@ -52,12 +55,14 @@ const OrderPage = () => {
         }
     };
 
+    // remove order
     const handleRemoveAllOrder = () => {
         if (listChecked?.length === order?.orderItems?.length) {
             dispatch(removeAllOrderProduct({ listChecked }));
         }
     };
 
+    // price product
     const priceMemo = useMemo(() => {
         if (listChecked && order) {
             const selectedItems = order.orderItems.filter((item) => listChecked.includes(item.product));
@@ -70,6 +75,7 @@ const OrderPage = () => {
         }
     }, [listChecked, order]);
 
+    // discount
     const discountMemo = useMemo(() => {
         if (listChecked && order) {
             const itemDiscount = order?.orderItems?.filter((item) => listChecked.includes(item.product));
@@ -80,20 +86,32 @@ const OrderPage = () => {
         }
     }, [listChecked, order]);
 
+    // price end
     const totalPrice = useMemo(() => {
         return Number(priceMemo) - Number(priceMemo) * (Number(discountMemo) / 100);
     }, [priceMemo, discountMemo]);
 
+    //   gửi state sang payment
+
     const handlePayOrder = () => {
         if (!listChecked.length || !(user?.address || user?.city)) {
             setIsModalOpen(true);
-        } else {
-            navigate('/payment');
+        } else if (listChecked.length === 1) {
+            const selectedItemId = listChecked[0]; // ID của đối tượng đầu tiên trong listChecked
+            const selectedItem = order?.orderItems.find((item) => item.product === selectedItemId);
+            if (selectedItem) {
+                navigate('/payment', { state: { selectedItem, totalPrice } });
+            }
+        } else if (listChecked.length > 1) {
+            setIsModalOpenProduct(true);
         }
     };
 
     const handleCancel = () => {
         setIsModalOpen(false);
+    };
+    const handleCancelModalProduct = () => {
+        setIsModalOpenProduct(false);
     };
 
     return (
@@ -151,7 +169,12 @@ const OrderPage = () => {
                                                         <Col sm={10}>
                                                             <div className={cx('img-content')}>
                                                                 <div>
-                                                                    <img alt="" width={80} height={80} src={User1} />
+                                                                    <img
+                                                                        alt=""
+                                                                        width={80}
+                                                                        height={80}
+                                                                        src={orders?.image}
+                                                                    />
                                                                 </div>
                                                                 <div className={cx('img-title')}>
                                                                     <span className={cx('title_content')}>
@@ -347,6 +370,17 @@ const OrderPage = () => {
                                             onCancel={handleCancel}
                                         >
                                             Bạn chưa mua hàng hoặc chưa có thông tin địa chỉ
+                                        </ModalComponent>
+
+                                        <ModalComponent
+                                            footer={null}
+                                            okText="..."
+                                            okType=""
+                                            isOpen={isModalOpenProduct}
+                                            title="Thông báo"
+                                            onCancel={handleCancelModalProduct}
+                                        >
+                                            Bạn chỉ được thanh toán 1 sản phẫm 1 lần
                                         </ModalComponent>
                                     </div>
                                 </div>

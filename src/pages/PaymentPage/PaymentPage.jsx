@@ -21,70 +21,41 @@ import { Checkbox, Col, Radio, Row, message } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronRight, faPlus } from '@fortawesome/free-solid-svg-icons';
 import ButtonComponent from '~/component/ButtonComponent/Buttoncomponent';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useMutationHook } from '~/hook/useMutationHook';
 
 import * as OrderService from '~/service/OrderService';
 import { convertPrice } from '~/utils';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { removeAllOrderProduct, removeAllSelectedProducts } from '~/redux/slide/orderSlide';
 
 const cx = classNames.bind(styles);
 
 const PaymentPage = () => {
-    const order = useSelector((state) => state.order);
+    // const order = useSelector((state) => state.order);
     const user = useSelector((state) => state.user);
+    const location = useLocation();
+    const selectedItem = location.state?.selectedItem;
+
     const [payment, setPayment] = useState('later_money');
     const navigate = useNavigate();
+    const { totalPrice } = location.state || {};
+    const dispatch = useDispatch();
 
-    const priceMemo = useMemo(() => {
-        const result = order?.orderItems?.reduce((total, cur) => {
-            return total + cur.price * cur.amount;
-        }, 0);
-        return result;
-    }, [order]);
-
-    const priceDiscountMemo = useMemo(() => {
-        const result = order?.orderItems?.reduce((total, cur) => {
-            const totalDiscount = cur.discount ? cur.discount : 0;
-            return total + (priceMemo * (totalDiscount * cur.amount)) / 100;
-        }, 0);
-        if (Number(result)) {
-            return result;
-        }
-        return 0;
-    }, [order]);
-
+    // tính phí vận chuyển
     const deliveryPriceMemo = useMemo(() => {
-        if (priceMemo > 200000) {
-            return 10000;
-        } else if (priceMemo === 0) {
-            return 0;
-        } else {
+        if (totalPrice > 200000) {
             return 20000;
+        } else if (totalPrice < 200000) {
+            return 10000;
+        } else {
+            return 0;
         }
-    }, [priceMemo]);
-
-    const discountMemo = useMemo(() => {
-        if (order && order.orderItems) {
-            const filteredItems = order.orderItems.filter((item) => {
-                return item.discount > 0;
-            });
-            const result = filteredItems.reduce((total, current) => {
-                return total + current.discount;
-            }, 0);
-
-            return result;
-        }
-        return 0;
-    }, [order]);
-
-    const pricePersent = useMemo(() => {
-        return Number(priceMemo) - Number(priceDiscountMemo) + Number(discountMemo);
-    }, [priceMemo, discountMemo]);
+    }, [totalPrice]);
 
     const totalPriceMemo = useMemo(() => {
-        return Number(pricePersent) - Number(deliveryPriceMemo) - 5000;
-    }, [pricePersent, deliveryPriceMemo]);
+        return Number(totalPrice) + Number(deliveryPriceMemo) - 5000;
+    }, [totalPrice, deliveryPriceMemo]);
 
     const handleAddOrder = () => {
         if (user?.access_token && user?.name && user?.address && user?.phone && user?.id) {
@@ -94,9 +65,9 @@ const PaymentPage = () => {
                 address: user?.address,
                 phone: user?.phone,
                 paymentMethod: payment,
-                itemsPrice: priceMemo,
+                itemsPrice: totalPrice,
                 shippingPrice: deliveryPriceMemo,
-                totalPrice: pricePersent,
+                totalPrice: totalPriceMemo,
                 user: user?.id,
                 email: user?.email,
             });
@@ -114,11 +85,14 @@ const PaymentPage = () => {
 
     useEffect(() => {
         if (isSuccess) {
+            // trước khi success phải xóa ở trong redux
+            const productToRemove = selectedItem?.product; // lấy id của product
+            dispatch(removeAllOrderProduct({ listChecked: productToRemove }));
             message.success('Đặt hàng thành công');
             navigate('/orderSuccess', {
                 state: {
                     payment,
-                    orders: order?.orderItems,
+                    orders: selectedItem?.orderItems,
                     totalPriceMemo: totalPriceMemo,
                 },
             });
@@ -168,18 +142,16 @@ const PaymentPage = () => {
                                                     GIAO TIẾT KIỆM
                                                 </span>
                                                 <span>
-                                                    {order?.orderItems[0].price} <sup>đ</sup>{' '}
+                                                    {selectedItem.price} <sup>đ</sup>{' '}
                                                 </span>
                                             </div>
                                             <div className={cx('content_left')}>
                                                 <div>
-                                                    <img alt="" src="" width={48} height={48} />
+                                                    <img alt="" src={selectedItem?.image} width={48} height={48} />
                                                 </div>
-                                                <div className={cx('noidung')}>{order?.orderItems[0]?.name}</div>
+                                                <div className={cx('noidung')}>{selectedItem?.name}</div>
                                             </div>
-                                            <div style={{ float: 'right' }}>
-                                                Số lượng: {order?.orderItems[0].amount}
-                                            </div>
+                                            <div style={{ float: 'right' }}>Số lượng: {selectedItem?.amount}</div>
                                         </div>
                                         <div className={cx('right-content')}>
                                             <div className={cx('wrapper_icon')}>
@@ -412,7 +384,7 @@ const PaymentPage = () => {
                                             <div className={cx('provisional', 'chung')}>
                                                 <div className={cx('title_chung')}>Tạm tính</div>
                                                 <div>
-                                                    {convertPrice(pricePersent)} <sup>đ</sup>
+                                                    {convertPrice(totalPrice)} <sup>đ</sup>
                                                 </div>
                                             </div>
                                             <div className={cx('ship', 'chung')}>

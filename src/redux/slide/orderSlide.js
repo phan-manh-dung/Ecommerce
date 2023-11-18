@@ -44,7 +44,6 @@ export const orderSlide = createSlice({
         },
         removeAllOrderProduct: (state, action) => {
             const { listChecked } = action.payload;
-
             const itemOrders = state?.orderItems?.filter((item) => !listChecked.includes(item.product));
             const itemOrdersSelected = state?.orderItems?.filter((item) => !listChecked.includes(item.product));
             state.orderItems = itemOrders;
