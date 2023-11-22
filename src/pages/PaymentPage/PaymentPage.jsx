@@ -20,14 +20,18 @@ import free_ship from '~/assets/img_Global/free_ship.png';
 import { Checkbox, Col, Radio, Row, message } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronRight, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { useQuery } from '@tanstack/react-query';
 import ButtonComponent from '~/component/ButtonComponent/Buttoncomponent';
 import { useDispatch, useSelector } from 'react-redux';
 import { useMutationHook } from '~/hook/useMutationHook';
+import * as ProductService from '~/service/ProductService';
 
 import * as OrderService from '~/service/OrderService';
 import { convertPrice } from '~/utils';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { removeAllOrderProduct, removeAllSelectedProducts } from '~/redux/slide/orderSlide';
+import { updateProduct } from '~/service/ProductService';
+import { logDOM } from '@testing-library/react';
 
 const cx = classNames.bind(styles);
 
@@ -36,11 +40,29 @@ const PaymentPage = () => {
     const user = useSelector((state) => state.user);
     const location = useLocation();
     const selectedItem = location.state?.selectedItem;
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const [payment, setPayment] = useState('later_money');
-    const navigate = useNavigate();
+
     const { totalPrice } = location.state || {};
-    const dispatch = useDispatch();
+    const idProduct = selectedItem?.product;
+
+    const initial = () => ({
+        name: '',
+        price: '',
+        description: '',
+        rating: '',
+        image: '',
+        type: '',
+        countInStock: '',
+        newType: '',
+        color: '',
+        discount: '',
+        sold: '',
+    });
+
+    const [productData, setProductData] = useState(initial); // lấy data
 
     // tính phí vận chuyển
     const deliveryPriceMemo = useMemo(() => {
@@ -83,11 +105,60 @@ const PaymentPage = () => {
     const { isLoading, data, isSuccess, isError } = mutationAddOrder;
     const { data: dataAdd, isLoading: isLoadingAddOrder } = mutationAddOrder;
 
+    // mutation update
+    const mutationUpdateProduct = useMutationHook((data) => {
+        const { id, token, ...rests } = data;
+        const res = ProductService.updateProduct(id, { ...rests }, token);
+        return res;
+    });
+
+    // update product
+    const updateProduct = async () => {
+        try {
+            await mutationUpdateProduct.mutate({
+                id: idProduct,
+                token: user?.access_token,
+                sold: productData.sold + 1,
+                countInStock: productData.countInStock - 1,
+            });
+        } catch (error) {
+            // handle error
+        }
+    };
+
+    useEffect(() => {
+        const fetchData = async (idProduct) => {
+            try {
+                const res = await ProductService.getDetailProduct(idProduct);
+                if (res?.data) {
+                    setProductData({
+                        name: res?.data?.name,
+                        price: res?.data?.price,
+                        description: res?.data?.description,
+                        rating: res?.data?.rating,
+                        image: res?.data?.image,
+                        type: res?.data?.type,
+                        countInStock: res?.data?.countInStock,
+                        discount: res?.data?.discount,
+                        color: res?.data?.color,
+                        sold: res?.data?.sold,
+                    });
+                }
+            } catch (error) {
+                throw error;
+            }
+        };
+
+        fetchData(idProduct);
+    }, []);
+
     useEffect(() => {
         if (isSuccess) {
+            updateProduct();
             // trước khi success phải xóa ở trong redux
             const productToRemove = selectedItem?.product; // lấy id của product
             dispatch(removeAllOrderProduct({ listChecked: productToRemove }));
+
             message.success('Đặt hàng thành công');
             navigate('/orderSuccess', {
                 state: {

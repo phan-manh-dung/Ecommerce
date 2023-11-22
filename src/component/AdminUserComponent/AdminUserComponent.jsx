@@ -648,17 +648,7 @@ const AdminUserComponent = () => {
                                     name="address"
                                 />
                             </Form.Item>
-                            {/* <Form.Item
-                                label="Birth"
-                                name="dateOfBirth"
-                                rules={[{ required: true, message: 'Please input your dateOfBirth!' }]}
-                            >
-                                <Input
-                                    value={stateUserDetails.dateOfBirth}
-                                    onChange={handleOnChangeDetail}
-                                    name="description"
-                                />
-                            </Form.Item> */}
+
                             <Form.Item
                                 label="Sex"
                                 name="sex"

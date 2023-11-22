@@ -31,7 +31,7 @@ const CardComponent = (props) => {
                 </div>
                 <div className={cx('user_name')}>{name}</div>
                 <div className={cx('user_sold')}>
-                    {rating} <StarFilled style={{ fontSize: '10px', color: '#ffce3d' }} /> | Đã bán: {sold}
+                    {rating} <StarFilled style={{ fontSize: '10px', color: '#ffce3d' }} /> | Đã bán: {sold || 0}
                 </div>
                 <div className={cx('user_wrapper-price')}>
                     <div className={cx('user_price')}>

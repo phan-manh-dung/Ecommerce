@@ -65,7 +65,7 @@ const AdminProductComponent = () => {
     // update product information
     const mutationUpdate = useMutationHook((data) => {
         const { id, token, ...rests } = data;
-        const res = ProductService.updateProduct(id, token, { ...rests });
+        const res = ProductService.updateProduct(id, { ...rests }, token);
         return res;
     });
 
@@ -83,6 +83,7 @@ const AdminProductComponent = () => {
 
     // useQuery
     const queryProduct = useQuery({ queryKey: ['products'], queryFn: getAllProduct });
+
     const typeProduct = useQuery({ queryKey: ['type-product'], queryFn: fetchAllTypeProduct });
 
     // get detail product on service
@@ -95,14 +96,6 @@ const AdminProductComponent = () => {
                 description: res?.data?.description,
                 rating: res?.data?.rating,
                 image: res?.data?.image,
-                image1: res?.data?.image1,
-                image2: res?.data?.image2,
-                image3: res?.data?.image3,
-                image4: res?.data?.image4,
-                image5: res?.data?.image5,
-                image6: res?.data?.image6,
-                image7: res?.data?.image7,
-                image8: res?.data?.image8,
                 type: res?.data?.type,
                 countInStock: res?.data?.countInStock,
                 discount: res?.data?.discount,
@@ -497,14 +490,6 @@ const AdminProductComponent = () => {
             description: '',
             rating: '',
             image: '',
-            image1: '',
-            image2: '',
-            image3: '',
-            image4: '',
-            image5: '',
-            image6: '',
-            image7: '',
-            image8: '',
             type: '',
             countInStock: '',
             color: '',
@@ -578,7 +563,7 @@ const AdminProductComponent = () => {
     };
 
     // update product
-    const onUpdateProduct = () => {
+    const onUpdateProductNew = () => {
         mutationUpdate.mutate(
             { id: rowSelected, token: user?.access_token, ...stateProductDetails },
             {
@@ -779,9 +764,9 @@ const AdminProductComponent = () => {
                             wrapperCol={{ span: 18 }}
                             style={{ maxWidth: 600 }}
                             initialValues={{ remember: true }}
-                            onFinish={onUpdateProduct}
-                            form={form}
+                            onFinish={onUpdateProductNew}
                             autoComplete="off"
+                            form={form}
                         >
                             <Form.Item
                                 label="Name"
@@ -895,7 +880,7 @@ const AdminProductComponent = () => {
                                     </Upload>
                                 </div>
                             </Form.Item>
-                            <Button type="primary" htmlType="submit">
+                            <Button type="primary" htmlType="submit" onClick={onUpdateProductNew}>
                                 Submit
                             </Button>
                         </Form>

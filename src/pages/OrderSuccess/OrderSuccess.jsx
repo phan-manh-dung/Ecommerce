@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 
 import styles from './OrderSuccess.module.scss';
 import classNames from 'classnames/bind';
@@ -8,9 +9,9 @@ import call from '~/assets/img_Global/call.png';
 import { Col, Row } from 'antd';
 import { convertPrice } from '~/utils';
 import ButtonComponent from '~/component/ButtonComponent/Buttoncomponent';
-import donu from '~/assets/img_products/dongu4.jpg';
 import ch_play from '~/assets/img_Global/chplay.png';
 import app_store from '~/assets/img_Global/appstore.png';
+import * as ProductService from '~/service/ProductService';
 const cx = classNames.bind(styles);
 
 const OrderSuccess = () => {
@@ -18,6 +19,7 @@ const OrderSuccess = () => {
     const { state } = useLocation();
     const priceProduct = state?.totalPriceMemo;
     const id = order?.orderItems[0]?.product;
+
     return (
         <div className={cx('wrapper_order')}>
             <div className={cx('container_order')}>

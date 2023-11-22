@@ -130,6 +130,8 @@ const ProductDetailComponent = ({ idProduct }) => {
                             <a href="/">Trang chủ</a>
                         </div>
                         <img alt="right_arrow" src={img_right_arrow} width={18} height={18} />
+                        <span className={cx('type-title')}>{productsDetail?.type}</span>
+                        <img alt="right_arrow" src={img_right_arrow} width={18} height={18} />
                         <span className={cx('type-title')}>{productsDetail?.name}</span>
                     </div>
                     <div className={cx('wrapper_row')}>
@@ -209,7 +211,7 @@ const ProductDetailComponent = ({ idProduct }) => {
                                                             />
                                                         ))}
                                                     <span className={cx('comment')}>Đã bán</span>
-                                                    <span className={cx('sold')}>{productsDetail?.sold}</span>
+                                                    <span className={cx('sold')}>{productsDetail?.sold || 0}</span>
                                                 </div>
                                                 <div className={cx('wrapper_price')}>
                                                     <div className={cx('price')}>
