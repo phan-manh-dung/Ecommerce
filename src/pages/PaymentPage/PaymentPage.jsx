@@ -29,9 +29,7 @@ import * as ProductService from '~/service/ProductService';
 import * as OrderService from '~/service/OrderService';
 import { convertPrice } from '~/utils';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { removeAllOrderProduct, removeAllSelectedProducts } from '~/redux/slide/orderSlide';
-import { updateProduct } from '~/service/ProductService';
-import { logDOM } from '@testing-library/react';
+import { removeAllOrderProduct } from '~/redux/slide/orderSlide';
 
 const cx = classNames.bind(styles);
 
@@ -45,8 +43,8 @@ const PaymentPage = () => {
 
     const [payment, setPayment] = useState('later_money');
 
-    const { totalPrice } = location.state || {};
-    const idProduct = selectedItem?.product;
+    const { totalPrice } = location.state || {}; // lấy data từ order
+    const idProduct = selectedItem?.product; // lấy id
 
     const initial = () => ({
         name: '',
@@ -62,7 +60,7 @@ const PaymentPage = () => {
         sold: '',
     });
 
-    const [productData, setProductData] = useState(initial); // lấy data
+    const [productData, setProductData] = useState(initial); // sét data
 
     // tính phí vận chuyển
     const deliveryPriceMemo = useMemo(() => {
@@ -75,10 +73,19 @@ const PaymentPage = () => {
         }
     }, [totalPrice]);
 
+    // total price
     const totalPriceMemo = useMemo(() => {
         return Number(totalPrice) + Number(deliveryPriceMemo) - 5000;
     }, [totalPrice, deliveryPriceMemo]);
 
+    // gọi api tạo order
+    const mutationAddOrder = useMutationHook((data) => {
+        const { token, ...rests } = data;
+        const res = OrderService.createOrder({ ...rests }, token);
+        return res;
+    });
+
+    // thay đổi dữ liệu vào redux
     const handleAddOrder = () => {
         if (user?.access_token && user?.name && user?.address && user?.phone && user?.id) {
             mutationAddOrder.mutate({
@@ -95,12 +102,6 @@ const PaymentPage = () => {
             });
         }
     };
-
-    const mutationAddOrder = useMutationHook((data) => {
-        const { token, ...rests } = data;
-        const res = OrderService.createOrder({ ...rests }, token);
-        return res;
-    });
 
     const { isLoading, data, isSuccess, isError } = mutationAddOrder;
     const { data: dataAdd, isLoading: isLoadingAddOrder } = mutationAddOrder;
@@ -121,12 +122,11 @@ const PaymentPage = () => {
                 sold: productData.sold + 1,
                 countInStock: productData.countInStock - 1,
             });
-        } catch (error) {
-            // handle error
-        }
+        } catch (error) {}
     };
 
     useEffect(() => {
+        // gọi api lấy dữ liệu chi tiết
         const fetchData = async (idProduct) => {
             try {
                 const res = await ProductService.getDetailProduct(idProduct);
