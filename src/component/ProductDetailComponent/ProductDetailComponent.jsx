@@ -322,7 +322,10 @@ const ProductDetailComponent = ({ idProduct }) => {
                                             </div>
                                         </div>
                                         <div className={cx('provisional')}>Tạm tính</div>
-                                        <div className={cx('price')}>{productsDetail?.price * numProduct}</div>
+                                        <div className={cx('price')}>
+                                            {convertPrice(productsDetail?.price * numProduct)}
+                                            <sup>đ</sup>
+                                        </div>
                                         <div className={cx('wrapper_button')}>
                                             <div className={cx('button')}>
                                                 <div style={{ paddingBottom: '10px' }} onClick={handleAddOrderProduct}>

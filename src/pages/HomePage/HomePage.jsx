@@ -7,13 +7,39 @@ import slider1 from '~/assets/img_Global/slide1.png';
 import slider2 from '~/assets/img_Global/slide2.png';
 import slider3 from '~/assets/img_Global/slide3.png';
 import { Col, Row } from 'antd';
-import CategoryComponent from '~/component/CategoryComponent/CategoryComponent';
+
 import TypeProductComponent from '~/component/TypeProductComponent/TypeProductComponent';
 import img1 from '../../assets/img_category/img1.png';
 import img2 from '../../assets/img_category/img2.png';
 import img3 from '../../assets/img_category/img3.png';
 import img4 from '../../assets/img_category/img4.png';
 import img5 from '../../assets/img_category/img5.png';
+import img6 from '../../assets/img_category/tuithoitrangnam.jpg';
+import img7 from '../../assets/img_category/donghovatrangsuc.jpg';
+import img8 from '../../assets/img_category/giaydepnam.jpg';
+import img9 from '../../assets/img_category/giaydepnu.jpg';
+import img10 from '../../assets/img_category/hangquocte.jpg';
+import img11 from '../../assets/img_category/thoitrangnu.jpg';
+import img12 from '../../assets/img_category/ngon.jpg';
+import img13 from '../../assets/img_category/nhaccuadoisong.jpg';
+import img14 from '../../assets/img_category/phukienthoitrang.jpg';
+import img15 from '../../assets/img_category/nhacsach.jpg';
+import img16 from '../../assets/img_category/bachhoaonline.jpg';
+import img17 from '../../assets/img_category/dientudienlanh.jpg';
+import img18 from '../../assets/img_category/mayanhquayphim.jpg';
+import img19 from '../../assets/img_category/otoxemay.jpg';
+import img20 from '../../assets/img_category/thethaodangoai.jpg';
+import img21 from '../../assets/img_category/thietbidientu.jpg';
+
+import img22 from '../../assets/img_category/exchange.jpg';
+import img23 from '../../assets/img_category/nowtotvanhanh.jpg';
+import img24 from '../../assets/img_category/giaremoingay.jpg';
+import img25 from '../../assets/img_category/xakho.jpg';
+import img26 from '../../assets/img_category/magiamgia.jpg';
+import img27 from '../../assets/img_category/uudaithevi.jpg';
+import img28 from '../../assets/img_category/dongtien.jpg';
+import img29 from '../../assets/img_category/muatrc.jpg';
+
 import img_store from '../../assets/img_Global/store.png';
 import CardComponent from '~/component/CardComponent/CardComponent';
 import AssistantComponent from '~/component/AssistantComponent/AssistantComponent';
@@ -32,8 +58,65 @@ const HomePage = () => {
     const [limit, setLimit] = useState(6);
     const [loading, setLoading] = useState(false);
     const [typeProduct, setTypeProduct] = useState([]);
-    const arrImg = [img1, img2, img3, img4, img5];
-    const arr2 = ['Đồ chơi trẻ em ', 'Máy tính bảng', 'Laptop', 'Thời trang nam', 'Túi xách'];
+    const arrImg = [
+        img1,
+        img2,
+        img3,
+        img4,
+        img5,
+        img6,
+        img7,
+        img8,
+        img9,
+        img10,
+        img11,
+        img12,
+        img13,
+        img14,
+        img15,
+        img16,
+        img17,
+        img18,
+        img19,
+        img20,
+        img21,
+    ];
+    const arr2 = [
+        'Đồ chơi - Mẹ và bé ',
+        'Máy tính bảng',
+        'Son - Make up',
+        'Nồi chiên',
+        'Túi xách',
+        'Túi thời trang nam',
+        'Đồng hồ',
+        'Giày dép nam',
+        'Giày dép nữ',
+        'Đồ quốc tế',
+        'Thời trang nữ',
+        'NGON',
+        'Đời sống sức khỏe',
+        'Mắt kính',
+        'Nhà sách của Dũng',
+        'Bách hóa online',
+        'Điện tử - điện lạnh',
+        'Máy ảnh - quay phim',
+        'Oto - Xe máy - Xe đạp',
+        'Thể thao dã ngoại',
+        'Tai nghe',
+    ];
+
+    const arrDanhMuc = [img22, img23, img24, img25, img26, img27, img28, img29];
+
+    const arrTitleDanhMuc = [
+        'Exchange',
+        'Tốt & nhanh',
+        'Giá rẻ mỗi ngày',
+        'Xả kho',
+        'Mã giảm giá',
+        'Ưu đãi thẻ , ví',
+        'Đóng tiền , nạp thẻ',
+        'Mua trước trả sau',
+    ];
 
     const fetchProductAll = async (context) => {
         const limit = context?.queryKey && context?.queryKey[1];
@@ -81,16 +164,18 @@ const HomePage = () => {
                                 </div>
                                 <div>
                                     <div className={cx('wrapper-left_title')}>
-                                        <div>
-                                            {arrImg.map((img) => {
-                                                return <CategoryComponent width={32} height={32} src={img} key={img} />;
-                                            })}
-                                        </div>
-                                        <div>
-                                            {arr2.map((max) => {
-                                                return <CategoryComponent name={max} key={max} />;
-                                            })}
-                                        </div>
+                                        {arrImg.map((imgSrc, index) => (
+                                            <div key={index} className="wrapper-left_title">
+                                                <div className={cx('container-img_title')}>
+                                                    <div className="img_left">
+                                                        <img src={imgSrc} alt="img" width={32} height={32} />
+                                                    </div>
+                                                    <div className="title_left" style={{ paddingLeft: '10px' }}>
+                                                        {arr2[index]} {/* Hiển thị tiêu đề từ mảng arr2 */}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
                                     </div>
                                 </div>
                             </div>
@@ -98,19 +183,19 @@ const HomePage = () => {
                                 <div className={cx('wrapper-title')}>
                                     <span className={cx('left-title')}>Nổi bật</span>
                                 </div>
-                                <div>
-                                    <div className={cx('wrapper-left_title')}>
-                                        <div>
-                                            {arrImg.map((img) => {
-                                                return <CategoryComponent width={32} height={32} src={img} key={img} />;
-                                            })}
+                                <div className={cx('wrapper-left_title')}>
+                                    {arrDanhMuc.map((imgSrc, index) => (
+                                        <div key={index} className="wrapper-left_title">
+                                            <div className={cx('container-img_title')}>
+                                                <div className="img_left">
+                                                    <img src={imgSrc} alt="img" width={32} height={32} />
+                                                </div>
+                                                <div className="title_left" style={{ paddingLeft: '10px' }}>
+                                                    {arrTitleDanhMuc[index]} {/* Hiển thị tiêu đề từ mảng arr2 */}
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div>
-                                            {arr2.map((max) => {
-                                                return <CategoryComponent name={max} key={max} />;
-                                            })}
-                                        </div>
-                                    </div>
+                                    ))}
                                 </div>
                             </div>
                             <div className={cx('home-left2')}>

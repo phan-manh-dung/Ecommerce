@@ -36,7 +36,6 @@ const TableComponent = (props) => {
     };
 
     const handleDeleteAll = () => {
-        console.log('sdd');
         handleDeleteMany(rowSelectedKeys);
     };
     // const exportExcel = () => {

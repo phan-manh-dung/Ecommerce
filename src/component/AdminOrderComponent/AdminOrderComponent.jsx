@@ -147,6 +147,42 @@ const AdminOrderComponent = () => {
         });
     };
 
+    // delete many , data with token on service
+    const mutationDeletedMany = useMutationHook((data) => {
+        const { token, ...ids } = data;
+        const res = OrderService.deleteManyOrder(ids, token);
+        return res;
+    });
+
+    // delete redux
+    const handleDeleteManyOrder = (ids) => {
+        mutationDeletedMany.mutate(
+            { ids: ids, token: user?.access_token },
+            {
+                onSettled: () => {
+                    queryOrder.refetch();
+                },
+            },
+        );
+    };
+
+    const {
+        data: dataDeletedMany,
+        isLoading: isLoadingDeletedMany,
+        isSuccess: isSuccessDeletedMany,
+        isError: isErrorDeletedMany,
+    } = mutationDeletedMany;
+
+    // effect success delete many
+    useEffect(() => {
+        if (isSuccessDeletedMany && dataDeletedMany?.status === 'OK') {
+            message.successDelete();
+            handleCancelDelete();
+        } else if (isErrorDeletedMany) {
+            message.errorDelete();
+        }
+    }, [isSuccessDeletedMany]);
+
     // open modal detail product
     useEffect(() => {
         if (!isModalOpen) {
@@ -217,7 +253,6 @@ const AdminOrderComponent = () => {
         ),
     });
 
-    console.log('data', dataTable);
     const renderAction = () => {
         return (
             <div>
@@ -233,6 +268,8 @@ const AdminOrderComponent = () => {
             </div>
         );
     };
+
+    console.log('data', dataTable);
 
     const columns = [
         {
@@ -326,7 +363,7 @@ const AdminOrderComponent = () => {
                         data={dataTable}
                         orders={order?.data}
                         isLoading={isLoadingOrders}
-                        // handleDeleteMany={handleDeleteManyProducts}
+                        handleDeleteMany={handleDeleteManyOrder}
                         onRow={(record, rowIndex) => {
                             return {
                                 onClick: (event) => {

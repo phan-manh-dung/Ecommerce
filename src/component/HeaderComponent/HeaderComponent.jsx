@@ -13,6 +13,8 @@ import * as UserService from '~/service/UserService';
 import { resetUser } from '~/redux/slide/userSlide';
 import { searchProduct } from '../../redux/slide/productSlide';
 import { ShoppingCartOutlined } from '@ant-design/icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 
 const cx = classNames.bind(styles);
 
@@ -56,7 +58,13 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
                     Quản lí hệ thống
                 </p>
             )}
-            <p onClick={handleLogOut}>Log out</p>
+            <p
+                onClick={handleLogOut}
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+            >
+                Log out
+                <FontAwesomeIcon icon={faRightFromBracket} />
+            </p>
         </div>
     );
 
@@ -82,16 +90,27 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
                                     </a>
                                 </span>
                             </div>
-                            <div className={cx('row_right-list')}>
+                            <div
+                                className={cx('row_right-list')}
+                                style={{ width: '15%', justifyContent: 'space-between', display: 'flex' }}
+                            >
                                 <img src={logo_astra} alt="astra" style={{ width: '24px', height: '24px' }} />
-                                <span style={{ fontSize: '14px', color: 'rgb(128, 128, 137)', paddingLeft: '5px' }}>
+                                <span
+                                    style={{
+                                        fontSize: '14px',
+                                        color: 'rgb(128, 128, 137)',
+                                        paddingLeft: '5px',
+                                    }}
+                                >
                                     Astra
                                 </span>
                             </div>
                             {user?.access_token ? (
                                 <>
                                     <Popover content={content} trigger="hover">
-                                        <div style={{ cursor: 'pointer' }}>{user?.nickname || user?.name}</div>
+                                        <div style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+                                            {user?.nickname || user?.name}
+                                        </div>
                                     </Popover>
                                 </>
                             ) : (

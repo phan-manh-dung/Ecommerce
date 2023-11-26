@@ -72,7 +72,18 @@
 }
 
 .wrapper-left_title {
-    display: flex;
+    padding: 0 5px;
+    .container-img_title {
+        border-radius: 6px;
+        margin: 5px 0;
+        padding: 5px 5px;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        &:hover {
+            background-color: #eee;
+        }
+    }
 }
 
 .see_more {

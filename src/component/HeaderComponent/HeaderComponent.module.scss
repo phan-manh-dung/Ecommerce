@@ -22,19 +22,28 @@
 .row_right-list {
     display: flex;
     cursor: pointer;
+    align-items: center;
+    padding: 1%;
+    &:hover {
+        background-color: #eee;
+        border-radius: 6px;
+    }
 }
 
 .row_right {
     display: flex;
     justify-content: space-around;
+    height: 34px;
 }
 
 .content-header {
     padding: 0;
     margin: 0;
     p {
-        padding: 5px 0;
+        padding: 5px;
         &:hover {
+            cursor: pointer;
+            border-radius: 4px;
             background-color: rgb(233, 233, 237);
         }
     }
