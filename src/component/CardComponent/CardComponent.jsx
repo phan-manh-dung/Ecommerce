@@ -47,7 +47,7 @@ const CardComponent = (props) => {
                 </div>
                 <div className={cx('user_speed')}>
                     <img alt="now" src={img_now} width={32} height={16} />
-                    <span className={cx('speed_title')}>Giao hàng siêu tốc</span>
+                    <span className={cx('speed_title')}>Giao hàng nhanh</span>
                 </div>
             </Card>
         </div>

@@ -433,6 +433,7 @@ const AdminUserComponent = () => {
             },
         );
     };
+
     return (
         <div className={cx('container_user')}>
             <div className={cx('wrapper_user')}>

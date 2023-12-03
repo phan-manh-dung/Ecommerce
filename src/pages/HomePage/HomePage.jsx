@@ -206,7 +206,7 @@ const HomePage = () => {
                             </div>
                         </div>
                     </Col>
-                    <Col xs={0} sm={19}>
+                    <Col xs={0} sm={19} className={cx('scrollable-content')}>
                         <div>
                             <SliderComponent arrImages={[slider1, slider2, slider3]} />
                         </div>

@@ -8,6 +8,7 @@ const initialState = {
     address: '',
     avatar: '',
     city: '',
+    moreAddress: '',
     dateOfBirth: '',
     sex: '',
     country: '',
@@ -31,6 +32,7 @@ export const userSlide = createSlice({
                 address = '',
                 avatar = '',
                 city = '',
+                moreAddress = '',
                 dateOfBirth = '',
                 sex = '',
                 nickname = '',
@@ -44,6 +46,7 @@ export const userSlide = createSlice({
             state.address = address;
             state.avatar = avatar;
             state.city = city;
+            state.moreAddress = moreAddress;
             state.dateOfBirth = dateOfBirth;
             state.sex = sex;
             state.country = country;
@@ -60,6 +63,7 @@ export const userSlide = createSlice({
             state.address = '';
             state.avatar = '';
             state.city = '';
+            state.moreAddress = '';
             state.dateOfBirth = '';
             state.sex = '';
             state.country = '';

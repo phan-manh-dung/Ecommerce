@@ -34,17 +34,17 @@ import { removeAllOrderProduct } from '~/redux/slide/orderSlide';
 const cx = classNames.bind(styles);
 
 const PaymentPage = () => {
-    // const order = useSelector((state) => state.order);
+    //  const order = useSelector((state) => state.order);
     const user = useSelector((state) => state.user);
     const location = useLocation();
-    const selectedItem = location.state?.selectedItem;
+    const selectedItem = location.state?.selectedItem || location.state?.productsDetail;
     const dispatch = useDispatch();
     const navigate = useNavigate();
-
     const [payment, setPayment] = useState('later_money');
-
     const { totalPrice } = location.state || {}; // lấy data từ order
-    const idProduct = selectedItem?.product; // lấy id
+    const idProduct = selectedItem?.product || selectedItem?._id; // lấy id
+
+    const { totalPriceProduct, numProduct } = location.state || {};
 
     const initial = () => ({
         name: '',
@@ -64,19 +64,19 @@ const PaymentPage = () => {
 
     // tính phí vận chuyển
     const deliveryPriceMemo = useMemo(() => {
-        if (totalPrice > 200000) {
+        if (totalPrice > 200000 || totalPriceProduct > 200000) {
             return 20000;
-        } else if (totalPrice < 200000) {
+        } else if (totalPrice < 200000 || totalPriceProduct < 200000) {
             return 10000;
         } else {
             return 0;
         }
-    }, [totalPrice]);
+    }, [totalPrice, totalPriceProduct]);
 
     // total price
     const totalPriceMemo = useMemo(() => {
-        return Number(totalPrice) + Number(deliveryPriceMemo) - 5000;
-    }, [totalPrice, deliveryPriceMemo]);
+        return (Number(totalPrice) || Number(totalPriceProduct)) + Number(deliveryPriceMemo) - 5000;
+    }, [totalPrice, deliveryPriceMemo, totalPriceProduct]);
 
     // gọi api tạo order
     const mutationAddOrder = useMutationHook((data) => {
@@ -119,8 +119,8 @@ const PaymentPage = () => {
             await mutationUpdateProduct.mutate({
                 id: idProduct,
                 token: user?.access_token,
-                sold: productData.sold + 1,
-                countInStock: productData.countInStock - 1,
+                sold: productData.sold + (selectedItem?.amount || numProduct),
+                countInStock: productData.countInStock - (selectedItem?.amount || numProduct),
             });
         } catch (error) {}
     };
@@ -213,7 +213,7 @@ const PaymentPage = () => {
                                                     GIAO TIẾT KIỆM
                                                 </span>
                                                 <span>
-                                                    {selectedItem.price} <sup>đ</sup>{' '}
+                                                    {selectedItem.price} <sup>đ</sup>
                                                 </span>
                                             </div>
                                             <div className={cx('content_left')}>
@@ -222,7 +222,9 @@ const PaymentPage = () => {
                                                 </div>
                                                 <div className={cx('noidung')}>{selectedItem?.name}</div>
                                             </div>
-                                            <div style={{ float: 'right' }}>Số lượng: {selectedItem?.amount}</div>
+                                            <div style={{ float: 'right' }}>
+                                                Số lượng: {selectedItem?.amount || numProduct}
+                                            </div>
                                         </div>
                                         <div className={cx('right-content')}>
                                             <div className={cx('wrapper_icon')}>
@@ -380,13 +382,12 @@ const PaymentPage = () => {
                                             <span>Thay đổi</span>
                                         </div>
                                         <div className={cx('name')}>
-                                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Perferendis,
-                                            harum!
+                                            {user?.moreAddress},{user?.address},{user?.city}
                                         </div>
                                         {/* address */}
                                         <div className={cx('address-detail')}>
                                             <span className={cx('house')}>Nhà</span>
-                                            <span style={{ color: 'rgb(128, 128, 137)' }}>lorem</span>
+                                            <span style={{ color: 'rgb(128, 128, 137)' }}>{user?.nickname}</span>
                                         </div>
                                     </div>
                                     {/* sale */}
@@ -455,7 +456,8 @@ const PaymentPage = () => {
                                             <div className={cx('provisional', 'chung')}>
                                                 <div className={cx('title_chung')}>Tạm tính</div>
                                                 <div>
-                                                    {convertPrice(totalPrice)} <sup>đ</sup>
+                                                    {convertPrice(totalPrice) || convertPrice(totalPriceProduct)}{' '}
+                                                    <sup>đ</sup>
                                                 </div>
                                             </div>
                                             <div className={cx('ship', 'chung')}>
@@ -473,7 +475,8 @@ const PaymentPage = () => {
                                             <div className={cx('total_price')}>
                                                 <div>Tổng tiền</div>
                                                 <div className={cx('wrapper_vat')}>
-                                                    {convertPrice(totalPriceMemo)} VND
+                                                    {convertPrice(totalPriceMemo)}
+                                                    VND
                                                 </div>
                                             </div>
                                             <div className={cx('free_ship')}>
