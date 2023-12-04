@@ -3,10 +3,11 @@
     max-width: 100%;
     padding: 0 20px;
     background-color: var(--primary-color-body);
+    padding-bottom: 26px;
 }
 
 .scrollable-content {
-    max-height: 600px; /* Điều chỉnh chiều cao tối đa của phần nội dung */
+    max-height: 1000px; /* Điều chỉnh chiều cao tối đa của phần nội dung */
     overflow-y: auto; /* Cho phép lăn cuộn dọc khi cần */
 }
 
@@ -95,4 +96,33 @@
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
+}
+
+// contaier imgs
+
+.container_imgs {
+    cursor: pointer;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr; /* 5 cột, cột cuối rộng hơn cho div lớn */
+    grid-template-rows: auto auto; /* 2 hàng */
+    grid-gap: 10px;
+    padding: 10px 0;
+
+    div > a > img {
+        border-radius: 12px;
+        transition: filter 0.3s ease;
+        &:hover {
+            filter: brightness(110%);
+        }
+    }
+}
+
+.container_imgs div {
+    text-align: center;
+    font-size: 30px;
+}
+
+.container_imgs .item1 {
+    grid-column: 1 / span 1; /* Div lớn chiếm cột 1 đến 3 */
+    grid-row: 1 / span 2; /* Chiếm 2 hàng */
 }

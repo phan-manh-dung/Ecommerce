@@ -5,6 +5,7 @@ import classNames from 'classnames/bind';
 
 import img_right_arrow from '~/assets/img_Global/right_arrow.png';
 import { Checkbox, Col, InputNumber, Radio, Row } from 'antd';
+import { useDispatch, useSelector } from 'react-redux';
 
 import img_location from '~/assets/img_Global/location.png';
 import img_now from '~/assets/img_Global/now.png';
@@ -25,13 +26,16 @@ import ButtonComponent from '~/component/ButtonComponent/Buttoncomponent';
 import CardComponent from '~/component/CardComponent/CardComponent';
 import * as ProductService from '~/service/ProductService';
 import { useLocation } from 'react-router-dom';
+import AddressComponent from '~/component/AddressComponent/AddressComponent';
 
 const cx = classNames.bind(styles);
 
 const TypeProductPage = () => {
+    const user = useSelector((state) => state.user);
     const { state } = useLocation();
     const [typeProduct, setTypeProduct] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [showAddressModal, setShowAddressModal] = useState(false);
     const [panigate, setPanigate] = useState({
         page: 0,
         limit: 10,
@@ -91,6 +95,15 @@ const TypeProductPage = () => {
         'Dược mỹ phẩm',
         'Sản phẩm thiên nhiên & Khác',
     ];
+
+    const handleOpenModalAddress = () => {
+        setShowAddressModal(true);
+    };
+
+    const handleCloseAddressModal = () => {
+        setShowAddressModal(false);
+    };
+
     return (
         <div className={cx('container_type-user')}>
             <div className={cx('wrapper-type')}>
@@ -113,11 +126,20 @@ const TypeProductPage = () => {
                                     );
                                 })}
                             </div>
-                            <div className={cx('wrapper_address')}>
+                            <div className={cx('wrapper_address')} onClick={handleOpenModalAddress}>
                                 <img alt="location" src={img_location} height={20} width={20} />
                                 <div className={cx('ship')}>Giao đến: </div>
-                                <span className={cx('address')}>Tô ký, Quận 12 , Hồ Chí Minh</span>
+                                <span className={cx('address')}>
+                                    {user?.moreAddress},{user?.address},{user?.city}
+                                </span>
                                 <span></span>
+                            </div>
+                            {/* address */}
+                            <div>
+                                <AddressComponent
+                                    showAddressModal={showAddressModal}
+                                    handleCloseAddressModal={handleCloseAddressModal}
+                                />
                             </div>
                             <div className={cx('wrapper_service')}>
                                 <span className={cx('title')}>Dịch vụ</span>
@@ -308,7 +330,7 @@ const TypeProductPage = () => {
                     <div className={cx('wrapper_right')}>
                         <div className={cx('right')}>
                             <div className={cx('search')}>
-                                <h2 className={cx('search-title')}>Làm Đẹp - Sức Khỏe</h2>
+                                <h2 className={cx('search-title')}>{typeProduct[0] && typeProduct[0].type}</h2>
                             </div>
                             <div className="slider_container">
                                 <div className={cx('slide')}>
@@ -375,7 +397,6 @@ const TypeProductPage = () => {
                                                     sold={products.sold}
                                                     id={products._id}
                                                 />
-                                                ;
                                             </React.Fragment>
                                         );
                                     })}

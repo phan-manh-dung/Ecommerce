@@ -34,3 +34,50 @@
         }
     }
 }
+
+.wrapper_address-modal {
+    height: auto;
+    .wrapper-title {
+        border-bottom: 1px solid #eee;
+        padding: 14px;
+        p {
+            margin: 0px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: 400;
+        }
+    }
+    .location {
+        padding: 6px;
+        p {
+            color: rgba(0, 0, 0, 0.54);
+        }
+    }
+    .check_group {
+        padding: 10px 0;
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+
+        p {
+            padding: 10px 0;
+        }
+    }
+    .button_address {
+        text-align: center;
+        padding: 10px 0;
+        button {
+            cursor: pointer;
+            width: 296px;
+            height: 40px;
+            color: rgb(255, 255, 255);
+            font-size: 13px;
+            line-height: 38px;
+            font-weight: 300;
+            border: none;
+            outline: none;
+            border-radius: 4px;
+            background-color: rgb(255, 66, 78);
+        }
+    }
+}

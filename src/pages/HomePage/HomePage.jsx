@@ -40,6 +40,16 @@ import img27 from '../../assets/img_category/uudaithevi.jpg';
 import img28 from '../../assets/img_category/dongtien.jpg';
 import img29 from '../../assets/img_category/muatrc.jpg';
 
+import img30 from '../../assets/img_products/product1.jpg';
+import img31 from '../../assets/img_products/product2.jpg';
+import img32 from '../../assets/img_products/product3.jpg';
+import img33 from '../../assets/img_products/product4.jpg';
+import img34 from '../../assets/img_products/product5.jpg';
+import img35 from '../../assets/img_products/product6.jpg';
+import img36 from '../../assets/img_products/product7.jpg';
+import img37 from '../../assets/img_products/product8.jpg';
+import img38 from '../../assets/img_products/product9.jpg';
+
 import img_store from '../../assets/img_Global/store.png';
 import CardComponent from '~/component/CardComponent/CardComponent';
 import AssistantComponent from '~/component/AssistantComponent/AssistantComponent';
@@ -207,13 +217,62 @@ const HomePage = () => {
                         </div>
                     </Col>
                     <Col xs={0} sm={19} className={cx('scrollable-content')}>
+                        {/* slide component */}
                         <div>
                             <SliderComponent arrImages={[slider1, slider2, slider3]} />
                         </div>
+                        {/* assistant */}
                         <div>
                             <AssistantComponent />
                         </div>
+                        {/* 2 */}
+                        <div className={cx('container_imgs')}>
+                            <div className={cx('item1')}>
+                                <a href="/">
+                                    <img alt="" src={img30} width={306} height={306} />
+                                </a>
+                            </div>
+                            <div className={cx('item2')}>
+                                <img alt="" src={img31} width={146} height={146} />
+                            </div>
+                            <div className={cx('item3')}>
+                                <a href="/">
+                                    <img alt="" src={img32} width={146} height={146} />
+                                </a>
+                            </div>
+                            <div className={cx('item4')}>
+                                <a href="/">
+                                    <img alt="" src={img33} width={146} height={146} />
+                                </a>
+                            </div>
+                            <div className={cx('item5')}>
+                                <a href="/">
+                                    <img alt="" src={img34} width={146} height={146} />
+                                </a>
+                            </div>
+                            <div className={cx('item6')}>
+                                <a href="/">
+                                    <img alt="" src={img35} width={146} height={146} />
+                                </a>
+                            </div>
+                            <div className={cx('item7')}>
+                                <a href="/">
+                                    <img alt="" src={img36} width={146} height={146} />
+                                </a>
+                            </div>
+                            <div className={cx('item8')}>
+                                <a href="/">
+                                    <img alt="" src={img37} width={146} height={146} />
+                                </a>
+                            </div>
+                            <div className={cx('item9')}>
+                                <a href="/">
+                                    <img alt="" src={img38} width={146} height={146} />
+                                </a>
+                            </div>
+                        </div>
 
+                        {/* wrapper card */}
                         <div className={cx('wrapper_card')}>
                             {product?.data?.map((products) => {
                                 return (
@@ -234,6 +293,7 @@ const HomePage = () => {
                             })}
                         </div>
 
+                        {/* button more */}
                         <div className={cx('see_more')} onClick={() => setLimit((prev) => prev + 1)}>
                             <ButtonComponent color="#fff" backgroundColor="#0099FF" textButton="Xem thêm" />
                         </div>

@@ -23,6 +23,7 @@ import black_friday from '~/assets/img_Global/black_fraiday.jpg';
 import robot from '~/assets/img_Global/robot.png';
 import tay from '~/assets/img_Global/chaptay.png';
 import chamthan from '~/assets/img_Global/chamthan.png';
+import logoshop from '~/assets/img_Global/logoshop.png';
 
 import { Col, InputNumber, Row } from 'antd';
 import { CaretLeftOutlined, MinusOutlined, PlusOutlined, StarFilled } from '@ant-design/icons';
@@ -37,7 +38,6 @@ import { convertPrice } from '~/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronRight, faComment, faPlus, faStar } from '@fortawesome/free-solid-svg-icons';
 import ModalComponent from '../ModalComponent/ModalComponent';
-import { Radio } from 'antd';
 import AddressComponent from '../AddressComponent/AddressComponent';
 const cx = classNames.bind(styles);
 
@@ -53,21 +53,8 @@ const ProductDetailComponent = ({ idProduct }) => {
     const [startIndex, setStartIndex] = useState(0);
     const imagesToShow = 6;
     const visibleImages = arrImageUsers.slice(startIndex, startIndex + imagesToShow);
-    const [clickOpenAddress, setClickOpenAddress] = useState(false);
-    const [value, setValue] = useState(null);
-    const [showOtherInfo, setShowOtherInfo] = useState(false);
     const [openSystem, setOpenSystem] = useState(false);
-
-    const onChangeInputAddress = (e) => {
-        const valueEnd = e.target.value;
-        setValue(valueEnd);
-
-        if (valueEnd === 'other') {
-            setShowOtherInfo(true);
-        } else {
-            setShowOtherInfo(false);
-        }
-    };
+    const [showAddressModal, setShowAddressModal] = useState(false);
 
     function generateRandom() {
         return `${Math.floor(Math.random() * 10)}${Math.floor(Math.random() * 10)}`;
@@ -165,20 +152,20 @@ const ProductDetailComponent = ({ idProduct }) => {
         }
     };
 
-    const handleOnChangeAddress = () => {
-        setClickOpenAddress(true);
-    };
-
-    const handleCancelDelete = () => {
-        setClickOpenAddress(false);
-    };
-
     const clickOpenSystem = () => {
         setOpenSystem(true);
     };
 
     const cancelOpenSystem = () => {
         setOpenSystem(false);
+    };
+
+    const handleOpenModalAddress = () => {
+        setShowAddressModal(true);
+    };
+
+    const handleCloseAddressModal = () => {
+        setShowAddressModal(false);
     };
 
     return (
@@ -339,7 +326,7 @@ const ProductDetailComponent = ({ idProduct }) => {
                                                         <div>
                                                             <span
                                                                 className={cx('change')}
-                                                                onClick={handleOnChangeAddress}
+                                                                onClick={handleOpenModalAddress}
                                                             >
                                                                 Đổi
                                                             </span>
@@ -403,7 +390,7 @@ const ProductDetailComponent = ({ idProduct }) => {
                                                     <Row>
                                                         <Col sm={4}>
                                                             <img
-                                                                src={the}
+                                                                src={logoshop}
                                                                 alt="the"
                                                                 width={40}
                                                                 height={40}
@@ -820,46 +807,12 @@ const ProductDetailComponent = ({ idProduct }) => {
                             </Col>
                         </Row>
                     </div>
-                    <ModalComponent title="" open={clickOpenAddress} onCancel={handleCancelDelete} footer={null}>
-                        <div className={cx('wrapper_address-modal')}>
-                            <div className={cx('wrapper-title')}>
-                                <p>Địa chỉ giao hàng</p>
-                            </div>
-                            <div style={{ backgroundColor: 'rgb(248, 248, 248)', padding: '4px', borderRadius: '6px' }}>
-                                <div className={cx('location')}>
-                                    <p>
-                                        Hãy chọn địa chỉ nhận hàng để được dự báo thời gian giao hàng cùng phí đóng gói,
-                                        vận chuyển một cách chính xác nhất.
-                                    </p>
-                                    <div>
-                                        {(user?.address || user?.city) && (
-                                            <div className={cx('check_group')}>
-                                                <Radio.Group onChange={onChangeInputAddress} value={value}>
-                                                    <p>
-                                                        <Radio
-                                                            value={user.address && user.city}
-                                                            checked={value === user.address || user.city}
-                                                        >
-                                                            {user.moreAddress},{user.address},{user.city}
-                                                        </Radio>
-                                                    </p>
-                                                    <p>
-                                                        <Radio value="other">Chọn khu vực giao hàng khác</Radio>
-                                                    </p>
-                                                </Radio.Group>
-                                            </div>
-                                        )}
-
-                                        {showOtherInfo && (
-                                            <div>
-                                                <AddressComponent />
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </ModalComponent>
+                    <div>
+                        <AddressComponent
+                            showAddressModal={showAddressModal}
+                            handleCloseAddressModal={handleCloseAddressModal}
+                        />
+                    </div>
                     <ModalComponent title="" footer={null} open={openSystem} onCancel={cancelOpenSystem}>
                         <div style={{ display: 'flex', alignItems: 'center' }}>
                             <img alt="" src={chamthan} width={20} height={20} />

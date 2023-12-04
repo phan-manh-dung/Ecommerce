@@ -34,7 +34,6 @@ import { removeAllOrderProduct } from '~/redux/slide/orderSlide';
 const cx = classNames.bind(styles);
 
 const PaymentPage = () => {
-    //  const order = useSelector((state) => state.order);
     const user = useSelector((state) => state.user);
     const location = useLocation();
     const selectedItem = location.state?.selectedItem || location.state?.productsDetail;
@@ -496,6 +495,30 @@ const PaymentPage = () => {
                             </Col>
                         </Row>
                     </div>
+                </div>
+                {/* footer */}
+                <div className={cx('footer_payment')}>
+                    <div className={cx('content-1')}>
+                        <span>Bằng việc tiến hành Đặt Mua, bạn đồng ý với các Điều kiện Giao dịch chung:</span>
+                    </div>
+                    <div className={cx('many_content')}>
+                        <p style={{ paddingTop: '4px' }}>
+                            <a href="/">Quy chế hoạt động</a>
+                            <i></i>
+
+                            <a href="/">Chính sách giải quyết khiếu nại</a>
+                            <i></i>
+
+                            <a href="/">Chính sách bảo hành</a>
+                            <i></i>
+
+                            <a href="/">Chính sách bảo mật thanh toán</a>
+                            <i></i>
+
+                            <a href="/">Chính sách bảo mật thông tin cá nhân</a>
+                        </p>
+                    </div>
+                    <p>© 2019 - Bản quyền của Công Ty Cổ Phần Mạnh Dũng MD.vn</p>
                 </div>
             </div>
         </div>

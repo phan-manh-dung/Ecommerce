@@ -6,10 +6,14 @@ import { apiGetPublicProvinces, apiGetPublicDistrict } from '~/service/ApisPubli
 import * as UserService from '~/service/UserService';
 import { useMutationHook } from '~/hook/useMutationHook';
 import Loading from '../LoadingComponent/Loading';
+import ModalComponent from '../ModalComponent/ModalComponent';
+import { Radio } from 'antd';
 
 const cx = classNames.bind(styles);
 
-const AddressComponent = () => {
+const AddressComponent = ({ showAddressModal, handleCloseAddressModal }) => {
+    const user = useSelector((state) => state.user);
+
     const [arrProvinces, setArrProvinces] = useState([]);
     const [province, setProvince] = useState();
     const [nameProvince, setNameProvince] = useState('');
@@ -18,10 +22,19 @@ const AddressComponent = () => {
     const [district, setDistrict] = useState();
     const [nameDistrict, setNameDistrict] = useState('');
     const [moreAddressValue, setMoreAddressValue] = useState('');
+    const [value, setValue] = useState(null);
+    const [showOtherInfo, setShowOtherInfo] = useState(false);
 
-    const [closeUpdate, setCloseUpdate] = useState(false);
+    const onChangeInputAddress = (e) => {
+        const valueEnd = e.target.value;
+        setValue(valueEnd);
 
-    const user = useSelector((state) => state.user);
+        if (valueEnd === 'other') {
+            setShowOtherInfo(true);
+        } else {
+            setShowOtherInfo(false);
+        }
+    };
 
     const initial = () => ({
         address: '',
@@ -93,14 +106,7 @@ const AddressComponent = () => {
     } = mutationUpdate;
 
     const onUpdateUser = () => {
-        mutationUpdate.mutate(
-            { id: user?.id, token: user?.access_token, ...stateUserDetails },
-            {
-                // onSettled: () => {
-                //     user?.id.refetch();
-                // },
-            },
-        );
+        mutationUpdate.mutate({ id: user?.id, token: user?.access_token, ...stateUserDetails });
     };
 
     const handleChangeMoreAddress = (e) => {
@@ -108,57 +114,103 @@ const AddressComponent = () => {
         setMoreAddressValue(values);
     };
 
+    const handleCancelDelete = () => {
+        handleCloseAddressModal();
+    };
+
     useEffect(() => {
-        if (isSuccessUpdated) {
-            setCloseUpdate(true);
+        if (mutationUpdate.isSuccess) {
+            handleCloseAddressModal();
         }
-    }, [isSuccessUpdated]);
+    }, [mutationUpdate.isSuccess]);
 
     return (
-        <Loading isLoading={isLoadingUpdated}>
-            <div className={cx('wrapper_more-info')}>
-                <div className={cx('row')}>
-                    <p>Tỉnh\Thành phố (*)</p>
-                    <select
-                        type="province"
-                        value={province}
-                        className="tinh"
-                        onChange={(e) => setProvince(e.target.value)}
-                    >
-                        <option value="">---</option>
-                        {arrProvinces?.map((item) => (
-                            <option key={item?.province_id} value={item?.province_id}>
-                                {item?.province_name}
-                            </option>
-                        ))}
-                    </select>
+        <ModalComponent title="" open={showAddressModal} onCancel={handleCancelDelete} footer={null}>
+            <div className={cx('wrapper_address-modal')}>
+                <div className={cx('wrapper-title')}>
+                    <p>Địa chỉ giao hàng</p>
                 </div>
-                <div className={cx('row')}>
-                    <p>Quận\Huyện (*)</p>
-                    <select
-                        value={district}
-                        className="huyen"
-                        type="district"
-                        disabled={!province}
-                        onChange={(e) => setDistrict(e.target.value)}
-                    >
-                        <option value="">---</option>
-                        {arrDistricts?.map((item) => (
-                            <option key={item?.district_id} value={item?.district_id}>
-                                {item?.district_name}
-                            </option>
-                        ))}
-                    </select>
-                </div>
-                <div className={cx('row')}>
-                    <p>Địa chỉ số nhà</p>
-                    <textarea style={{ width: '50%', height: '40px' }} onChange={handleChangeMoreAddress}></textarea>
-                </div>
-                <div className={cx('button_address')} closeUpdate>
-                    <button onClick={onUpdateUser}>Giao đến địa chỉ này</button>
+                <div style={{ backgroundColor: 'rgb(248, 248, 248)', padding: '4px', borderRadius: '6px' }}>
+                    <div className={cx('location')}>
+                        <p>
+                            Hãy chọn địa chỉ nhận hàng để được dự báo thời gian giao hàng cùng phí đóng gói, vận chuyển
+                            một cách chính xác nhất.
+                        </p>
+                        <div>
+                            {(user?.address || user?.city) && (
+                                <div className={cx('check_group')}>
+                                    <Radio.Group onChange={onChangeInputAddress} value={value}>
+                                        <p>
+                                            <Radio
+                                                value={user.address && user.city}
+                                                checked={value === user.address || user.city}
+                                            >
+                                                {user.moreAddress},{user.address},{user.city}
+                                            </Radio>
+                                        </p>
+                                        <p>
+                                            <Radio value="other">Chọn khu vực giao hàng khác</Radio>
+                                        </p>
+                                    </Radio.Group>
+                                </div>
+                            )}
+
+                            {showOtherInfo && (
+                                <div>
+                                    <Loading isLoading={isLoadingUpdated}>
+                                        <div className={cx('wrapper_more-info')} closeUpdate>
+                                            <div className={cx('row')}>
+                                                <p>Tỉnh\Thành phố (*)</p>
+                                                <select
+                                                    type="province"
+                                                    value={province}
+                                                    className="tinh"
+                                                    onChange={(e) => setProvince(e.target.value)}
+                                                >
+                                                    <option value="">---</option>
+                                                    {arrProvinces?.map((item) => (
+                                                        <option key={item?.province_id} value={item?.province_id}>
+                                                            {item?.province_name}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                            <div className={cx('row')}>
+                                                <p>Quận\Huyện (*)</p>
+                                                <select
+                                                    value={district}
+                                                    className="huyen"
+                                                    type="district"
+                                                    disabled={!province}
+                                                    onChange={(e) => setDistrict(e.target.value)}
+                                                >
+                                                    <option value="">---</option>
+                                                    {arrDistricts?.map((item) => (
+                                                        <option key={item?.district_id} value={item?.district_id}>
+                                                            {item?.district_name}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                            <div className={cx('row')}>
+                                                <p>Địa chỉ số nhà</p>
+                                                <textarea
+                                                    style={{ width: '50%', height: '40px' }}
+                                                    onChange={handleChangeMoreAddress}
+                                                ></textarea>
+                                            </div>
+                                            <div className={cx('button_address')}>
+                                                <button onClick={onUpdateUser}>Giao đến địa chỉ này</button>
+                                            </div>
+                                        </div>
+                                    </Loading>
+                                </div>
+                            )}
+                        </div>
+                    </div>
                 </div>
             </div>
-        </Loading>
+        </ModalComponent>
     );
 };
 

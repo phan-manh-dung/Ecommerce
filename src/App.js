@@ -6,7 +6,6 @@ import { Fragment, useEffect, useState } from 'react';
 import jwt_decode from 'jwt-decode';
 import * as UserService from '~/service/UserService';
 import { useDispatch, useSelector } from 'react-redux';
-import { DataRouter } from 'react-router-dom';
 import { isJsonString } from './utils';
 import { updateUser } from './redux/slide/userSlide';
 import Loading from './component/LoadingComponent/Loading';

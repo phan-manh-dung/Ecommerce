@@ -60,9 +60,10 @@
             color: rgb(56, 56, 61);
             font-size: 14px;
             padding: 12px 0px;
-            font-weight: 500;
+            font-weight: 600;
         }
         .list_category {
+            cursor: pointer;
             font-size: 12px;
             font-weight: 400;
             padding: 0px 0px 12px;
@@ -72,6 +73,10 @@
         .link {
             color: rgb(56, 56, 61);
             padding: 0px 0px 12px;
+
+            &:hover {
+                color: #999;
+            }
         }
     }
 }
@@ -87,10 +92,10 @@
 }
 
 .wrapper_address {
-    margin-top: 10px;
     display: flex;
     align-items: center;
-
+    padding-bottom: 10px;
+    cursor: pointer;
     .ship {
         margin: 0px;
         display: block;

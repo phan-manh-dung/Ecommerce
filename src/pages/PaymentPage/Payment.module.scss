@@ -287,3 +287,39 @@
 .button_success {
     margin-top: 3%;
 }
+
+// footer payment
+.footer_payment {
+    background: rgb(235, 235, 240);
+    padding: 20px 15px;
+    .content-1 {
+        span {
+            font-size: 11px;
+            line-height: 16px;
+            margin-bottom: 4px;
+            color: rgb(128, 128, 137);
+        }
+    }
+    .many_content {
+        display: flex;
+
+        a {
+            font-size: 11px;
+            line-height: 16px;
+            margin-bottom: 4px;
+            color: black;
+            padding-right: 12px;
+            padding-left: 12px;
+        }
+        i {
+            border: 1px solid rgb(221, 221, 227);
+        }
+    }
+    p {
+        margin-top: 18px;
+        width: 100%;
+        margin-left: 0px;
+        margin-bottom: 0px;
+        color: rgb(128, 128, 137);
+    }
+}

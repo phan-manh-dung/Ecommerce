@@ -1,0 +1,60 @@
+.wrapper_footer {
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 20px;
+    .container_footer {
+        .help_customer {
+            .title {
+                font-size: 16px;
+                line-height: 24px;
+                font-weight: 500;
+                color: rgb(56, 56, 61);
+                margin-bottom: 12px;
+                margin-top: 0px;
+            }
+            .content {
+                display: flex;
+                flex-direction: column;
+                padding-top: 8px;
+                a {
+                    margin-bottom: 8px;
+                    &:hover {
+                        text-decoration: underline;
+                    }
+                }
+                .text {
+                    font-size: 12px;
+                    line-height: 16px;
+                    font-weight: normal;
+                    color: rgb(128, 128, 137);
+                }
+            }
+            .payment {
+                padding-top: 6px;
+
+                &:hover {
+                    cursor: pointer;
+                }
+            }
+            .social {
+                display: flex;
+                padding-top: 6px;
+                .icon_social {
+                    padding: 0 4px;
+                }
+            }
+        }
+        .information {
+            padding: 8px 0;
+            border-top: 1px solid #ccc;
+            border-bottom: 1px solid #ccc;
+            p {
+                font-size: 12px;
+                line-height: 16px;
+                font-weight: normal;
+                color: rgb(128, 128, 137);
+                margin-bottom: 8px;
+            }
+        }
+    }
+}
