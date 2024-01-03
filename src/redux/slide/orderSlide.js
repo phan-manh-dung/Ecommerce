@@ -34,6 +34,7 @@ export const orderSlide = createSlice({
                 state.orderItems.push(orderItem);
             }
         },
+
         removeOrderProduct: (state, action) => {
             const { idProduct } = action.payload; // muốn cos id thì phải truy cập được id từ order page
             const itemOrder = state?.orderItems?.filter((item) => item?.product !== idProduct);
@@ -49,10 +50,27 @@ export const orderSlide = createSlice({
             state.orderItems = itemOrders;
             state.orderItemsSelected = itemOrdersSelected;
         },
+        RESET_ORDER_DATA: (state) => {
+            // Reset tất cả dữ liệu order về trạng thái ban đầu
+            state.orderItems = [];
+            state.orderItemsSelected = [];
+            state.shippingAddress = {};
+            state.paymentMethod = '';
+            state.itemsPrice = 0;
+            state.shippingPrice = 0;
+            state.taxPrice = 0;
+            state.totalPrice = 0;
+            state.user = '';
+            state.isPaid = false;
+            state.paidAt = '';
+            state.isDelivered = false;
+            state.deliveredAt = '';
+            state.isSuccessOrder = false;
+        },
     },
 });
 
 // Action creators are generated for each case reducer function
-export const { addOrderProduct, removeOrderProduct, removeAllOrderProduct } = orderSlide.actions;
+export const { addOrderProduct, removeOrderProduct, removeAllOrderProduct, RESET_ORDER_DATA } = orderSlide.actions;
 
 export default orderSlide.reducer;

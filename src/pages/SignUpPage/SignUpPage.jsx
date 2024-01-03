@@ -23,7 +23,7 @@ const cx = classNames.bind(styles);
 const SignInPage = () => {
     const [isShowPassword, setIsShowPassword] = useState(false);
     const [isShowConfirmPassword, setIsShowConfirmPassword] = useState(false);
-    const [email, setEmail] = useState('');
+    const [name, setName] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const navigate = useNavigate();
@@ -32,7 +32,7 @@ const SignInPage = () => {
     };
     const onChangeEmail = (event) => {
         const value = event.target.value;
-        setEmail(value);
+        setName(value);
     };
 
     const onChangePassword = (event) => {
@@ -58,7 +58,7 @@ const SignInPage = () => {
 
     const handleSignUp = () => {
         mutation.mutate({
-            email,
+            name,
             password,
             confirmPassword,
         });
@@ -66,6 +66,10 @@ const SignInPage = () => {
 
     const handleSignIn = () => {
         navigate('/sign-in');
+    };
+
+    const loginWithFacebook = () => {
+        window.location.href = '/facebook/redirect';
     };
 
     return (
@@ -105,7 +109,7 @@ const SignInPage = () => {
                 <div className={cx('login')}>
                     <h2> Sign Up </h2>
                     <div className={cx('input')}>
-                        <Input placeholder="Nhập email" onChange={onChangeEmail} value={email} />
+                        <Input placeholder="Tên tài khoản" onChange={onChangeEmail} value={name} />
                     </div>
                     <div
                         className={cx('input')}
@@ -153,9 +157,10 @@ const SignInPage = () => {
                     <div className={cx('button')} onClick={handleSignUp}>
                         <ButtonComponent className={cx('btn')} textButton={'Login'} backgroundColor="rgb(254,67,79)" />
                     </div>
+                    <button onClick={loginWithFacebook}>Login bằng facebook</button>
                     <div className={cx('sign-up')} onClick={handleNavigate}>
                         <p> Already have an account?</p>
-                        <span> Sign in</span>
+                        <span>Tạo tài khoản</span>
                     </div>
                 </div>
             </section>

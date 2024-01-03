@@ -233,7 +233,9 @@ const HomePage = () => {
                                 </a>
                             </div>
                             <div className={cx('item2')}>
-                                <img alt="" src={img31} width={146} height={146} />
+                                <a href="/">
+                                    <img alt="" src={img31} width={146} height={146} />
+                                </a>
                             </div>
                             <div className={cx('item3')}>
                                 <a href="/">

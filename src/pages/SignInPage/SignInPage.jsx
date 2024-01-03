@@ -24,12 +24,14 @@ import { updateUser } from '~/redux/slide/userSlide';
 const cx = classNames.bind(styles);
 
 const SignInPage = () => {
-    const [email, setEmail] = useState('');
+    const [name, setName] = useState('');
     const [password, setPassword] = useState('');
     const [isShowPassword, setIsShowPassword] = useState(false);
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const location = useLocation();
+    // Trạng thái đăng nhập
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     const handleNavigate = () => {
         navigate('/sign-up');
@@ -37,7 +39,7 @@ const SignInPage = () => {
 
     const handleEmailChange = (event) => {
         const value = event.target.value;
-        setEmail(value);
+        setName(value);
     };
 
     const handlePasswordChange = (event) => {
@@ -57,7 +59,9 @@ const SignInPage = () => {
             } else {
                 navigate('/');
             }
+            localStorage.setItem('isLoggedIn', 'true');
             localStorage.setItem('access_token', JSON.stringify(data?.access_token));
+            localStorage.setItem('refresh_token', JSON.stringify(data?.refresh_token)); // lưu token vào local storage
             if (data?.access_token) {
                 const decoded = jwt_decoded(data?.access_token);
                 if (decoded?.id) {
@@ -75,15 +79,25 @@ const SignInPage = () => {
     const handleLogin = () => {
         if (mutation) {
             mutation.mutate({
-                email,
+                name,
                 password,
             });
+            setIsLoggedIn(true); // Cập nhật trạng thái đã đăng nhập thành công
         }
     };
 
+    const handleKeyPress = (e) => {
+        if (e.key === 'Enter') {
+            handleLogin();
+        }
+    };
     if (!mutation) {
         return null;
     }
+
+    const signInFacebook = () => {
+        window.location.href = 'http://localhost:4000/facebook/redirect';
+    };
 
     return (
         <Loading isLoading={isLoading}>
@@ -121,7 +135,12 @@ const SignInPage = () => {
                     <div className={cx('login')}>
                         <h2> Login </h2>
                         <div className={cx('input')}>
-                            <Input placeholder="Nhập email" onChange={handleEmailChange} value={email} />
+                            <Input
+                                placeholder="Nhập email"
+                                onChange={handleEmailChange}
+                                value={name}
+                                onKeyPress={handleKeyPress}
+                            />
                         </div>
                         <div
                             className={cx('input')}
@@ -136,6 +155,7 @@ const SignInPage = () => {
                                 type={isShowPassword ? 'text' : 'password'}
                                 onChange={handlePasswordChange}
                                 value={password}
+                                onKeyPress={handleKeyPress}
                             />
                             <span
                                 style={{ position: 'absolute', left: '90%' }}
@@ -155,13 +175,13 @@ const SignInPage = () => {
 
                         <div className={cx('button')} onClick={handleLogin}>
                             <ButtonComponent
-                                disabled={!email.length || !password.length}
+                                disabled={!name.length || !password.length}
                                 className={cx('btn')}
-                                textButton={'Login'}
+                                textButton={'Đăng nhập'}
                                 backgroundColor="rgb(254,67,79)"
                             />
                         </div>
-
+                        <button onClick={signInFacebook}>Fb</button>
                         <div className={cx('sign-up')}>
                             <p> Don't have an account?</p>
                             <div onClick={handleNavigate}>

@@ -19,6 +19,7 @@ import {
     faUser,
 } from '@fortawesome/free-solid-svg-icons';
 import ListProfileComponent from '~/component/ListProfileComponent/ListProfileComponent';
+import { useQuery } from '@tanstack/react-query';
 
 import img_user from '~/assets/img_Global/user_profile.png';
 import img_facebook from '~/assets/img_Global/facebook.png';
@@ -39,6 +40,7 @@ import { useMutationHook } from '~/hook/useMutationHook';
 import Loading from '~/component/LoadingComponent/Loading';
 import { updateUser } from '~/redux/slide/userSlide';
 import { getBase64 } from '~/utils';
+import AddressComponent from '~/component/AddressComponent/AddressComponent';
 
 const cx = classNames.bind(styles);
 
@@ -49,63 +51,45 @@ const ProfilePage = () => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [phone, setPhone] = useState('');
-    const [city, setCity] = useState('');
-    const [address, setAddress] = useState('');
     const [avatar, setAvatar] = useState('');
     const [sex, setSex] = useState('');
     const [country, setCountry] = useState('');
     const [nickname, setNickName] = useState('');
+    const [isSubmit, setIsSubmit] = useState(false);
+    const [dataPhone, setDataPhone] = useState(false);
+
     const [dateOfBirth, setDateOfBirth] = useState({
         day: '',
         month: '',
         year: '',
     });
 
-    const mutation = useMutationHook((data) => {
-        const { id, access_token, ...rests } = data;
-        UserService.updateUser(id, rests, access_token);
-    });
-    const { data, isLoading, isSuccess, isError } = mutation;
-    console.log('data-dang test', mutation);
+    const mutationUpdate = useMutationHook(
+        (data) => {
+            const { id, access_token, ...rests } = data;
+            return UserService.updateUser(id, rests, access_token);
+        },
+        {
+            onSuccess: () => {
+                setIsSubmit(true); // Khi mutation hoàn tất, cập nhật isSubmit thành true
+            },
+        },
+    );
+
+    const {
+        data: dataUpdated,
+        isLoading: isLoadingUpdated,
+        isSuccess: isSuccessUpdated,
+        isError: isErrorUpdated,
+    } = mutationUpdate;
 
     useEffect(() => {
-        setName(user?.name);
-        setEmail(user?.email);
-        setPhone(user?.phone);
-        setCity(user?.city);
-        setAddress(user?.address);
-        setAvatar(user?.avatar);
-        setSex(user?.sex);
-        setCountry(user?.country);
-        setNickName(user?.nickname);
-        if (user?.dateOfBirth) {
-            const date = new Date(user?.dateOfBirth);
-            const day = Number(date.getDate());
-            const month = Number(date.getMonth());
-            const year = Number(date.getUTCFullYear());
-
-            // Gán giá trị vào các select box
-            setDateOfBirth({
-                day,
-                month,
-                year,
-            });
+        if (isSuccessUpdated) {
+            message.successUpdate();
+        } else if (isErrorUpdated) {
+            message.errorUpdate();
         }
-    }, [user]);
-
-    useEffect(() => {
-        if (isSuccess) {
-            message.success();
-            handleGetDetailUser(user?.id, user?.access_token);
-        } else if (isError) {
-            message.error();
-        }
-    });
-
-    const handleGetDetailUser = async (id, token) => {
-        const res = await UserService.getDetailUser(id, token);
-        dispatch(updateUser({ ...res?.data, access_token: token }));
-    };
+    }, [isSuccessUpdated, isErrorUpdated]);
 
     const handleOnchangeName = (event) => {
         const value = event.target.value;
@@ -115,18 +99,17 @@ const ProfilePage = () => {
         const value = event.target.value;
         setEmail(value);
     };
+
     const handleOnchangePhone = (event) => {
         const value = event.target.value;
-        setPhone(value);
+        if (value.length < 0) {
+            setDataPhone(false);
+        } else if (value.length > 0) {
+            setPhone(value);
+            setDataPhone(true);
+        }
     };
-    const handleOnchangeCity = (event) => {
-        const value = event.target.value;
-        setCity(value);
-    };
-    const handleOnchangeAddress = (event) => {
-        const value = event.target.value;
-        setAddress(value);
-    };
+
     const handleOnchangeAvatar = async ({ fileList }) => {
         const file = fileList[0];
         if (!file.url && !file.preview) {
@@ -150,7 +133,6 @@ const ProfilePage = () => {
     };
     const handleOnchangeCountry = (e) => {
         const value = e.target.value;
-
         if (value) {
             setCountry(value);
         }
@@ -159,9 +141,10 @@ const ProfilePage = () => {
         const value = event.target.value;
         setNickName(value);
     };
+
     const handleSubmit = () => {
         const convertDate = new Date(dateOfBirth.year, dateOfBirth.month, dateOfBirth.day);
-        mutation.mutate({
+        mutationUpdate.mutate({
             id: user?.id,
             name,
             nickname,
@@ -169,18 +152,48 @@ const ProfilePage = () => {
             sex,
             avatar,
             country,
+            email,
             access_token: user?.access_token,
         });
     };
 
-    const handleSubmitPhone = () => {
-        mutation.mutate({
-            id: user?.id,
-            phone,
-        });
+    useEffect(() => {
+        setName(user?.name);
+        setEmail(user?.email);
+        setPhone(user?.phone);
+        setAvatar(user?.avatar);
+        setSex(user?.sex);
+        setCountry(user?.country);
+        setNickName(user?.nickname);
+        if (user?.dateOfBirth) {
+            const date = new Date(user?.dateOfBirth);
+            const day = Number(date.getDate());
+            const month = Number(date.getMonth());
+            const year = Number(date.getUTCFullYear());
+
+            // Gán giá trị vào các select box
+            setDateOfBirth({
+                day,
+                month,
+                year,
+            });
+        }
+    }, [user]);
+
+    const handleSubmitPhone = async () => {
+        try {
+            if (dataPhone === false) {
+            } else {
+                await mutationUpdate.mutate({
+                    id: user?.id,
+                    phone,
+                });
+            }
+        } catch (err) {}
     };
+
     const handleSubmitEmail = () => {
-        mutation.mutate({
+        mutationUpdate.mutate({
             id: user?.id,
             email,
         });
@@ -213,12 +226,12 @@ const ProfilePage = () => {
     const arrCountry = ['Việt Nam', 'Japan', 'Franch', 'Italy', 'Ai cập', 'India'];
     return (
         <div className={cx('container_profile')}>
-            <Loading isLoading={isLoading}>
+            <Loading isLoading={isLoadingUpdated}>
                 <div className={cx('wrapper_profile')}>
                     <div className={cx('wrapper-type')}>
                         <div className={cx('type-home')}>Trang chủ</div>
                         <img alt="right_arrow" src={img_right_arrow} width={18} height={18} />
-                        <span className={cx('type-title')}>Làm Đẹp - Sức Khỏe</span>
+                        <span className={cx('type-title')}>Thông tin tài khoản</span>
                     </div>
                     <Row>
                         <Col xs={0} sm={5}>
@@ -237,7 +250,7 @@ const ProfilePage = () => {
                                                     textOverflow: 'ellipsis',
                                                 }}
                                             >
-                                                {user?.email ? user?.name : 'Chưa có'}
+                                                {name ? nickname : 'Chưa có'}
                                             </p>
                                         </div>
                                     </div>
@@ -434,6 +447,10 @@ const ProfilePage = () => {
                                                             Khác
                                                         </Radio>
                                                     </div>
+                                                    {/* component address */}
+                                                    <div>
+                                                        <AddressComponent />
+                                                    </div>
                                                     {/* quoc tich */}
                                                     <div className={cx('wrapper-date')}>
                                                         <label className={cx('title-date')}>Quốc tịch</label>
@@ -478,18 +495,31 @@ const ProfilePage = () => {
                                                         <div className={cx('sdt')}>
                                                             <div className={cx('wrapper-sdt')}>
                                                                 <FontAwesomeIcon
-                                                                    tyle={{ width: '18px', height: '18px' }}
+                                                                    style={{ width: '18px', height: '18px' }}
                                                                     icon={faPhone}
                                                                     color="#999"
                                                                 />
                                                                 <div className={cx('detail')}>
-                                                                    <span>Số điện thoại</span>
+                                                                    <span style={{ padding: '4px 11px' }}>
+                                                                        Số điện thoại
+                                                                    </span>
                                                                     <div>
-                                                                        <Input
-                                                                            onInput={handleOnchangePhone}
-                                                                            value={phone}
-                                                                            style={{ width: '100%', border: 'none' }}
-                                                                        />
+                                                                        <div>
+                                                                            <div class="style-flex">
+                                                                                <span style={{ fontSize: '12px' }}>
+                                                                                    (+84)
+                                                                                </span>
+                                                                                <Input
+                                                                                    placeholder="Nhập phone..."
+                                                                                    onInput={handleOnchangePhone}
+                                                                                    value={phone}
+                                                                                    style={{
+                                                                                        width: '100%',
+                                                                                        border: 'none',
+                                                                                    }}
+                                                                                />
+                                                                            </div>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -512,11 +542,14 @@ const ProfilePage = () => {
                                                                     color="#999"
                                                                 />
                                                                 <div className={cx('detail')}>
-                                                                    <span>Địa chỉ Email</span>
+                                                                    <span style={{ padding: '4px 11px' }}>
+                                                                        Địa chỉ Email
+                                                                    </span>
                                                                     <div>
                                                                         <Input
                                                                             onInput={handleOnchangeEmail}
                                                                             value={email}
+                                                                            placeholder="Nhập email..."
                                                                             style={{ width: '100%', border: 'none' }}
                                                                         />
                                                                     </div>

@@ -61,10 +61,8 @@ const FooterComponent = () => {
                                     Hotline: <span style={{ color: 'black', fontSize: '13px' }}>0373286662</span>
                                 </a>
                                 {arrHelpCustomer.map((item, index) => (
-                                    <a href="/" className={cx('text')}>
-                                        <span key={index} className={cx('text1')}>
-                                            {item}
-                                        </span>
+                                    <a href="/" className={cx('text')} key={index}>
+                                        <span className={cx('text1')}>{item}</span>
                                     </a>
                                 ))}
                             </div>
@@ -75,10 +73,8 @@ const FooterComponent = () => {
                             <span className={cx('title')}>Shop MD</span>
                             <div className={cx('content')}>
                                 {arrMyShop.map((item, index) => (
-                                    <a href="/" className={cx('text')}>
-                                        <span key={index} className={cx('text1')}>
-                                            {item}
-                                        </span>
+                                    <a href="/" className={cx('text')} key={index}>
+                                        <span className={cx('text1')}>{item}</span>
                                     </a>
                                 ))}
                             </div>
@@ -89,10 +85,8 @@ const FooterComponent = () => {
                             <span className={cx('title')}>Hợp tác và liên kết</span>
                             <div className={cx('content')}>
                                 {arrCooperate.map((item, index) => (
-                                    <a href="/" className={cx('text')}>
-                                        <span key={index} className={cx('text1')}>
-                                            {item}
-                                        </span>
+                                    <a href="/" className={cx('text')} key={index}>
+                                        <span className={cx('text1')}>{item}</span>
                                     </a>
                                 ))}
                             </div>

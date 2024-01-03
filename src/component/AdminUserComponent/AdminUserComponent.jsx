@@ -227,23 +227,6 @@ const AdminUserComponent = () => {
             return { ...user, key: user._id };
         });
 
-    const handleOk = () => {
-        onFinish();
-    };
-    const onFinish = () => {
-        mutation.mutate(stateUser, {
-            onSettled: () => {
-                queryUser.refetch();
-            },
-        });
-    };
-    const handleOnChange = (e) => {
-        setStateUser({
-            ...stateUser,
-            [e.target.name]: e.target.value,
-        });
-    };
-
     const handleOnChangeDetail = (e) => {
         setStateUserDetails({
             ...stateUserDetails,
@@ -411,17 +394,6 @@ const AdminUserComponent = () => {
             message.error();
         }
     }, [isSuccessUpdated]);
-
-    const handleOnchangeAvatarDetail = async ({ fileList }) => {
-        const file = fileList[0];
-        if (!file.url && !file.preview) {
-            file.preview = await getBase64(file.originFileObj);
-        }
-        setStateUserDetails({
-            ...stateUserDetails,
-            avatar: file.preview,
-        });
-    };
 
     const onUpdateUser = () => {
         mutationUpdate.mutate(

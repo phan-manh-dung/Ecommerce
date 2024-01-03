@@ -21,10 +21,16 @@ export const getDetailUser = async (id, access_token) => {
     return res.data;
 };
 
-export const refreshToken = async (id, access_token) => {
-    const res = await axios.post(`${process.env.REACT_APP_API_URL}/user/refresh-token`, {
-        withCredentials: true, // khi có cookie thì tự động lấy và truyền xuống backend
-    });
+export const refreshToken = async (refreshToken) => {
+    const res = await axios.post(
+        `${process.env.REACT_APP_API_URL}/user/refresh-token`,
+        {},
+        {
+            headers: {
+                token: `Bearer ${refreshToken}`,
+            },
+        },
+    );
     return res.data;
 };
 
@@ -32,6 +38,7 @@ export const logOutUser = async () => {
     const res = await axios.post(`${process.env.REACT_APP_API_URL}/user/log-out`);
     return res.data;
 };
+
 export const updateUser = async (id, data, access_token) => {
     const res = await axiosJWT.put(`${process.env.REACT_APP_API_URL}/user/update-user/${id}`, data, {
         headers: {

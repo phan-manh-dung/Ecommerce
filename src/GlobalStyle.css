@@ -17,6 +17,12 @@ body {
     line-height: 1.5;
 }
 
+.style-flex {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
 * {
     box-sizing: border-box;
 }

@@ -29,6 +29,7 @@ import { Col, InputNumber, Row } from 'antd';
 import { CaretLeftOutlined, MinusOutlined, PlusOutlined, StarFilled } from '@ant-design/icons';
 import ButtonComponent from '~/component/ButtonComponent/Buttoncomponent';
 import * as ProductService from '~/service/ProductService';
+import { createCart } from '~/service/OrderService';
 import { useQuery } from '@tanstack/react-query';
 import Loading from '../LoadingComponent/Loading';
 import { useDispatch, useSelector } from 'react-redux';
@@ -39,6 +40,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronRight, faComment, faPlus, faStar } from '@fortawesome/free-solid-svg-icons';
 import ModalComponent from '../ModalComponent/ModalComponent';
 import AddressComponent from '../AddressComponent/AddressComponent';
+import { useMutationHook } from '~/hook/useMutationHook';
 const cx = classNames.bind(styles);
 
 const ProductDetailComponent = ({ idProduct }) => {
@@ -55,6 +57,8 @@ const ProductDetailComponent = ({ idProduct }) => {
     const visibleImages = arrImageUsers.slice(startIndex, startIndex + imagesToShow);
     const [openSystem, setOpenSystem] = useState(false);
     const [showAddressModal, setShowAddressModal] = useState(false);
+    // Mảng lưu trữ các ID sản phẩm đã thêm vào giỏ hàng
+    const [addedProducts, setAddedProducts] = useState([]);
 
     function generateRandom() {
         return `${Math.floor(Math.random() * 10)}${Math.floor(Math.random() * 10)}`;
@@ -131,24 +135,46 @@ const ProductDetailComponent = ({ idProduct }) => {
         }
     };
 
+    const handleOrderDispatch = async () => {
+        const userId = user?.id; // Lấy userId của người dùng đã đăng nhập
+        const productId = productsDetail?._id;
+
+        if (!addedProducts.includes(productId)) {
+            // Kiểm tra xem sản phẩm đã được thêm chưa
+            const orderItem = {
+                name: productsDetail?.name,
+                amount: numProduct,
+                image: productsDetail?.image,
+                price: productsDetail?.price,
+                product: productId,
+                color: productsDetail?.color,
+                discount: productsDetail?.discount,
+                type: productsDetail?.type,
+            };
+
+            // Dispatch đơn hàng và thông tin userId vào Redux
+            dispatch(addOrderProduct({ orderItem, userId }));
+            setAddedProducts([...addedProducts, productId]); // Thêm ID sản phẩm vào mảng
+
+            try {
+                const data = {
+                    userId,
+                    ...orderItem,
+                };
+                const result = await createCart(data); // Gửi dữ liệu lên backend thông qua hàm createCart
+            } catch (error) {
+                console.error('Lỗi khi gửi dữ liệu:', error);
+            }
+        } else {
+            alert('Bạn đã có sản phẩm này trong giỏ hàng');
+        }
+    };
+
     const handleAddOrderProductCart = () => {
         if (!user?.id) {
             navigate('/sign-in', { state: location?.pathname });
         } else {
-            dispatch(
-                addOrderProduct({
-                    orderItem: {
-                        name: productsDetail?.name,
-                        amount: numProduct,
-                        image: productsDetail?.image,
-                        price: productsDetail?.price,
-                        product: productsDetail?._id,
-                        color: productsDetail?.color,
-                        discount: productsDetail?.discount,
-                        type: productsDetail?.type,
-                    },
-                }),
-            );
+            handleOrderDispatch();
         }
     };
 

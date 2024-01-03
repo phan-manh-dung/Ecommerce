@@ -16,8 +16,16 @@ const errorDelete = (mes = 'Error Success') => {
     message.error(mes);
 };
 
+const successUpdate = (mes = 'Update Success') => {
+    message.success(mes);
+};
+
+const errorUpdate = (mes = 'Update Error') => {
+    message.error(mes);
+};
+
 const warning = (mes = 'Warning') => {
     message.warning(mes);
 };
 
-export { success, error, warning, successDelete, errorDelete };
+export { success, error, warning, successDelete, errorDelete, successUpdate, errorUpdate };

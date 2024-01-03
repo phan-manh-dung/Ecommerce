@@ -15,6 +15,7 @@
                 line-height: 28px;
                 text-transform: uppercase;
                 flex-basis: calc(797px);
+                padding-bottom: 5px;
             }
         }
     }
@@ -148,6 +149,26 @@
     .button-pay {
         margin-top: 2%;
         border: none;
+    }
+}
+
+.create-row {
+    .cart_null {
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding-bottom: 4%;
+        border-radius: 6px;
+        height: auto;
+        span {
+            font-size: 16px;
+            font-weight: 600;
+            line-height: 150%;
+            color: rgb(39, 39, 42);
+            margin: 12px 0px 2px;
+        }
     }
 }
 

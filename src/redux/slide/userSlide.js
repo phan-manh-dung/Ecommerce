@@ -2,20 +2,20 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
     name: '',
-    email: '',
     access_token: '',
     phone: '',
-    address: '',
+    district: '',
     avatar: '',
     city: '',
+    country: '',
     moreAddress: '',
     dateOfBirth: '',
     sex: '',
-    country: '',
     nickname: '',
     isLoading: false,
     id: '',
     isAdmin: false,
+    refresh_token: '',
 };
 
 export const userSlide = createSlice({
@@ -26,24 +26,23 @@ export const userSlide = createSlice({
         updateUser: (state, action) => {
             const {
                 name = '',
-                email = '',
                 access_token = '',
                 phone = '',
-                address = '',
+                district = '',
                 avatar = '',
                 city = '',
+                country = '',
                 moreAddress = '',
                 dateOfBirth = '',
                 sex = '',
                 nickname = '',
-                country = '',
                 _id = '',
                 isAdmin,
+                refresh_token = '',
             } = action.payload;
-            state.name = name || email;
-            state.email = email;
+            state.name = name;
             state.phone = phone;
-            state.address = address;
+            state.district = district;
             state.avatar = avatar;
             state.city = city;
             state.moreAddress = moreAddress;
@@ -54,11 +53,12 @@ export const userSlide = createSlice({
             state.id = _id;
             state.access_token = access_token || '';
             state.isAdmin = isAdmin;
+            state.refresh_token = refresh_token;
         },
+
         // xóa thông tin reset lại
         resetUser: (state) => {
             state.name = '';
-            state.email = '';
             state.phone = '';
             state.address = '';
             state.avatar = '';
@@ -70,12 +70,11 @@ export const userSlide = createSlice({
             state.nickname = '';
             state.id = '';
             state.access_token = '';
-            state.refreshToken = '';
+            state.refresh_token = '';
         },
     },
 });
 
 // Action creators are generated for each case reducer function
 export const { updateUser, resetUser } = userSlide.actions;
-
 export default userSlide.reducer;

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styles from './HeaderComponent.module.scss';
 import classNames from 'classnames/bind';
 import { Badge, Col, Popover, Row } from 'antd';
@@ -15,6 +15,8 @@ import { searchProduct } from '../../redux/slide/productSlide';
 import { ShoppingCartOutlined } from '@ant-design/icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+import { RESET_ORDER_DATA, addOrderProduct } from '~/redux/slide/orderSlide';
+import { getCartByUserId } from '~/service/OrderService';
 
 const cx = classNames.bind(styles);
 
@@ -25,13 +27,68 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
     const user = useSelector((state) => state.user);
     const order = useSelector((state) => state.order);
     const [search, setSearch] = useState('');
+    const initialLoad = useRef(true);
+    const [hasFetchedCartData, setHasFetchedCartData] = useState(false); // kiểm tra đã useEffect hay chưa
+
     const handleNavigate = () => {
         navigate('/sign-in');
     };
+
+    // Trong bất kỳ component nào bạn muốn kiểm tra trạng thái đăng nhập
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+
+    const userId = user?.id;
+
+    useEffect(() => {
+        let mounted = true;
+
+        if (isLoggedIn && userId && mounted && !hasFetchedCartData) {
+            getCartByUserId(userId)
+                .then((data) => {
+                    if (mounted) {
+                        data.forEach((order) => {
+                            const orderItems = order.orderItems;
+
+                            if (Array.isArray(orderItems) && orderItems.length > 0) {
+                                orderItems.forEach((item) => {
+                                    const orderItem = {
+                                        name: item.name,
+                                        amount: item.amount,
+                                        image: item.image,
+                                        price: item.price,
+                                        product: item._id,
+                                        color: item.color,
+                                        discount: item.discount,
+                                        type: item.type,
+                                    };
+                                    dispatch(addOrderProduct({ orderItem }));
+                                });
+                            }
+                        });
+                        setHasFetchedCartData(true); // Đã thực hiện useEffect
+                        localStorage.removeItem('isLoggedIn');
+                    }
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+        }
+
+        return () => {
+            mounted = false;
+        };
+    }, [userId, dispatch]);
+
     const handleLogOut = async () => {
         setLoading(true);
         await UserService.logOutUser();
+        // Xóa các token từ local storage sau khi đăng xuất thành công
+        localStorage.removeItem('access_token'); // xóa token thì mới dc
+        localStorage.removeItem('refresh_token');
+        localStorage.removeItem('isLoggedIn');
+
         dispatch(resetUser());
+        dispatch(RESET_ORDER_DATA());
         setLoading(false);
     };
 
@@ -48,6 +105,13 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
                 }}
             >
                 Thông tin người dùng
+            </p>
+            <p
+                onClick={() => {
+                    navigate('/OrderSuccess');
+                }}
+            >
+                Đơn hàng của tôi
             </p>
             {user?.isAdmin && (
                 <p

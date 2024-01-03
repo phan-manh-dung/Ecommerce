@@ -5,7 +5,8 @@ import classNames from 'classnames/bind';
 import call from '~/assets/img_Global/call.png';
 import down from '~/assets/img_Global/muiten_dow.png';
 import truck from '~/assets/img_Global/truck.png';
-import img_down from '~/assets/img_Global/muiten_dow.png';
+import tay from '~/assets/img_Global/chaptay.png';
+import chamthan from '~/assets/img_Global/chamthan.png';
 import cash from '~/assets/img_Global/cash.png';
 import viettel from '~/assets/img_Global/viettel.png';
 import momo from '~/assets/img_Global/momo.jpg';
@@ -20,7 +21,6 @@ import free_ship from '~/assets/img_Global/free_ship.png';
 import { Checkbox, Col, Radio, Row, message } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronRight, faPlus } from '@fortawesome/free-solid-svg-icons';
-import { useQuery } from '@tanstack/react-query';
 import ButtonComponent from '~/component/ButtonComponent/Buttoncomponent';
 import { useDispatch, useSelector } from 'react-redux';
 import { useMutationHook } from '~/hook/useMutationHook';
@@ -30,6 +30,8 @@ import * as OrderService from '~/service/OrderService';
 import { convertPrice } from '~/utils';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { removeAllOrderProduct } from '~/redux/slide/orderSlide';
+import ModalComponent from '~/component/ModalComponent/ModalComponent';
+import AddressComponent from '~/component/AddressComponent/AddressComponent';
 
 const cx = classNames.bind(styles);
 
@@ -39,6 +41,7 @@ const PaymentPage = () => {
     const selectedItem = location.state?.selectedItem || location.state?.productsDetail;
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const [openSystem, setOpenSystem] = useState(false);
     const [payment, setPayment] = useState('later_money');
     const { totalPrice } = location.state || {}; // lấy data từ order
     const idProduct = selectedItem?.product || selectedItem?._id; // lấy id
@@ -84,9 +87,21 @@ const PaymentPage = () => {
         return res;
     });
 
+    const clickOpenSystem = () => {
+        setOpenSystem(true);
+    };
+
     // thay đổi dữ liệu vào redux
     const handleAddOrder = () => {
-        if (user?.access_token && user?.name && user?.address && user?.phone && user?.id) {
+        if (
+            user?.access_token &&
+            user?.name &&
+            user?.district &&
+            user?.city &&
+            user?.country &&
+            user?.moreAddress &&
+            user?.id
+        ) {
             mutationAddOrder.mutate({
                 token: user?.access_token,
                 fullName: user?.name,
@@ -99,6 +114,8 @@ const PaymentPage = () => {
                 user: user?.id,
                 email: user?.email,
             });
+        } else {
+            clickOpenSystem();
         }
     };
 
@@ -111,6 +128,10 @@ const PaymentPage = () => {
         const res = ProductService.updateProduct(id, { ...rests }, token);
         return res;
     });
+
+    const cancelOpenSystem = () => {
+        setOpenSystem(false);
+    };
 
     // update product
     const updateProduct = async () => {
@@ -170,6 +191,10 @@ const PaymentPage = () => {
             message.error('Đặt hàng thất bại');
         }
     }, [handleAddOrder]); // Chỉ chạy lại khi handleAddOrder thay đổi
+
+    const convertUpdate = () => {
+        navigate('/profile-user');
+    };
 
     return (
         <div className={cx('container_payment')}>
@@ -520,6 +545,17 @@ const PaymentPage = () => {
                     </div>
                     <p>© 2019 - Bản quyền của Công Ty Cổ Phần Mạnh Dũng MD.vn</p>
                 </div>
+                {/* modal */}
+                <ModalComponent title="" footer={null} open={openSystem} onCancel={cancelOpenSystem}>
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <img alt="" src={chamthan} width={20} height={20} />
+                        <p style={{ paddingRight: '10px' }}>Bạn chưa có thông tin cá nhân , Vui lòng cập nhật</p>
+                    </div>
+
+                    <div style={{ paddingTop: '10px', textAlign: 'center' }} onClick={convertUpdate}>
+                        <ButtonComponent width="20%" backgroundColor="green" textButton="Cập nhật" />
+                    </div>
+                </ModalComponent>
             </div>
         </div>
     );
