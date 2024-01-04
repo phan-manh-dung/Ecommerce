@@ -30,40 +30,22 @@ const AdminUserComponent = () => {
 
     const initial = () => ({
         name: '',
-        email: '',
-        isAdmin: false,
-        phone: '',
-        address: '',
-        avatar: '',
-        city: '',
-        //  dateOfBirth: '',
-        sex: '',
-        country: '',
-        //   nickname: '',
+        password: '',
+        confirmPassword: '',
     });
 
     const [stateUser, setStateUser] = useState(initial());
+
+    // get onchange on initial
+    const handleOnChange = (e) => {
+        setStateUser({
+            ...stateUser,
+            [e.target.name]: e.target.value,
+        });
+    };
+
     const [stateUserDetails, setStateUserDetails] = useState(initial());
     const [form] = Form.useForm();
-
-    const mutation = useMutationHook((data) => {
-        // tương tác với store cập nhật data
-        const { name, email, isAdmin, phone, address, city, dateOfBirth, sex, country, nickname, avatar } = data;
-        const res = UserService.signUpUser({
-            name,
-            email,
-            isAdmin,
-            phone,
-            address,
-            city,
-            dateOfBirth,
-            sex,
-            country,
-            nickname,
-            avatar,
-        });
-        return res;
-    });
 
     const mutationUpdate = useMutationHook((data) => {
         const { id, token, ...rests } = data;
@@ -151,7 +133,26 @@ const AdminUserComponent = () => {
         );
     };
 
-    const { data, isLoading, isSuccess, isError } = mutation; // tác vụ thay đổi dữ liệu
+    const mutationCreate = useMutationHook((data) => UserService.signUpUser(data));
+
+    // query
+    const queryUsers = useQuery({ queryKey: ['users'], queryFn: getAllUsers });
+
+    // on
+    const onFinish = () => {
+        const params = {
+            name: stateUser.name,
+            password: stateUser.password,
+            confirmPassword: stateUser.confirmPassword,
+        };
+        mutationCreate.mutate(params, {
+            onSettled: () => {
+                queryUsers.refetch();
+            },
+        });
+    };
+
+    const { data, isLoading, isSuccess, isError } = mutationCreate; // tác vụ thay đổi dữ liệu
 
     const handleDeleteUser = () => {
         mutationDeleted.mutate(
@@ -211,7 +212,6 @@ const AdminUserComponent = () => {
             email: '',
             isAdmin: '',
             phone: '',
-            address: '',
             city: '',
             dateOfBirth: '',
             sex: '',
@@ -316,9 +316,9 @@ const AdminUserComponent = () => {
 
         {
             title: 'Address',
-            dataIndex: 'address',
+            dataIndex: 'city',
             render: (text) => <a>{text}</a>,
-            sorter: (a, b) => a.address.localeCompare(b.address),
+            sorter: (a, b) => a.city.localeCompare(b.city),
             sortDirections: ['ascend', 'descend'],
         },
         {
@@ -413,7 +413,7 @@ const AdminUserComponent = () => {
                     <span className={cx('title')}>Quản lý người dùng</span>
                 </div>
                 <div>
-                    <Button className={cx('button')}>
+                    <Button className={cx('button')} onClick={() => setIsModalOpen(true)}>
                         <PlusCircleFilled style={{ fontSize: '20px' }} />
                     </Button>
                 </div>
@@ -433,14 +433,14 @@ const AdminUserComponent = () => {
                         }}
                     />
                 </div>
-                {/* <Loading isLoading={isLoading}>
+                <Loading isLoading={isLoading}>
                     <ModalComponent
                         forceRender
                         footer={null}
                         className={cx('custom-modal')}
-                        title="Tạo sản phẩm"
+                        title="Tạo người dùng"
                         open={isModalOpen}
-                        onOk={handleOk}
+                        // onOk={handleOk}
                         onCancel={handleCancel}
                         okText="..."
                         okType=""
@@ -455,6 +455,7 @@ const AdminUserComponent = () => {
                             form={form}
                             autoComplete="off"
                         >
+                            {/* name */}
                             <Form.Item
                                 label="Name"
                                 name="Name"
@@ -463,100 +464,34 @@ const AdminUserComponent = () => {
                                 <Input value={stateUser.name} onChange={handleOnChange} name="name" />
                             </Form.Item>
 
+                            {/* mật khẩu */}
                             <Form.Item
-                                label="Type"
-                                name="Type"
-                                rules={[{ required: true, message: 'Please input your type!' }]}
+                                label="Password"
+                                name="password"
+                                rules={[{ required: true, message: 'Please input your Password!' }]}
                             >
-                                <Input value={stateUser.type} onChange={handleOnChange} name="type" />
+                                <Input value={stateUser.password} onChange={handleOnChange} name="password" />
                             </Form.Item>
 
+                            {/* nhập lại mật khẩu */}
                             <Form.Item
-                                label="Price"
-                                name="Price"
-                                rules={[{ required: true, message: 'Please input your Price!' }]}
+                                label="ConfirmPassword"
+                                name="confirmPassword"
+                                rules={[{ required: true, message: 'Please input your ConfirmPassword!' }]}
                             >
-                                <Input value={stateUser.price} onChange={handleOnChange} name="price" />
+                                <Input
+                                    value={stateUser.confirmPassword}
+                                    onChange={handleOnChange}
+                                    name="confirmPassword"
+                                />
                             </Form.Item>
 
-                            <Form.Item
-                                label="CountInStock"
-                                name="CountInStock"
-                                rules={[{ required: true, message: 'Please input your countInStock!' }]}
-                            >
-                                <Input value={stateUser.countInStock} onChange={handleOnChange} name="countInStock" />
-                            </Form.Item>
-
-                            <Form.Item
-                                label="Rating"
-                                name="Rating"
-                                rules={[{ required: true, message: 'Please input your Rating!' }]}
-                            >
-                                <Input value={stateUser.rating} onChange={handleOnChange} name="rating" />
-                            </Form.Item>
-                            <Form.Item
-                                label="Description"
-                                name="Description"
-                                rules={[{ required: true, message: 'Please input your Description!' }]}
-                            >
-                                <Input value={stateUser.description} onChange={handleOnChange} name="description" />
-                            </Form.Item>
-                            <Form.Item
-                                label="Color"
-                                name="Color"
-                                rules={[{ required: true, message: 'Please input your Color!' }]}
-                            >
-                                <Input value={stateUser.color} onChange={handleOnChange} name="color" />
-                            </Form.Item>
-                            <Form.Item
-                                label="Discount"
-                                name="Discount"
-                                rules={[{ required: true, message: 'Please input your Discount!' }]}
-                            >
-                                <Input value={stateUser.discount} onChange={handleOnChange} name="discount" />
-                            </Form.Item>
-
-                            <Form.Item
-                                label="Image"
-                                name="Image"
-                                rules={[{ required: true, message: 'Please input your Image!' }]}
-                            >
-                                <div>
-                                    <Upload
-                                        maxCount={1}
-                                        showUploadList={false}
-                                        className={cx('pen')}
-                                        onChange={handleOnchangeAvatar}
-                                    >
-                                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                                            <div>
-                                                <Button>Select File</Button>
-                                            </div>
-                                            <div>
-                                                {stateUser?.image && (
-                                                    <img
-                                                        src={stateUser?.image}
-                                                        style={{
-                                                            height: '40px',
-                                                            width: '40px',
-                                                            borderRadius: '50%',
-                                                            objectFit: 'cover',
-                                                            marginLeft: '10px',
-                                                        }}
-                                                        alt="avatar"
-                                                    />
-                                                )}
-                                            </div>
-                                        </div>
-                                    </Upload>
-                                </div>
-                            </Form.Item>
                             <Button type="primary" htmlType="submit">
-                                Submit
+                                Tạo người dùng
                             </Button>
                         </Form>
                     </ModalComponent>
-                </Loading> */}
+                </Loading>
                 <DrawerComponent
                     width="50%"
                     title="Chi tiết người dùng"
@@ -615,11 +550,7 @@ const AdminUserComponent = () => {
                                 name="address"
                                 rules={[{ required: true, message: 'Please input your Address!' }]}
                             >
-                                <Input
-                                    value={stateUserDetails.address}
-                                    onChange={handleOnChangeDetail}
-                                    name="address"
-                                />
+                                <Input value={stateUserDetails.city} onChange={handleOnChangeDetail} name="city" />
                             </Form.Item>
 
                             <Form.Item

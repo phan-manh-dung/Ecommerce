@@ -46,7 +46,7 @@ const FooterComponent = () => {
         'Điều kiện vận chuyển',
     ];
 
-    const arrCooperate = ['Quy chế hoạt động Sàn GDTMĐT', 'Bán hàng cùng Tiki'];
+    const arrCooperate = ['Quy chế hoạt động Sàn GDTMĐT', 'Bán hàng cùng Shop MD'];
 
     const arrPayment = [tt1, tt2, tt3, tt4, tt5];
     return (

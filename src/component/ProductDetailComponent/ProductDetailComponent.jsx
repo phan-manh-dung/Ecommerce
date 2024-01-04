@@ -346,7 +346,14 @@ const ProductDetailComponent = ({ idProduct }) => {
                                                         <div>
                                                             <span className={cx('shipper')}>Giao đến</span>
                                                             <span className={cx('address')}>
-                                                                {user?.moreAddress},{user?.address},{user?.city}
+                                                                {user?.moreAddress || user?.district || user?.city ? (
+                                                                    <>
+                                                                        {user?.moreAddress} {user?.district}
+                                                                        {user?.city}
+                                                                    </>
+                                                                ) : (
+                                                                    <span>Q.1, P.Bến Nghé, Hồ Chí Minh</span>
+                                                                )}
                                                             </span>
                                                         </div>
                                                         <div>

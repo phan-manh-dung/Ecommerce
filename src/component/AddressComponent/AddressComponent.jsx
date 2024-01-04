@@ -21,6 +21,7 @@ const AddressComponent = ({ showAddressModal, handleCloseAddressModal }) => {
     const [arrDistricts, setArrDistricts] = useState();
     const [district, setDistrict] = useState();
     const [nameDistrict, setNameDistrict] = useState('');
+
     const [moreAddressValue, setMoreAddressValue] = useState('');
     const [value, setValue] = useState(null);
     const [showOtherInfo, setShowOtherInfo] = useState(false);
@@ -31,13 +32,15 @@ const AddressComponent = ({ showAddressModal, handleCloseAddressModal }) => {
 
         if (valueEnd === 'other') {
             setShowOtherInfo(true);
+        } else if (valueEnd === 'other2') {
+            setShowOtherInfo(true);
         } else {
             setShowOtherInfo(false);
         }
     };
 
     const initial = () => ({
-        address: '',
+        district: '',
         city: '',
         moreAddress: '',
     });
@@ -87,7 +90,7 @@ const AddressComponent = ({ showAddressModal, handleCloseAddressModal }) => {
         setStateUserDetails((prevState) => ({
             ...prevState,
             moreAddress: moreAddressValue,
-            address: nameDistrict,
+            district: nameDistrict,
             city: nameProvince,
         }));
     }, [nameProvince, nameDistrict, moreAddressValue]);
@@ -106,7 +109,11 @@ const AddressComponent = ({ showAddressModal, handleCloseAddressModal }) => {
     } = mutationUpdate;
 
     const onUpdateUser = () => {
-        mutationUpdate.mutate({ id: user?.id, token: user?.access_token, ...stateUserDetails });
+        if (!district || !province) {
+            alert('Bạn chưa chọn thông tin');
+        } else {
+            mutationUpdate.mutate({ id: user?.id, token: user?.access_token, ...stateUserDetails });
+        }
     };
 
     const handleChangeMoreAddress = (e) => {
@@ -137,19 +144,30 @@ const AddressComponent = ({ showAddressModal, handleCloseAddressModal }) => {
                             một cách chính xác nhất.
                         </p>
                         <div>
-                            {(user?.address || user?.city) && (
+                            {(user?.district || user?.city) && (
                                 <div className={cx('check_group')}>
                                     <Radio.Group onChange={onChangeInputAddress} value={value}>
                                         <p>
                                             <Radio
-                                                value={user.address && user.city}
-                                                checked={value === user.address || user.city}
+                                                value={user.district && user.city}
+                                                checked={value === user.district || user.city}
                                             >
-                                                {user.moreAddress},{user.address},{user.city}
+                                                {user.moreAddress},{user.district},{user.city}
                                             </Radio>
                                         </p>
                                         <p>
                                             <Radio value="other">Chọn khu vực giao hàng khác</Radio>
+                                        </p>
+                                    </Radio.Group>
+                                </div>
+                            )}
+                            {user?.district || user?.city ? (
+                                <div></div>
+                            ) : (
+                                <div onClick={onChangeInputAddress} style={{ padding: '5px 0' }}>
+                                    <Radio.Group>
+                                        <p>
+                                            <Radio value="other2">Thêm địa chỉ giao hàng khác</Radio>
                                         </p>
                                     </Radio.Group>
                                 </div>

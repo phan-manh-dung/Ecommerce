@@ -68,10 +68,6 @@ const SignInPage = () => {
         navigate('/sign-in');
     };
 
-    const loginWithFacebook = () => {
-        window.location.href = '/facebook/redirect';
-    };
-
     return (
         <div className={cx('container_wrapper')}>
             <header className={cx('header')}></header>
@@ -157,7 +153,7 @@ const SignInPage = () => {
                     <div className={cx('button')} onClick={handleSignUp}>
                         <ButtonComponent className={cx('btn')} textButton={'Login'} backgroundColor="rgb(254,67,79)" />
                     </div>
-                    <button onClick={loginWithFacebook}>Login bằng facebook</button>
+                    <button>Login bằng facebook</button>
                     <div className={cx('sign-up')} onClick={handleNavigate}>
                         <p> Already have an account?</p>
                         <span>Tạo tài khoản</span>
