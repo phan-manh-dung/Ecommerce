@@ -8,6 +8,7 @@ import SignInPage from '~/pages/SignInPage/SignInPage';
 import SignUpPage from '~/pages/SignUpPage/SignUpPage';
 import PaymentPage from '~/pages/PaymentPage/PaymentPage';
 import OrderSuccess from '~/pages/OrderSuccess/OrderSuccess';
+import LoginSuccess from '~/pages/LoginSuccess/LoginSuccess';
 
 const { default: HomePage } = require('~/pages/HomePage/HomePage');
 const { default: OrderPage } = require('~/pages/OrderPage/OrderPage');
@@ -68,6 +69,13 @@ export const routes = [
     {
         path: '/orderSuccess',
         page: OrderSuccess,
+        isShowHeader: false,
+        isShowFooter: false,
+        isPrivate: true,
+    },
+    {
+        path: '/login-success/:id',
+        page: LoginSuccess,
         isShowHeader: false,
         isShowFooter: false,
         isPrivate: true,

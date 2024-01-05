@@ -34,6 +34,7 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
         navigate('/sign-in');
     };
 
+    console.log('user', user);
     // Trong bất kỳ component nào bạn muốn kiểm tra trạng thái đăng nhập
     const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
 
@@ -96,6 +97,8 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
         setSearch(e.target.value);
         dispatch(searchProduct(e.target.value));
     };
+
+    // google
 
     const content = (
         <div className={cx('content-header')}>

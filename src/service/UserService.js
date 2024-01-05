@@ -83,3 +83,19 @@ export const getAllUser = async (access_token) => {
     });
     return res.data;
 };
+
+export const apiServiceGoogle = (id) =>
+    new Promise(async (resolve, reject) => {
+        try {
+            let response = await axios({
+                method: 'post',
+                url: 'http://localhost:4000/api/auth/login-success',
+                data: { id },
+            });
+
+            resolve(response);
+        } catch (error) {
+            console.error('API error:', error);
+            reject(error);
+        }
+    });

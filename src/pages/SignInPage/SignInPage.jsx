@@ -95,8 +95,8 @@ const SignInPage = () => {
         return null;
     }
 
-    const signInFacebook = () => {
-        window.location.href = 'http://localhost:4000/facebook/redirect';
+    const handleSignInSocial = (type) => {
+        window.open(`http://localhost:4000/api/auth/${type}`, '_self'); // self không mở tab mới
     };
 
     return (
@@ -181,7 +181,12 @@ const SignInPage = () => {
                                 backgroundColor="rgb(254,67,79)"
                             />
                         </div>
-                        <button onClick={signInFacebook}>Fb</button>
+                        <div style={{ padding: '5px 0' }}>
+                            <button onClick={() => handleSignInSocial('google')}>Google</button>
+                        </div>
+                        <div style={{ padding: '5px 0' }}>
+                            <button onClick={() => handleSignInSocial('facebook')}>Fb</button>
+                        </div>
                         <div className={cx('sign-up')}>
                             <p> Don't have an account?</p>
                             <div onClick={handleNavigate}>
