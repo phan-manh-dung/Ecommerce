@@ -229,47 +229,47 @@ const HomePage = () => {
                         <div className={cx('container_imgs')}>
                             <div className={cx('item1')}>
                                 <a href="/">
-                                    <img alt="" src={img30} width={306} height={306} />
+                                    <img loading="lazy" alt="" src={img30} width={306} height={306} />
                                 </a>
                             </div>
                             <div className={cx('item2')}>
                                 <a href="/">
-                                    <img alt="" src={img31} width={146} height={146} />
+                                    <img loading="lazy" alt="" src={img31} width={146} height={146} />
                                 </a>
                             </div>
                             <div className={cx('item3')}>
                                 <a href="/">
-                                    <img alt="" src={img32} width={146} height={146} />
+                                    <img loading="lazy" alt="" src={img32} width={146} height={146} />
                                 </a>
                             </div>
                             <div className={cx('item4')}>
                                 <a href="/">
-                                    <img alt="" src={img33} width={146} height={146} />
+                                    <img loading="lazy" alt="" src={img33} width={146} height={146} />
                                 </a>
                             </div>
                             <div className={cx('item5')}>
                                 <a href="/">
-                                    <img alt="" src={img34} width={146} height={146} />
+                                    <img loading="lazy" alt="" src={img34} width={146} height={146} />
                                 </a>
                             </div>
                             <div className={cx('item6')}>
                                 <a href="/">
-                                    <img alt="" src={img35} width={146} height={146} />
+                                    <img loading="lazy" alt="" src={img35} width={146} height={146} />
                                 </a>
                             </div>
                             <div className={cx('item7')}>
                                 <a href="/">
-                                    <img alt="" src={img36} width={146} height={146} />
+                                    <img loading="lazy" alt="" src={img36} width={146} height={146} />
                                 </a>
                             </div>
                             <div className={cx('item8')}>
                                 <a href="/">
-                                    <img alt="" src={img37} width={146} height={146} />
+                                    <img loading="lazy" alt="" src={img37} width={146} height={146} />
                                 </a>
                             </div>
                             <div className={cx('item9')}>
                                 <a href="/">
-                                    <img alt="" src={img38} width={146} height={146} />
+                                    <img loading="lazy" alt="" src={img38} width={146} height={146} />
                                 </a>
                             </div>
                         </div>

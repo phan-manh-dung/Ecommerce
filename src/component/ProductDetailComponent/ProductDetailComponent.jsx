@@ -3,6 +3,7 @@ import styles from './ProductDetail.module.scss';
 import classNames from 'classnames/bind';
 
 import img_right_arrow from '~/assets/img_Global/right_arrow.png';
+import img_left_arrow from '~/assets/img_Global/img_left_arrow.png';
 import img_pay from '~/assets/img_Global/pay.png';
 
 import img1 from '~/assets/img_Global/slide10.jpg';
@@ -26,7 +27,7 @@ import chamthan from '~/assets/img_Global/chamthan.png';
 import logoshop from '~/assets/img_Global/logoshop.png';
 
 import { Col, InputNumber, Row } from 'antd';
-import { CaretLeftOutlined, MinusOutlined, PlusOutlined, StarFilled } from '@ant-design/icons';
+import { MinusOutlined, PlusOutlined, StarFilled } from '@ant-design/icons';
 import ButtonComponent from '~/component/ButtonComponent/Buttoncomponent';
 import * as ProductService from '~/service/ProductService';
 import { createCart } from '~/service/OrderService';
@@ -40,7 +41,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronRight, faComment, faPlus, faStar } from '@fortawesome/free-solid-svg-icons';
 import ModalComponent from '../ModalComponent/ModalComponent';
 import AddressComponent from '../AddressComponent/AddressComponent';
-import { useMutationHook } from '~/hook/useMutationHook';
 const cx = classNames.bind(styles);
 
 const ProductDetailComponent = ({ idProduct }) => {
@@ -230,13 +230,11 @@ const ProductDetailComponent = ({ idProduct }) => {
                                                             className={cx('button_right')}
                                                         >
                                                             <div className={cx('button')}>
-                                                                <CaretLeftOutlined
-                                                                    style={{
-                                                                        backgroundColor: 'var(--primary-color)',
-                                                                        height: '24px',
-                                                                        width: '26px',
-                                                                        borderRadius: '50%',
-                                                                    }}
+                                                                <img
+                                                                    alt="left_arrow"
+                                                                    src={img_left_arrow}
+                                                                    width={20}
+                                                                    height={20}
                                                                 />
                                                             </div>
                                                         </div>
@@ -348,7 +346,7 @@ const ProductDetailComponent = ({ idProduct }) => {
                                                             <span className={cx('address')}>
                                                                 {user?.moreAddress || user?.district || user?.city ? (
                                                                     <>
-                                                                        {user?.moreAddress} {user?.district}
+                                                                        {user?.moreAddress} {user?.district}{' '}
                                                                         {user?.city}
                                                                     </>
                                                                 ) : (

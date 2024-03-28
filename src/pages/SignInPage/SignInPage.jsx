@@ -12,7 +12,6 @@ import {
     EyeOutlined,
     FacebookOutlined,
     GithubOutlined,
-    HomeOutlined,
     InstagramOutlined,
     LinkedinOutlined,
 } from '@ant-design/icons';
@@ -20,6 +19,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useMutationHook } from '~/hook/useMutationHook';
 import Loading from '~/component/LoadingComponent/Loading';
 import { updateUser } from '~/redux/slide/userSlide';
+import google from '~/assets/img_Global/google.png';
+import facebook from '~/assets/img_Global/facebook.png';
 
 const cx = classNames.bind(styles);
 
@@ -126,11 +127,6 @@ const SignInPage = () => {
                                 <LinkedinOutlined style={{ width: '20px', height: '20px' }} />
                             </a>
                         </div>
-                        <div className={cx('home_back')}>
-                            <a href="/">
-                                <HomeOutlined style={{ color: '#fff', fontSize: '30px' }} />
-                            </a>
-                        </div>
                     </div>
                     <div className={cx('login')}>
                         <h2> Login </h2>
@@ -172,7 +168,6 @@ const SignInPage = () => {
                             </label>
                             <a href="#"> Forgot Password?</a>
                         </div>
-
                         <div className={cx('button')} onClick={handleLogin}>
                             <ButtonComponent
                                 disabled={!name.length || !password.length}
@@ -181,16 +176,25 @@ const SignInPage = () => {
                                 backgroundColor="rgb(254,67,79)"
                             />
                         </div>
-                        <div style={{ padding: '5px 0' }}>
-                            <button onClick={() => handleSignInSocial('google')}>Google</button>
+                        <div style={{ textAlign: 'center' }}>
+                            <span style={{ color: '#fff' }}>Hoặc</span>
+                        </div>
+                        <div className={cx('style_button-social')}>
+                            <button className={cx('button_social')} onClick={() => handleSignInSocial('google')}>
+                                <img alt="google" src={google} width={22} height={22} />
+                                <span className={cx('title_button')}>Google</span>
+                            </button>
                         </div>
                         <div style={{ padding: '5px 0' }}>
-                            <button onClick={() => handleSignInSocial('facebook')}>Fb</button>
+                            <button className={cx('button_social')} onClick={() => handleSignInSocial('facebook')}>
+                                <img alt="facebook" src={facebook} width={24} height={24} />
+                                <span className={cx('title_button')}> Facebook</span>
+                            </button>
                         </div>
                         <div className={cx('sign-up')}>
-                            <p> Don't have an account?</p>
+                            <p style={{ paddingRight: '5px' }}> Don't have an account?</p>
                             <div onClick={handleNavigate}>
-                                <span className={cx('')}> Sign up</span>
+                                <span style={{ textDecoration: 'underline' }}> Sign up</span>
                             </div>
                         </div>
                     </div>

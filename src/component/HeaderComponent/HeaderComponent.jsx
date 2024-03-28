@@ -34,7 +34,6 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
         navigate('/sign-in');
     };
 
-    console.log('user', user);
     // Trong bất kỳ component nào bạn muốn kiểm tra trạng thái đăng nhập
     const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
 
@@ -111,7 +110,7 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
             </p>
             <p
                 onClick={() => {
-                    navigate('/OrderSuccess');
+                    navigate('/my-order');
                 }}
             >
                 Đơn hàng của tôi
@@ -140,7 +139,11 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
             <div className={cx('wrapper_header')}>
                 <Row className={cx('wrapper_row')}>
                     <Col span={6} className={cx('row_left')}>
-                        <img style={{ width: '20%', height: '100%' }} src={logo_shop} alt="logo" />
+                        <div>
+                            <a href="/" className={cx('row_left-home')}>
+                                <img style={{ width: '20%', height: '100%' }} src={logo_shop} alt="logo" />
+                            </a>
+                        </div>
                     </Col>
                     {!isHiddenSearch && (
                         <Col span={8}>

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styles from './Profile.module.scss';
 import classNames from 'classnames/bind';
+import { useNavigate } from 'react-router-dom';
 import { Col, Radio, Row, Upload } from 'antd';
 import {
     faBell,
@@ -17,19 +18,19 @@ import {
     faShieldVirus,
     faStarHalfStroke,
     faUser,
+    faHeadset,
 } from '@fortawesome/free-solid-svg-icons';
 import ListProfileComponent from '~/component/ListProfileComponent/ListProfileComponent';
-import { useQuery } from '@tanstack/react-query';
 
 import img_user from '~/assets/img_Global/user_profile.png';
 import img_facebook from '~/assets/img_Global/facebook.png';
 import img_google from '~/assets/img_Global/google.png';
 import astra_reward from '~/assets/img_Global/astra_reward.png';
-import tiki360 from '~/assets/img_Global/tiki360.png';
 import astra from '~/assets/img_Global/astra_red.png';
 import img_right_arrow from '~/assets/img_Global/right_arrow.png';
 import avatar_blue from '~/assets/img_Global/avatar_blue.png';
 import img_pen from '~/assets/img_Global/pen.png';
+
 import Input from 'antd/es/input/Input';
 import ButtonComponent from '~/component/ButtonComponent/Buttoncomponent';
 import * as UserService from '~/service/UserService';
@@ -38,7 +39,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useDispatch, useSelector } from 'react-redux';
 import { useMutationHook } from '~/hook/useMutationHook';
 import Loading from '~/component/LoadingComponent/Loading';
-import { updateUser } from '~/redux/slide/userSlide';
+import { updateUser, updateUserSlice } from '~/redux/slide/userSlide';
 import { getBase64 } from '~/utils';
 import AddressComponent from '~/component/AddressComponent/AddressComponent';
 
@@ -155,6 +156,18 @@ const ProfilePage = () => {
             email,
             access_token: user?.access_token,
         });
+        dispatch(
+            updateUserSlice({
+                id: user?.id,
+                token: user?.access_token,
+                name,
+                nickname,
+                dateOfBirth: convertDate,
+                sex,
+                avatar,
+                country,
+            }),
+        );
     };
 
     useEffect(() => {
@@ -210,6 +223,7 @@ const ProfilePage = () => {
         faEye,
         faHeartCirclePlus,
         faStarHalfStroke,
+        faHeadset,
     ];
     const arrTitleLeft = [
         'Thông tin tài khoản',
@@ -222,8 +236,10 @@ const ProfilePage = () => {
         'Sản phẩm bạn đã xem',
         'Sản phẩm yêu thích',
         'Nhận xét của tôi',
+        'Hỗ trợ khách hàng',
     ];
     const arrCountry = ['Việt Nam', 'Japan', 'Franch', 'Italy', 'Ai cập', 'India'];
+
     return (
         <div className={cx('container_profile')}>
             <Loading isLoading={isLoadingUpdated}>
@@ -238,8 +254,27 @@ const ProfilePage = () => {
                             <div className={cx('container_left')}>
                                 <div className={cx('wrapper_left')}>
                                     <div className={cx('user')}>
-                                        <div className="img">
-                                            <img alt="" src={img_user} width={45} style={{ borderRadius: '50%' }} />
+                                        <div className={cx('img')}>
+                                            {avatar ? (
+                                                <div>
+                                                    <img
+                                                        className={cx('wrapper_form')}
+                                                        alt="img"
+                                                        src={avatar}
+                                                        width={50}
+                                                        height={50}
+                                                    />
+                                                </div>
+                                            ) : (
+                                                <div>
+                                                    <img
+                                                        className={cx('wrapper_form')}
+                                                        alt=""
+                                                        src={img_user}
+                                                        style={{ width: '52px' }}
+                                                    />
+                                                </div>
+                                            )}
                                         </div>
                                         <div style={{ paddingLeft: '12px' }}>
                                             <p>Tài khoản của</p>
@@ -250,7 +285,7 @@ const ProfilePage = () => {
                                                     textOverflow: 'ellipsis',
                                                 }}
                                             >
-                                                {name ? nickname : 'Chưa có'}
+                                                {user?.name ? user?.nickname : 'Chưa có'}
                                             </p>
                                         </div>
                                     </div>
@@ -265,23 +300,16 @@ const ProfilePage = () => {
                                             <div style={{ marginRight: '16px' }}>
                                                 <img alt="" src={astra_reward} width={24} height={24} />
                                             </div>
-                                            <span style={{ color: 'rgb(155,155,155)' }}>Astra Reward</span>
+                                            <span style={{ color: 'rgb(0,0,0)', fontSize: '13px' }}>Astra Reward</span>
                                         </a>
                                     </div>
-                                    <div className={cx('left_list')}>
-                                        <a href="/" className={cx('wrapper_list')}>
-                                            <div style={{ marginRight: '16px' }}>
-                                                <img alt="" src={tiki360} width={24} height={24} />
-                                            </div>
-                                            <span style={{ color: 'rgb(155,155,155)' }}>Hợp đồng bảo hiểm</span>
-                                        </a>
-                                    </div>
+
                                     <div className={cx('left_list')}>
                                         <a href="/" className={cx('wrapper_list')}>
                                             <div style={{ marginRight: '16px' }}>
                                                 <img alt="" src={astra} width={24} height={24} />
                                             </div>
-                                            <span style={{ color: 'rgb(155,155,155)' }}>Astra của bạn</span>
+                                            <span style={{ color: 'rgb(0,0,0)', fontSize: '13px' }}>Astra của bạn</span>
                                         </a>
                                     </div>
                                 </div>
@@ -485,7 +513,7 @@ const ProfilePage = () => {
                                             </Col>
                                             <Col xs={0} sm={12}>
                                                 <div className={cx('wrapper_right-right')}>
-                                                    <div className="right-right">
+                                                    <div className={cx('right-right')}>
                                                         <div className={cx('right-left')}>
                                                             <span className={cx('info-title')}>
                                                                 Số điện thoại & Email
@@ -505,7 +533,7 @@ const ProfilePage = () => {
                                                                     </span>
                                                                     <div>
                                                                         <div>
-                                                                            <div class="style-flex">
+                                                                            <div className={cx('style-flex')}>
                                                                                 <span style={{ fontSize: '12px' }}>
                                                                                     (+84)
                                                                                 </span>
@@ -617,49 +645,52 @@ const ProfilePage = () => {
                                                             </span>
                                                         </div>
                                                         {/* facebook */}
-                                                        <div className={cx('sdt')}>
-                                                            <div className={cx('wrapper-sdt')}>
-                                                                <img
-                                                                    alt="facebook"
-                                                                    src={img_facebook}
-                                                                    width={24}
-                                                                    height={24}
-                                                                />
-                                                                <div className={cx('detail')}>
-                                                                    <span>Facebook</span>
+                                                        {user?.loginType !== 'facebook' ? (
+                                                            <div className={cx('sdt')}>
+                                                                <div className={cx('wrapper-sdt')}>
+                                                                    <img
+                                                                        alt="facebook"
+                                                                        src={img_google}
+                                                                        width={24}
+                                                                        height={24}
+                                                                    />
+                                                                    <div className={cx('detail')}>
+                                                                        <span>Google</span>
+                                                                    </div>
+                                                                </div>
+                                                                <div className={cx('status')}>
+                                                                    <ButtonComponent
+                                                                        className={cx('status-button')}
+                                                                        textButton="Đã thiết lập"
+                                                                        width="100%"
+                                                                        height={28}
+                                                                    />
                                                                 </div>
                                                             </div>
-                                                            <div className={cx('status')}>
-                                                                <ButtonComponent
-                                                                    className={cx('status-button')}
-                                                                    textButton="Thiết lập"
-                                                                    width="100%"
-                                                                    height={28}
-                                                                />
-                                                            </div>
-                                                        </div>
-                                                        {/* google */}
-                                                        <div className={cx('sdt')}>
-                                                            <div className={cx('wrapper-sdt')}>
-                                                                <img
-                                                                    alt="facebook"
-                                                                    src={img_google}
-                                                                    width={24}
-                                                                    height={24}
-                                                                />
-                                                                <div className={cx('detail')}>
-                                                                    <span>Google</span>
+                                                        ) : (
+                                                            <div className={cx('sdt')}>
+                                                                <div className={cx('wrapper-sdt')}>
+                                                                    <img
+                                                                        alt="facebook"
+                                                                        src={img_facebook}
+                                                                        width={24}
+                                                                        height={24}
+                                                                    />
+                                                                    <div className={cx('detail')}>
+                                                                        <span>Facebook</span>
+                                                                    </div>
+                                                                </div>
+                                                                <div className={cx('status')}>
+                                                                    <ButtonComponent
+                                                                        disabled={true}
+                                                                        className={cx('status-button')}
+                                                                        textButton="Đã thiết lập"
+                                                                        width="100%"
+                                                                        height={28}
+                                                                    />
                                                                 </div>
                                                             </div>
-                                                            <div className={cx('status')}>
-                                                                <ButtonComponent
-                                                                    className={cx('status-button')}
-                                                                    textButton="Thiết lập"
-                                                                    width="100%"
-                                                                    height={28}
-                                                                />
-                                                            </div>
-                                                        </div>
+                                                        )}
                                                     </div>
                                                 </div>
                                             </Col>

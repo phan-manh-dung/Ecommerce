@@ -16,6 +16,7 @@ const initialState = {
     id: '',
     isAdmin: false,
     refresh_token: '',
+    loginType: '',
 };
 
 export const userSlide = createSlice({
@@ -39,6 +40,7 @@ export const userSlide = createSlice({
                 _id = '',
                 isAdmin,
                 refresh_token = '',
+                loginType = '',
             } = action.payload;
             state.name = name;
             state.phone = phone;
@@ -54,6 +56,24 @@ export const userSlide = createSlice({
             state.access_token = access_token || '';
             state.isAdmin = isAdmin;
             state.refresh_token = refresh_token;
+            state.loginType = loginType;
+        },
+
+        updateUserAddress: (state, action) => {
+            const { district = '', city = '', moreAddress = '' } = action.payload;
+            state.district = district;
+            state.city = city;
+            state.moreAddress = moreAddress;
+        },
+
+        updateUserSlice: (state, action) => {
+            const { name = '', dateOfBirth = '', nickname = '', sex = '', country = '', avatar = '' } = action.payload;
+            state.name = name;
+            state.dateOfBirth = dateOfBirth;
+            state.nickname = nickname;
+            state.country = country;
+            state.sex = sex;
+            state.avatar = avatar;
         },
 
         // xóa thông tin reset lại
@@ -76,5 +96,5 @@ export const userSlide = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { updateUser, resetUser } = userSlide.actions;
+export const { updateUser, resetUser, updateUserAddress, updateUserSlice } = userSlide.actions;
 export default userSlide.reducer;

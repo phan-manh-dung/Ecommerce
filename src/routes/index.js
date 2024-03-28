@@ -9,6 +9,7 @@ import SignUpPage from '~/pages/SignUpPage/SignUpPage';
 import PaymentPage from '~/pages/PaymentPage/PaymentPage';
 import OrderSuccess from '~/pages/OrderSuccess/OrderSuccess';
 import LoginSuccess from '~/pages/LoginSuccess/LoginSuccess';
+import MyOfOrder from '~/pages/MyOfOrder/MyOfOrder';
 
 const { default: HomePage } = require('~/pages/HomePage/HomePage');
 const { default: OrderPage } = require('~/pages/OrderPage/OrderPage');
@@ -79,6 +80,12 @@ export const routes = [
         isShowHeader: false,
         isShowFooter: false,
         isPrivate: true,
+    },
+    {
+        path: '/my-order',
+        page: MyOfOrder,
+        isShowHeader: true,
+        isShowFooter: true,
     },
     {
         path: '*',

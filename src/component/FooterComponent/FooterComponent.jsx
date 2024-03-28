@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './FooterComponent.module.scss';
 import classNames from 'classnames/bind';
-import { Badge, Col, Popover, Row } from 'antd';
+import { Col, Row } from 'antd';
 
 import khonghanggia from '~/assets/img_Global/khonghanggia.png';
 import dmca from '~/assets/img_Global/dcma.png';

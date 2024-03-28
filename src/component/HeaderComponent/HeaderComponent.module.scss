@@ -17,6 +17,12 @@
 .row_left {
     justify-content: center;
     display: flex;
+
+    .row_left-home {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 }
 
 .row_right-list {

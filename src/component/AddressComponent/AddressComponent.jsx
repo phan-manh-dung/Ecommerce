@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import styles from './Address.module.scss';
 import classNames from 'classnames/bind';
 import { apiGetPublicProvinces, apiGetPublicDistrict } from '~/service/ApisPublic';
@@ -8,6 +8,7 @@ import { useMutationHook } from '~/hook/useMutationHook';
 import Loading from '../LoadingComponent/Loading';
 import ModalComponent from '../ModalComponent/ModalComponent';
 import { Radio } from 'antd';
+import { resetUser, updateUser, updateUserAddress } from '~/redux/slide/userSlide';
 
 const cx = classNames.bind(styles);
 
@@ -101,6 +102,7 @@ const AddressComponent = ({ showAddressModal, handleCloseAddressModal }) => {
         return res;
     });
 
+    const dispatch = useDispatch();
     const {
         data: dataUpdated,
         isLoading: isLoadingUpdated,
@@ -108,11 +110,14 @@ const AddressComponent = ({ showAddressModal, handleCloseAddressModal }) => {
         isError: isErrorUpdated,
     } = mutationUpdate;
 
+    const [isUpdating, setIsUpdating] = useState(false);
+
     const onUpdateUser = () => {
         if (!district || !province) {
             alert('Bạn chưa chọn thông tin');
         } else {
             mutationUpdate.mutate({ id: user?.id, token: user?.access_token, ...stateUserDetails });
+            dispatch(updateUserAddress({ id: user?.id, token: user?.access_token, ...stateUserDetails }));
         }
     };
 
@@ -176,7 +181,7 @@ const AddressComponent = ({ showAddressModal, handleCloseAddressModal }) => {
                             {showOtherInfo && (
                                 <div>
                                     <Loading isLoading={isLoadingUpdated}>
-                                        <div className={cx('wrapper_more-info')} closeUpdate>
+                                        <div className={cx('wrapper_more-info')}>
                                             <div className={cx('row')}>
                                                 <p>Tỉnh\Thành phố (*)</p>
                                                 <select
