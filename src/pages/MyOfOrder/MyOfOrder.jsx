@@ -17,6 +17,7 @@ import {
     faStarHalfStroke,
     faUser,
     faHeadset,
+    faMagnifyingGlass,
 } from '@fortawesome/free-solid-svg-icons';
 
 import styles from './MyOfOrder.module.scss';
@@ -28,12 +29,19 @@ import img_right_arrow from '~/assets/img_Global/right_arrow.png';
 import img_user from '~/assets/img_Global/user_profile.png';
 import astra_reward from '~/assets/img_Global/astra_reward.png';
 import astra from '~/assets/img_Global/astra_red.png';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import AllOrders from '~/orders_component/AllOrders/AllOrders';
+import WaitPay from '~/orders_component/WaitPay/WaitPay';
+import Processing from '~/orders_component/Processing/Processing';
+import Delivered from '~/orders_component/Delivered/Delivered';
+import Transport from '~/orders_component/Transport/Transport';
+import Cancelled from '~/orders_component/Cancelled/Cancelled';
 
 const cx = classNames.bind(styles);
 
 const MyOfOrder = () => {
     const user = useSelector((state) => state.user);
-    const [avatar, setAvatar] = useState('');
+    const [activeTab, setActiveTab] = useState('all');
 
     // dữ liệu map
     const arrImage = [
@@ -62,6 +70,30 @@ const MyOfOrder = () => {
         'Nhận xét của tôi',
         'Hỗ trợ khách hàng',
     ];
+
+    const handleTabClick = (tab) => {
+        setActiveTab(tab); // Cập nhật trạng thái của tab khi người dùng click vào
+    };
+
+    // Hàm render component dựa trên tab đang được chọn
+    const renderComponent = () => {
+        switch (activeTab) {
+            case 'all':
+                return <AllOrders />;
+            case 'wait_pay':
+                return <WaitPay />;
+            case 'processing':
+                return <Processing />;
+            case 'transport':
+                return <Transport />;
+            case 'delivered':
+                return <Delivered />;
+            case 'cancelled':
+                return <Cancelled />;
+            default:
+                return null;
+        }
+    };
 
     return (
         <div className={cx('container_my-order')}>
@@ -142,8 +174,64 @@ const MyOfOrder = () => {
                             </div>
                         </div>
                     </Col>
-                    <Col sx={0} sm={19}>
+                    <Col sx={0} sm={19} style={{ padding: '0 16px' }}>
                         <div className={cx('information')}>Đơn hàng của tôi</div>
+                        <div className={cx('container_order')}>
+                            <div className={cx('list')}>
+                                <Row style={{ height: '42px', backgroundColor: '#fff' }}>
+                                    <Col xs={0} sm={4} className={cx('col')} onClick={() => handleTabClick('all')}>
+                                        <div>Tất cả đơn</div>
+                                    </Col>
+                                    <Col xs={0} sm={4} className={cx('col')} onClick={() => handleTabClick('wait_pay')}>
+                                        <div>Chờ thanh toán</div>
+                                    </Col>
+                                    <Col
+                                        xs={0}
+                                        sm={4}
+                                        className={cx('col')}
+                                        onClick={() => handleTabClick('processing')}
+                                    >
+                                        <div>Đang xử lí</div>
+                                    </Col>
+                                    <Col
+                                        xs={0}
+                                        sm={4}
+                                        className={cx('col')}
+                                        onClick={() => handleTabClick('transport')}
+                                    >
+                                        <div>Đang vận chuyển</div>
+                                    </Col>
+                                    <Col
+                                        xs={0}
+                                        sm={4}
+                                        className={cx('col')}
+                                        onClick={() => handleTabClick('delivered')}
+                                    >
+                                        <div>Đã giao</div>
+                                    </Col>
+                                    <Col
+                                        xs={0}
+                                        sm={4}
+                                        className={cx('col')}
+                                        onClick={() => handleTabClick('cancelled')}
+                                    >
+                                        <div>Đã hủy</div>
+                                    </Col>
+                                </Row>
+                            </div>
+                            <div className={cx('search')}>
+                                <div>
+                                    <FontAwesomeIcon icon={faMagnifyingGlass} width={40} color="#808089" />
+                                </div>
+                                <input
+                                    type="text"
+                                    placeholder="Tìm đơn hàng theo Mã đơn hàng, Nhà bán hoặc Tên sản phẩm"
+                                />
+                                <div className={cx('find')}>Tìm đơn hàng</div>
+                            </div>
+                            {/* componet */}
+                            <div className={cx('slide-in')}>{renderComponent()}</div>
+                        </div>
                     </Col>
                 </Row>
             </div>

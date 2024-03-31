@@ -6,7 +6,7 @@ import { useMemo } from 'react';
 import styles from './Table.module.scss';
 import classNames from 'classnames/bind';
 import { Excel } from 'antd-table-saveas-excel';
-import ButtonComponent from '../ButtonComponent/Buttoncomponent';
+
 const cx = classNames.bind(styles);
 
 const TableComponent = (props) => {
