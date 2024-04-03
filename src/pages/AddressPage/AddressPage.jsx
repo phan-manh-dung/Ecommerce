@@ -1,6 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Col, Radio, Row, Upload } from 'antd';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
+
+import styles from './Address.module.scss';
+import classNames from 'classnames/bind';
+
+import img_right_arrow from '~/assets/img_Global/right_arrow.png';
+import img_user from '~/assets/img_Global/user_profile.png';
+import astra_reward from '~/assets/img_Global/astra_reward.png';
+import astra from '~/assets/img_Global/astra_red.png';
+
 import {
     faBell,
     faBox,
@@ -18,30 +27,20 @@ import {
     faUser,
     faHeadset,
     faMagnifyingGlass,
+    faHome,
+    faGift,
+    faNoteSticky,
+    faRotateLeft,
+    faPlus,
+    faCircleCheck,
 } from '@fortawesome/free-solid-svg-icons';
-
-import styles from './MyOfOrder.module.scss';
-import classNames from 'classnames/bind';
-import Loading from '~/component/LoadingComponent/Loading';
 import ListProfileComponent from '~/component/ListProfileComponent/ListProfileComponent';
-
-import img_right_arrow from '~/assets/img_Global/right_arrow.png';
-import img_user from '~/assets/img_Global/user_profile.png';
-import astra_reward from '~/assets/img_Global/astra_reward.png';
-import astra from '~/assets/img_Global/astra_red.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import AllOrders from '~/orders_component/AllOrders/AllOrders';
-import WaitPay from '~/orders_component/WaitPay/WaitPay';
-import Processing from '~/orders_component/Processing/Processing';
-import Delivered from '~/orders_component/Delivered/Delivered';
-import Transport from '~/orders_component/Transport/Transport';
-import Cancelled from '~/orders_component/Cancelled/Cancelled';
 
 const cx = classNames.bind(styles);
 
-const MyOfOrder = () => {
+const AddressPage = () => {
     const user = useSelector((state) => state.user);
-    const [activeTab, setActiveTab] = useState('all');
 
     // dữ liệu map
     const arrImage = [
@@ -71,37 +70,13 @@ const MyOfOrder = () => {
         'Hỗ trợ khách hàng',
     ];
 
-    const handleTabClick = (tab) => {
-        setActiveTab(tab); // Cập nhật trạng thái của tab khi người dùng click vào
-    };
-
-    // Hàm render component dựa trên tab đang được chọn
-    const renderComponent = () => {
-        switch (activeTab) {
-            case 'all':
-                return <AllOrders />;
-            case 'wait_pay':
-                return <WaitPay />;
-            case 'processing':
-                return <Processing />;
-            case 'transport':
-                return <Transport />;
-            case 'delivered':
-                return <Delivered />;
-            case 'cancelled':
-                return <Cancelled />;
-            default:
-                return null;
-        }
-    };
-
     return (
-        <div className={cx('container_my-order')}>
-            <div className={cx('wrapper_my-order')}>
+        <div className={cx('container_address')}>
+            <div className={cx('wrapper_address')}>
                 <div className={cx('wrapper-type')}>
                     <div className={cx('type-home')}>Trang chủ</div>
                     <img alt="right_arrow" src={img_right_arrow} width={18} height={18} />
-                    <span className={cx('type-title')}>Đơn hàng của tôi</span>
+                    <span className={cx('type-title')}>Sổ địa chỉ</span>
                 </div>
                 <Row>
                     <Col xs={0} sm={5}>
@@ -174,73 +149,44 @@ const MyOfOrder = () => {
                             </div>
                         </div>
                     </Col>
-                    <Col sx={0} sm={19} style={{ padding: '0 16px' }}>
-                        <div className={cx('information')}>Đơn hàng của tôi</div>
-                        <div className={cx('container_order')}>
-                            <div className={cx('list')}>
-                                <Row style={{ height: '42px', backgroundColor: '#fff' }}>
-                                    <Col
-                                        xs={0}
-                                        sm={4}
-                                        className={cx('col', { active: activeTab === 'all' })}
-                                        onClick={() => handleTabClick('all')}
-                                    >
-                                        <div>Tất cả đơn</div>
-                                    </Col>
-                                    <Col
-                                        xs={0}
-                                        sm={4}
-                                        className={cx('col', { active: activeTab === 'wait_pay' })}
-                                        onClick={() => handleTabClick('wait_pay')}
-                                    >
-                                        <div>Chờ thanh toán</div>
-                                    </Col>
-                                    <Col
-                                        xs={0}
-                                        sm={4}
-                                        className={cx('col', { active: activeTab === 'processing' })}
-                                        onClick={() => handleTabClick('processing')}
-                                    >
-                                        <div>Đang xử lí</div>
-                                    </Col>
-                                    <Col
-                                        xs={0}
-                                        sm={4}
-                                        className={cx('col', { active: activeTab === 'transport' })}
-                                        onClick={() => handleTabClick('transport')}
-                                    >
-                                        <div>Đang vận chuyển</div>
-                                    </Col>
-                                    <Col
-                                        xs={0}
-                                        sm={4}
-                                        className={cx('col', { active: activeTab === 'delivered' })}
-                                        onClick={() => handleTabClick('delivered')}
-                                    >
-                                        <div>Đã giao</div>
-                                    </Col>
-                                    <Col
-                                        xs={0}
-                                        sm={4}
-                                        className={cx('col', { active: activeTab === 'cancelled' })}
-                                        onClick={() => handleTabClick('cancelled')}
-                                    >
-                                        <div>Đã hủy</div>
-                                    </Col>
-                                </Row>
+                    <Col className={cx('col')} xs={0} sm={19} style={{ padding: '0 16px' }}>
+                        <div className={cx('information')}>Sổ địa chỉ</div>
+                        <div className={cx('wrapper_add')}>
+                            <div className={cx('new')}>
+                                <a href="/" className={cx('the_a')}>
+                                    <div className={cx('icon')}>
+                                        <FontAwesomeIcon icon={faPlus} />
+                                    </div>
+                                    <span>Thêm địa chỉ mới</span>
+                                </a>
                             </div>
-                            <div className={cx('search')}>
-                                <div>
-                                    <FontAwesomeIcon icon={faMagnifyingGlass} width={40} color="#808089" />
+                            <div className={cx('item')}>
+                                <div className={cx('info')}>
+                                    <div className={cx('name')}>
+                                        {user?.name}
+                                        <span className={cx('span1')}>
+                                            <FontAwesomeIcon icon={faCircleCheck} />
+                                            <span>Địa chỉ mặc định</span>
+                                        </span>
+                                    </div>
+                                    <div className={cx('address')}>
+                                        <span>Địa chỉ: </span>
+                                        {user?.moreAddress}
+                                        {','}
+                                        {user?.district}
+                                        {','}
+                                        {user?.city}
+                                    </div>
+                                    <div className={cx('phone')}>
+                                        <span>Điện thoại: </span>
+                                        {user?.phone || 'Chưa thiết lập'}
+                                    </div>
                                 </div>
-                                <input
-                                    type="text"
-                                    placeholder="Tìm đơn hàng theo Mã đơn hàng, Nhà bán hoặc Tên sản phẩm"
-                                />
-                                <div className={cx('find')}>Tìm đơn hàng</div>
+                                <div className={cx('action')}>
+                                    <a href="/"> Chỉnh sửa </a>
+                                    <button>Xóa</button>
+                                </div>
                             </div>
-                            {/* componet */}
-                            <div className={cx('slide-in')}>{renderComponent()}</div>
                         </div>
                     </Col>
                 </Row>
@@ -249,4 +195,4 @@ const MyOfOrder = () => {
     );
 };
 
-export default MyOfOrder;
+export default AddressPage;

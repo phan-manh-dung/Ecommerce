@@ -130,30 +130,29 @@
             background-color: rgb(235, 235, 240);
         }
     }
-}
 
-.wrapper_form {
-    border-radius: 50%;
-    -webkit-box-pack: center;
-    justify-content: center;
-    display: flex;
-    -webkit-box-align: center;
-    align-items: center;
-    object-fit: cover;
-}
-
-//
-@keyframes slideFromRight {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
+    .wrapper_form {
+        border-radius: 50%;
+        -webkit-box-pack: center;
+        justify-content: center;
+        display: flex;
+        -webkit-box-align: center;
+        align-items: center;
+        object-fit: cover;
     }
 }
 
-.slide-in {
-    animation: slideFromRight 0.5s ease forwards;
+.active {
+    &::after {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 2px;
+        background-color: rgb(86, 86, 246);
+        bottom: 1px;
+    }
+}
+
+.col.active div {
+    color: rgb(86, 86, 246) !important;
 }

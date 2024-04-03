@@ -346,7 +346,10 @@ const ProductDetailComponent = ({ idProduct }) => {
                                                             <span className={cx('address')}>
                                                                 {user?.moreAddress || user?.district || user?.city ? (
                                                                     <>
-                                                                        {user?.moreAddress} {user?.district}{' '}
+                                                                        {user?.moreAddress}
+                                                                        {','}
+                                                                        {user?.district}
+                                                                        {','}
                                                                         {user?.city}
                                                                     </>
                                                                 ) : (

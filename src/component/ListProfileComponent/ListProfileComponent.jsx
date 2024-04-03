@@ -7,9 +7,6 @@ const cx = classNames.bind(styles);
 const ListProfileComponent = ({ index, name, width, height, src }) => {
     const navigate = useNavigate();
 
-    console.log('name', name);
-    console.log('index', index);
-
     const handleOrder = (name) => {
         if (name === 'Quản lý đơn hàng') {
             navigate('/my-order');
@@ -17,9 +14,17 @@ const ListProfileComponent = ({ index, name, width, height, src }) => {
         if (name === 'Thông tin tài khoản') {
             navigate('/profile-user');
         }
+        if (name === 'Thông báo của tôi') {
+            navigate('/my-notification');
+        }
+        if (name === 'Quản lý đổi trả') {
+            navigate('/lie-manager');
+        }
+        if (name === 'Sổ địa chỉ') {
+            navigate('/my-address');
+        }
     };
 
-    //  const className = name === activePage ? 'list1' : 'left_list';
     return (
         <div className={cx('left_list')} onClick={() => handleOrder(name)}>
             <div className={cx('wrapper_list')}>

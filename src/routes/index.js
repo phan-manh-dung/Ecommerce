@@ -10,6 +10,9 @@ import PaymentPage from '~/pages/PaymentPage/PaymentPage';
 import OrderSuccess from '~/pages/OrderSuccess/OrderSuccess';
 import LoginSuccess from '~/pages/LoginSuccess/LoginSuccess';
 import MyOfOrder from '~/pages/MyOfOrder/MyOfOrder';
+import No_Notification from '~/pages/No_Notification/No_Notification';
+import ManagerLie from '~/pages/ManagerLie/ManagerLie';
+import AddressPage from '~/pages/AddressPage/AddressPage';
 
 const { default: HomePage } = require('~/pages/HomePage/HomePage');
 const { default: OrderPage } = require('~/pages/OrderPage/OrderPage');
@@ -84,6 +87,24 @@ export const routes = [
     {
         path: '/my-order',
         page: MyOfOrder,
+        isShowHeader: true,
+        isShowFooter: true,
+    },
+    {
+        path: '/my-notification',
+        page: No_Notification,
+        isShowHeader: true,
+        isShowFooter: true,
+    },
+    {
+        path: '/lie-manager',
+        page: ManagerLie,
+        isShowHeader: true,
+        isShowFooter: true,
+    },
+    {
+        path: '/my-address',
+        page: AddressPage,
         isShowHeader: true,
         isShowFooter: true,
     },
