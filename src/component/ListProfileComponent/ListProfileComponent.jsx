@@ -23,6 +23,21 @@ const ListProfileComponent = ({ index, name, width, height, src }) => {
         if (name === 'Sổ địa chỉ') {
             navigate('/my-address');
         }
+        if (name === 'Thông tin thanh toán') {
+            navigate('/my/pay-information');
+        }
+        if (name === 'Đánh giá sản phẩm') {
+            navigate('/my-review');
+        }
+        if (name === 'Sản phẩm yêu thích') {
+            navigate('/my/favorite-product');
+        }
+        if (name === 'Nhận xét của tôi') {
+            navigate('/my-comment');
+        }
+        if (name === 'Hỗ trợ khách hàng') {
+            navigate('/customer/help');
+        }
     };
 
     return (

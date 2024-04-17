@@ -13,6 +13,10 @@ import MyOfOrder from '~/pages/MyOfOrder/MyOfOrder';
 import No_Notification from '~/pages/No_Notification/No_Notification';
 import ManagerLie from '~/pages/ManagerLie/ManagerLie';
 import AddressPage from '~/pages/AddressPage/AddressPage';
+import PayInformation from '~/pages/PayInformation/PayInformation';
+import ReviewProduct from '~/pages/ReviewProduct/ReviewProduct';
+import FavoriteProduct from '~/pages/FavoriteProduct/FavoriteProduct';
+import MyComment from '~/pages/MyComment/MyCommnet';
 
 const { default: HomePage } = require('~/pages/HomePage/HomePage');
 const { default: OrderPage } = require('~/pages/OrderPage/OrderPage');
@@ -105,6 +109,30 @@ export const routes = [
     {
         path: '/my-address',
         page: AddressPage,
+        isShowHeader: true,
+        isShowFooter: true,
+    },
+    {
+        path: '/my/pay-information',
+        page: PayInformation,
+        isShowHeader: true,
+        isShowFooter: true,
+    },
+    {
+        path: '/my-review',
+        page: ReviewProduct,
+        isShowHeader: true,
+        isShowFooter: true,
+    },
+    {
+        path: '/my/favorite-product',
+        page: FavoriteProduct,
+        isShowHeader: true,
+        isShowFooter: true,
+    },
+    {
+        path: '/my-comment',
+        page: MyComment,
         isShowHeader: true,
         isShowFooter: true,
     },
