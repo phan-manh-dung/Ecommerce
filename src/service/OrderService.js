@@ -1,14 +1,24 @@
 import { axiosJWT } from './UserService';
 import axios from 'axios';
 
-export const createOrder = async (data, access_token) => {
+// export const createOrder = async (data, access_token) => {
+//     console.log('access_token', { access_token, data });
+//     const res = await axiosJWT.post(`${process.env.REACT_APP_API_URL}/order/create/${data.user}`, data, {
+//         headers: {
+//             token: `Bearer ${access_token}`,
+//         },
+//     });
+//     return res.data;
+// };
+
+export const createOrder = async (data, access_token, userId) => {
     console.log('access_token', { access_token, data });
     const res = await axiosJWT.post(`${process.env.REACT_APP_API_URL}/order/create/${data.user}`, data, {
         headers: {
             token: `Bearer ${access_token}`,
         },
     });
-    return res.data;
+    return res;
 };
 
 export const createCart = async (data) => {

@@ -147,6 +147,33 @@ const OrderPage = () => {
         navigate('/profile-user');
     };
 
+    function getPhoneCode(country) {
+        let phoneCode = '';
+        switch (country) {
+            case 'VietNamese':
+                phoneCode = '+84';
+                break;
+            case 'Japan':
+                phoneCode = '+81';
+                break;
+            case 'Franch':
+                phoneCode = '+33';
+                break;
+            case 'Italy':
+                phoneCode = '+39';
+                break;
+            case 'Egypt':
+                phoneCode = '+20';
+                break;
+            case 'India':
+                phoneCode = '+91';
+                break;
+            default:
+                phoneCode = 'Country not found';
+        }
+        return phoneCode;
+    }
+
     return (
         <div className={cx('container_order')}>
             <div className={cx('wrapper_order')}>
@@ -334,7 +361,11 @@ const OrderPage = () => {
                                             <span>Thay đổi</span>
                                         </div>
                                         <div className={cx('name')}>
-                                            {user?.nickname || user?.name} <i className={cx('i')}></i> {user?.phone}
+                                            {user?.nickname || user?.name} <i className={cx('i')}></i>
+                                            <span style={{ fontSize: '12px', paddingRight: '6px' }}>
+                                                {getPhoneCode(user?.country)}
+                                            </span>
+                                            {user?.phone}
                                         </div>
                                         {/* address */}
                                         <div className={cx('address-detail')}>
@@ -415,7 +446,7 @@ const OrderPage = () => {
                                                 onCancel={handleCancel}
                                             >
                                                 <div class="style-flex">
-                                                    <span>Bạn chưa có thông tin địa chỉ</span>
+                                                    <span>Bạn chưa có thông tin địa chỉ hoặc chưa chọn sản phẩm</span>
                                                     <div onClick={navigateUpdate}>
                                                         <ButtonComponent
                                                             textButton="Cập nhật"

@@ -12,6 +12,7 @@ const initialState = {
     dateOfBirth: '',
     sex: '',
     nickname: '',
+    email: '',
     isLoading: false,
     id: '',
     isAdmin: false,
@@ -37,6 +38,7 @@ export const userSlide = createSlice({
                 dateOfBirth = '',
                 sex = '',
                 nickname = '',
+                email = '',
                 _id = '',
                 isAdmin,
                 refresh_token = '',
@@ -52,6 +54,7 @@ export const userSlide = createSlice({
             state.sex = sex;
             state.country = country;
             state.nickname = nickname;
+            state.email = email;
             state.id = _id;
             state.access_token = access_token || '';
             state.isAdmin = isAdmin;

@@ -5,7 +5,6 @@ import classNames from 'classnames/bind';
 import call from '~/assets/img_Global/call.png';
 import down from '~/assets/img_Global/muiten_dow.png';
 import truck from '~/assets/img_Global/truck.png';
-import tay from '~/assets/img_Global/chaptay.png';
 import chamthan from '~/assets/img_Global/chamthan.png';
 import cash from '~/assets/img_Global/cash.png';
 import viettel from '~/assets/img_Global/viettel.png';
@@ -31,7 +30,6 @@ import { convertPrice } from '~/utils';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { removeAllOrderProduct } from '~/redux/slide/orderSlide';
 import ModalComponent from '~/component/ModalComponent/ModalComponent';
-import AddressComponent from '~/component/AddressComponent/AddressComponent';
 
 const cx = classNames.bind(styles);
 
@@ -42,7 +40,7 @@ const PaymentPage = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [openSystem, setOpenSystem] = useState(false);
-    const [payment, setPayment] = useState('later_money');
+    const [payment, setPayment] = useState('cash'); // thanh toán
     const { totalPrice } = location.state || {}; // lấy data từ order
     const idProduct = selectedItem?.product || selectedItem?._id; // lấy id
 
@@ -91,46 +89,61 @@ const PaymentPage = () => {
         setOpenSystem(true);
     };
 
-    // thay đổi dữ liệu vào redux
-    const handleAddOrder = () => {
-        if (
-            user?.access_token &&
-            user?.name &&
-            user?.district &&
-            user?.city &&
-            user?.country &&
-            user?.moreAddress &&
-            user?.id
-        ) {
-            mutationAddOrder.mutate({
-                token: user?.access_token,
-                fullName: user?.name,
-                address: user?.address,
-                phone: user?.phone,
-                paymentMethod: payment,
-                itemsPrice: totalPrice,
-                shippingPrice: deliveryPriceMemo,
-                totalPrice: totalPriceMemo,
-                user: user?.id,
-                email: user?.email,
-            });
-        } else {
-            clickOpenSystem();
-        }
-    };
-
-    const { isLoading, data, isSuccess, isError } = mutationAddOrder;
-    const { data: dataAdd, isLoading: isLoadingAddOrder } = mutationAddOrder;
-
     // mutation update
     const mutationUpdateProduct = useMutationHook((data) => {
         const { id, token, ...rests } = data;
         const res = ProductService.updateProduct(id, { ...rests }, token);
         return res;
     });
+    const { isLoading, data, isSuccess, isError } = mutationAddOrder;
 
     const cancelOpenSystem = () => {
         setOpenSystem(false);
+    };
+
+    // dữ liệu gán cho order
+    const orderItem = [
+        {
+            name: selectedItem.name,
+            amount: 1,
+            image: selectedItem.image,
+            price: selectedItem.price,
+            discount: selectedItem.discount,
+            color: selectedItem.color,
+            product: selectedItem._id,
+        },
+    ];
+
+    // thay đổi dữ liệu vào redux
+    const handleAddOrder = () => {
+        if (
+            user?.access_token &&
+            user?.city &&
+            user?.country &&
+            user?.district &&
+            user?.name &&
+            user?.moreAddress &&
+            user?.id
+        ) {
+            mutationAddOrder.mutate({
+                token: user?.access_token,
+                fullName: user?.name,
+                phone: user?.phone,
+                moreAddress: user?.moreAddress,
+                district: user?.district,
+                city: user?.city,
+                country: user?.country,
+                paymentMethod: payment,
+                itemsPrice: totalPrice,
+                shippingPrice: deliveryPriceMemo,
+                totalPrice: totalPriceMemo,
+                user: user?.id,
+                product: selectedItem?._id,
+                orderItems: orderItem,
+            });
+        } else {
+            clickOpenSystem();
+        }
     };
 
     // update product
@@ -175,25 +188,32 @@ const PaymentPage = () => {
     useEffect(() => {
         if (isSuccess) {
             updateProduct();
-            // trước khi success phải xóa ở trong redux
-            const productToRemove = selectedItem?.product; // lấy id của product
-            dispatch(removeAllOrderProduct({ listChecked: productToRemove }));
+            // trước khi success phải xóa số lượng tồn ở trong redux
+            // const productToRemove = selectedItem?.product; // lấy id của product
+            // dispatch(removeAllOrderProduct({ listChecked: productToRemove }));
 
             message.success('Đặt hàng thành công');
+            // gửi dữ liệu sang cho trang orderSuccess
             navigate('/orderSuccess', {
                 state: {
                     payment,
-                    orders: selectedItem?.orderItems,
                     totalPriceMemo: totalPriceMemo,
+                    name: selectedItem.name,
+                    image: selectedItem.image,
                 },
             });
         } else if (isError) {
             message.error('Đặt hàng thất bại');
         }
-    }, [handleAddOrder]); // Chỉ chạy lại khi handleAddOrder thay đổi
+    }, [isSuccess, isError]); // Chỉ chạy lại khi handleAddOrder thay đổi
 
     const convertUpdate = () => {
         navigate('/profile-user');
+    };
+
+    // payment
+    const handlePaymentChange = (selectedPayment) => {
+        setPayment(selectedPayment);
     };
 
     return (
@@ -282,7 +302,11 @@ const PaymentPage = () => {
                                     <div className={cx('choose_pay')}>
                                         <div style={{ display: 'flex', alignItems: 'center' }}>
                                             <div>
-                                                <Radio defaultChecked={true} />
+                                                <Radio
+                                                    defaultChecked={true}
+                                                    checked={payment === 'cash'}
+                                                    onChange={() => handlePaymentChange('cash')}
+                                                />
                                             </div>
                                             <div style={{ display: 'flex', alignItems: 'center' }}>
                                                 <img alt="the" src={cash} width={32} height={32} />
@@ -294,7 +318,25 @@ const PaymentPage = () => {
                                     <div className={cx('choose_pay')}>
                                         <div style={{ display: 'flex', alignItems: 'center' }}>
                                             <div>
-                                                <Radio />
+                                                <Radio
+                                                    checked={payment === 'momo'}
+                                                    onChange={() => handlePaymentChange('momo')}
+                                                />
+                                            </div>
+                                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                <img alt="the" src={momo} width={32} height={32} />
+                                                <span style={{ paddingLeft: '12px' }}>Thanh toán bằng ví MoMo</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {/* pay 3*/}
+                                    <div className={cx('choose_pay')}>
+                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                                            <div>
+                                                <Radio
+                                                    checked={payment === 'viettel_money'}
+                                                    onChange={() => handlePaymentChange('viettel_money')}
+                                                />
                                             </div>
                                             <div style={{ display: 'flex', alignItems: 'center' }}>
                                                 <img alt="the" src={viettel} width={32} height={32} />
@@ -304,23 +346,14 @@ const PaymentPage = () => {
                                             </div>
                                         </div>
                                     </div>
-                                    {/* pay 3*/}
-                                    <div className={cx('choose_pay')}>
-                                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                                            <div>
-                                                <Radio />
-                                            </div>
-                                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                                                <img alt="the" src={momo} width={32} height={32} />
-                                                <span style={{ paddingLeft: '12px' }}>Thanh toán bằng ví MoMo</span>
-                                            </div>
-                                        </div>
-                                    </div>
                                     {/* pay 4 */}
                                     <div className={cx('choose_pay')}>
                                         <div style={{ display: 'flex', alignItems: 'center' }}>
                                             <div>
-                                                <Radio />
+                                                <Radio
+                                                    checked={payment === 'zalo_pay'}
+                                                    onChange={() => handlePaymentChange('zalo_pay')}
+                                                />
                                             </div>
                                             <div style={{ display: 'flex', alignItems: 'center' }}>
                                                 <img alt="the" src={zalo} width={32} height={32} />
@@ -332,7 +365,10 @@ const PaymentPage = () => {
                                     <div className={cx('choose_pay')}>
                                         <div style={{ display: 'flex', alignItems: 'center' }}>
                                             <div>
-                                                <Radio />
+                                                <Radio
+                                                    checked={payment === 'vn_pay'}
+                                                    onChange={() => handlePaymentChange('vn_pay')}
+                                                />
                                             </div>
                                             <div style={{ display: 'flex', alignItems: 'center' }}>
                                                 <img alt="the" src={vnpay} width={32} height={32} />
@@ -349,7 +385,10 @@ const PaymentPage = () => {
                                     <div className={cx('choose_pay')}>
                                         <div style={{ display: 'flex', alignItems: 'center' }}>
                                             <div>
-                                                <Radio />
+                                                <Radio
+                                                    checked={payment === 'atm_visa'}
+                                                    onChange={() => handlePaymentChange('atm_visa')}
+                                                />
                                             </div>
                                             <div style={{ display: 'flex', alignItems: 'center' }}>
                                                 <img alt="the" src={doublevisa} width={32} height={32} />
@@ -367,7 +406,10 @@ const PaymentPage = () => {
                                     <div className={cx('choose_pay')}>
                                         <div style={{ display: 'flex', alignItems: 'center' }}>
                                             <div>
-                                                <Radio />
+                                                <Radio
+                                                    checked={payment === 'atm_napas'}
+                                                    onChange={() => handlePaymentChange('atm_napas')}
+                                                />
                                             </div>
                                             <div style={{ display: 'flex', alignItems: 'center' }}>
                                                 <img alt="the" src={atm} width={32} height={32} />

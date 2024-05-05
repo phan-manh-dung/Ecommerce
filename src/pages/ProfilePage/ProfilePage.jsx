@@ -143,9 +143,9 @@ const ProfilePage = () => {
         setNickName(value);
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         const convertDate = new Date(dateOfBirth.year, dateOfBirth.month, dateOfBirth.day);
-        mutationUpdate.mutate({
+        await mutationUpdate.mutate({
             id: user?.id,
             name,
             nickname,
@@ -183,7 +183,6 @@ const ProfilePage = () => {
             const day = Number(date.getDate());
             const month = Number(date.getMonth());
             const year = Number(date.getUTCFullYear());
-
             // Gán giá trị vào các select box
             setDateOfBirth({
                 day,
@@ -196,20 +195,27 @@ const ProfilePage = () => {
     const handleSubmitPhone = async () => {
         try {
             if (dataPhone === false) {
+                alert('Bạn hãy nhập phone.');
             } else {
                 await mutationUpdate.mutate({
                     id: user?.id,
                     phone,
+                    access_token: user?.access_token,
                 });
             }
         } catch (err) {}
     };
 
-    const handleSubmitEmail = () => {
-        mutationUpdate.mutate({
-            id: user?.id,
-            email,
-        });
+    const handleSubmitEmail = async () => {
+        if (email === false) {
+            alert('Bạn hãy nhập email');
+        } else {
+            await mutationUpdate.mutate({
+                id: user?.id,
+                email,
+                access_token: user?.access_token,
+            });
+        }
     };
 
     const arrImage = [
@@ -238,7 +244,35 @@ const ProfilePage = () => {
         'Nhận xét của tôi',
         'Hỗ trợ khách hàng',
     ];
-    const arrCountry = ['Việt Nam', 'Japan', 'Franch', 'Italy', 'Ai cập', 'India'];
+    const arrCounstry = ['VietNamese', 'Japan', 'Franch', 'Italy', 'Egypt', 'India'];
+    const phoneCode = ['+84', '+81', '+33', '+39', '+20', '+91'];
+
+    function getPhoneCode(country) {
+        let phoneCode = '';
+        switch (country) {
+            case 'VietNamese':
+                phoneCode = '+84';
+                break;
+            case 'Japan':
+                phoneCode = '+81';
+                break;
+            case 'Franch':
+                phoneCode = '+33';
+                break;
+            case 'Italy':
+                phoneCode = '+39';
+                break;
+            case 'Egypt':
+                phoneCode = '+20';
+                break;
+            case 'India':
+                phoneCode = '+91';
+                break;
+            default:
+                phoneCode = 'Country not found';
+        }
+        return phoneCode;
+    }
 
     return (
         <div className={cx('container_profile')}>
@@ -489,8 +523,8 @@ const ProfilePage = () => {
                                                             onChange={handleOnchangeCountry}
                                                         >
                                                             <option value=""></option>
-                                                            {arrCountry.map((current, index) => {
-                                                                const value = arrCountry[index % arrCountry.length];
+                                                            {arrCounstry.map((current, index) => {
+                                                                const value = arrCounstry[index % arrCounstry.length];
                                                                 return (
                                                                     <option key={index} value={value}>
                                                                         {value}
@@ -535,7 +569,7 @@ const ProfilePage = () => {
                                                                         <div>
                                                                             <div className={cx('style-flex')}>
                                                                                 <span style={{ fontSize: '12px' }}>
-                                                                                    (+84)
+                                                                                    {getPhoneCode(user?.country)}
                                                                                 </span>
                                                                                 <Input
                                                                                     placeholder="Nhập phone..."
@@ -576,7 +610,7 @@ const ProfilePage = () => {
                                                                     <div>
                                                                         <Input
                                                                             onInput={handleOnchangeEmail}
-                                                                            value={email}
+                                                                            value={user?.email}
                                                                             placeholder="Nhập email..."
                                                                             style={{ width: '100%', border: 'none' }}
                                                                         />

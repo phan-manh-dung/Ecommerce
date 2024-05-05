@@ -1,24 +1,28 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-
 import styles from './OrderSuccess.module.scss';
 import classNames from 'classnames/bind';
 import call from '~/assets/img_Global/call.png';
 import { Col, Row } from 'antd';
 import { convertPrice } from '~/utils';
 import ButtonComponent from '~/component/ButtonComponent/Buttoncomponent';
+import { useNavigate } from 'react-router-dom';
 import ch_play from '~/assets/img_Global/chplay.png';
 import app_store from '~/assets/img_Global/appstore.png';
-import * as ProductService from '~/service/ProductService';
+
 const cx = classNames.bind(styles);
 
 const OrderSuccess = () => {
-    const order = useSelector((state) => state.order);
     const { state } = useLocation();
+
     const priceProduct = state?.totalPriceMemo;
-    const id = order?.orderItems[0]?.product;
+
+    const navigate = useNavigate();
+
+    const viewOrder = () => {
+        navigate('/my-order');
+    };
 
     return (
         <div className={cx('wrapper_order')}>
@@ -77,8 +81,9 @@ const OrderSuccess = () => {
                                 <div className={cx('wrapper_right')}>
                                     <div className={cx('wrapper_1')}>
                                         <div className={cx('container_wrapper')}>
-                                            <span className={cx('id_product')}>Mã đơn hàng: {id}</span>
+                                            <span className={cx('id_product')}>Mã đơn hàng:</span>
                                             <span
+                                                onClick={viewOrder}
                                                 className={cx('view-product')}
                                                 style={{ color: 'rgb(56,129,230)', cursor: 'pointer' }}
                                             >
@@ -90,23 +95,18 @@ const OrderSuccess = () => {
                                     <div className={cx('wrapper_2')}>
                                         <div>
                                             <span style={{ fontSize: '12px', color: 'rgb(93,93,97)' }}>
-                                                Giao thứ 4 , trước 19h , 15/11
+                                                Giao hàng từ 3 - 5 ngày
                                             </span>
                                         </div>
                                         <div className={cx('product_content')}>
                                             <div>
-                                                <img
-                                                    alt="product"
-                                                    src={order?.orderItems[0]?.image}
-                                                    height={48}
-                                                    width={48}
-                                                />
+                                                <img alt="product" src={state?.image} height={48} width={48} />
                                             </div>
                                             <div
                                                 className={cx('title_child')}
                                                 style={{ color: 'rgb(144,144,156)', fontSize: '13px' }}
                                             >
-                                                quần áo nữ gia dụng
+                                                {state?.name}
                                             </div>
                                         </div>
                                     </div>
