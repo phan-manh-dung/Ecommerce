@@ -44,7 +44,7 @@ const PaymentPage = () => {
     const { totalPrice } = location.state || {}; // lấy data từ order
     const idProduct = selectedItem?.product || selectedItem?._id; // lấy id
 
-    const { totalPriceProduct, numProduct } = location.state || {};
+    const { totalPriceProduct, numProduct, product } = location.state || {};
 
     const initial = () => ({
         name: '',
@@ -110,7 +110,7 @@ const PaymentPage = () => {
             price: selectedItem.price,
             discount: selectedItem.discount,
             color: selectedItem.color,
-            product: selectedItem._id,
+            product: selectedItem._id || idProduct,
         },
     ];
 
@@ -138,7 +138,7 @@ const PaymentPage = () => {
                 shippingPrice: deliveryPriceMemo,
                 totalPrice: totalPriceMemo,
                 user: user?.id,
-                product: selectedItem?._id,
+                product: selectedItem?._id || idProduct,
                 orderItems: orderItem,
             });
         } else {
@@ -188,9 +188,9 @@ const PaymentPage = () => {
     useEffect(() => {
         if (isSuccess) {
             updateProduct();
-            // trước khi success phải xóa số lượng tồn ở trong redux
-            // const productToRemove = selectedItem?.product; // lấy id của product
-            // dispatch(removeAllOrderProduct({ listChecked: productToRemove }));
+            // trước khi success phải xóa số lượng tồn ở trong redux và xóa ở trong giỏ hàng
+            const productToRemove = selectedItem?.product; // lấy id của product
+            dispatch(removeAllOrderProduct({ listChecked: productToRemove }));
 
             message.success('Đặt hàng thành công');
             // gửi dữ liệu sang cho trang orderSuccess

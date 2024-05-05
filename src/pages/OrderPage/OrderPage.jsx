@@ -71,6 +71,8 @@ const OrderPage = () => {
         }
     };
 
+    console.log('order', order);
+
     // onchange check all
     const handleCheckAll = (e) => {
         if (e.target.checked) {
@@ -122,6 +124,8 @@ const OrderPage = () => {
 
     //   gửi state sang payment
 
+    // id sản phẩm
+    const product = order?.orderItems[0]?.product;
     const handlePayOrder = () => {
         if (!listChecked.length || !(user?.address || user?.city || user?.country)) {
             setIsModalOpen(true);
@@ -129,7 +133,7 @@ const OrderPage = () => {
             const selectedItemId = listChecked[0]; // ID của đối tượng đầu tiên trong listChecked
             const selectedItem = order?.orderItems.find((item) => item.product === selectedItemId);
             if (selectedItem) {
-                navigate('/payment', { state: { selectedItem, totalPrice } });
+                navigate('/payment', { state: { selectedItem, totalPrice, product } });
             }
         } else if (listChecked.length > 1) {
             setIsModalOpenProduct(true);
