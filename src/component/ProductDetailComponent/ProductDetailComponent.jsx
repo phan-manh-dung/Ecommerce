@@ -35,7 +35,7 @@ import { useQuery } from '@tanstack/react-query';
 import Loading from '../LoadingComponent/Loading';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { addOrderProduct } from '~/redux/slide/orderSlide';
+import { addProductInCart } from '~/redux/slide/cartSlide';
 import { convertPrice } from '~/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronRight, faComment, faPlus, faStar } from '@fortawesome/free-solid-svg-icons';
@@ -141,7 +141,7 @@ const ProductDetailComponent = ({ idProduct }) => {
 
         if (!addedProducts.includes(productId)) {
             // Kiểm tra xem sản phẩm đã được thêm chưa
-            const orderItem = {
+            const cartItem = {
                 name: productsDetail?.name,
                 amount: numProduct,
                 image: productsDetail?.image,
@@ -153,13 +153,13 @@ const ProductDetailComponent = ({ idProduct }) => {
             };
 
             // Dispatch đơn hàng và thông tin userId vào Redux
-            dispatch(addOrderProduct({ orderItem, userId }));
+            dispatch(addProductInCart({ cartItem, userId }));
             setAddedProducts([...addedProducts, productId]); // Thêm ID sản phẩm vào mảng
 
             try {
                 const data = {
                     userId,
-                    ...orderItem,
+                    ...cartItem,
                 };
                 const result = await createCart(data); // Gửi dữ liệu lên backend thông qua hàm createCart
             } catch (error) {

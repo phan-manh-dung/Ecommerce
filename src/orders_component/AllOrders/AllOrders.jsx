@@ -5,9 +5,14 @@ import classNames from 'classnames/bind';
 import astra from '~/assets/img_Global/astra_red.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+import { useDispatch, useSelector } from 'react-redux';
+
 const cx = classNames.bind(styles);
 
 const AllOrders = () => {
+    const orders = useSelector((state) => state.order);
+    console.log('orders', orders);
+
     return (
         <div className={cx('wrapper_cancelled')}>
             <div className={cx('title')}>

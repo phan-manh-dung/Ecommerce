@@ -28,8 +28,10 @@ import * as ProductService from '~/service/ProductService';
 import * as OrderService from '~/service/OrderService';
 import { convertPrice } from '~/utils';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { removeAllOrderProduct } from '~/redux/slide/orderSlide';
+import { removeAllProductInCart } from '~/redux/slide/cartSlide';
 import ModalComponent from '~/component/ModalComponent/ModalComponent';
+
+import { updateOrder } from '../../redux/slide/orderSlide';
 
 const cx = classNames.bind(styles);
 
@@ -97,6 +99,13 @@ const PaymentPage = () => {
     });
     const { isLoading, data, isSuccess, isError } = mutationAddOrder;
 
+    // delete trong giỏ hàng ở database
+    const mutationDeleteCart = useMutationHook((data) => {
+        const { id, token } = data;
+        const res = OrderService.deleteCart(id, token);
+        return res;
+    });
+
     const cancelOpenSystem = () => {
         setOpenSystem(false);
     };
@@ -140,6 +149,11 @@ const PaymentPage = () => {
                 user: user?.id,
                 product: selectedItem?._id || idProduct,
                 orderItems: orderItem,
+            });
+            // gọi api mutationDeleteCart
+            mutationDeleteCart.mutate({
+                id: product,
+                token: user?.access_token,
             });
         } else {
             clickOpenSystem();
@@ -189,8 +203,9 @@ const PaymentPage = () => {
         if (isSuccess) {
             updateProduct();
             // trước khi success phải xóa số lượng tồn ở trong redux và xóa ở trong giỏ hàng
+            // nhưng chưa xóa trong  database
             const productToRemove = selectedItem?.product; // lấy id của product
-            dispatch(removeAllOrderProduct({ listChecked: productToRemove }));
+            dispatch(removeAllProductInCart({ listChecked: productToRemove }));
 
             message.success('Đặt hàng thành công');
             // gửi dữ liệu sang cho trang orderSuccess

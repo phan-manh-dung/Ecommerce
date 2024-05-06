@@ -1,76 +1,82 @@
 import { createSlice } from '@reduxjs/toolkit';
+// import { getAllOrder } from '~/service/OrderService';
 
 const initialState = {
     orderItems: [],
-    orderItemsSelected: [],
-    shippingAddress: {},
+    fullName: '',
+    phone: 0,
+    moreAddress: '',
+    district: '',
+    city: '',
+    country: '',
     paymentMethod: '',
-    itemsPrice: 0,
-    shippingPrice: 0,
-    taxPrice: 0,
-    totalPrice: 0,
+    shippingPrice: '',
+    totalPrice: '',
     user: '',
+    product: '',
     isPaid: false,
-    paidAt: '',
     isDelivered: false,
-    deliveredAt: '',
-    isSuccessOrder: false,
 };
 
 export const orderSlide = createSlice({
     name: 'order',
     initialState,
     reducers: {
-        addOrderProduct: (state, action) => {
-            const { orderItem } = action.payload;
-            const itemOrder = state?.orderItems?.find((item) => item?.product === orderItem.product);
-            if (itemOrder) {
-                if (itemOrder.amount <= itemOrder.countInStock) {
-                    itemOrder.amount += orderItem?.amount;
-                    state.isSuccessOrder = true;
-                    state.isErrorOrder = false;
-                }
-            } else {
-                state.orderItems.push(orderItem);
-            }
-        },
+        updateOrder: (state, action) => {
+            const {
+                orderItems = [],
+                fullName = '',
+                phone = 0,
+                moreAddress = '',
+                district = '',
+                city = '',
+                country = '',
+                paymentMethod = '',
+                shippingPrice = '',
+                totalPrice = '',
+                user = '',
+                product = '',
+                isPaid = false,
+                isDelivered = false,
+            } = action.payload;
 
-        removeOrderProduct: (state, action) => {
-            const { idProduct } = action.payload; // muốn cos id thì phải truy cập được id từ order page
-            const itemOrder = state?.orderItems?.filter((item) => item?.product !== idProduct);
-            const itemOrderSelected = state?.orderItemsSelected?.filter((item) => item?.product !== idProduct);
-
-            state.orderItems = itemOrder;
-            state.orderItemsSelected = itemOrderSelected;
-        },
-        removeAllOrderProduct: (state, action) => {
-            const { listChecked } = action.payload;
-            const itemOrders = state?.orderItems?.filter((item) => !listChecked.includes(item.product));
-            const itemOrdersSelected = state?.orderItems?.filter((item) => !listChecked.includes(item.product));
-            state.orderItems = itemOrders;
-            state.orderItemsSelected = itemOrdersSelected;
+            // Cập nhật state với dữ liệu từ action.payload
+            state.orderItems = orderItems;
+            state.fullName = fullName;
+            state.phone = phone;
+            state.moreAddress = moreAddress;
+            state.district = district;
+            state.city = city;
+            state.country = country;
+            state.paymentMethod = paymentMethod;
+            state.shippingPrice = shippingPrice;
+            state.totalPrice = totalPrice;
+            state.user = user;
+            state.product = product;
+            state.isPaid = isPaid;
+            state.isDelivered = isDelivered;
         },
         RESET_ORDER_DATA: (state) => {
             // Reset tất cả dữ liệu order về trạng thái ban đầu
             state.orderItems = [];
-            state.orderItemsSelected = [];
-            state.shippingAddress = {};
+            state.fullName = '';
+            state.phone = 0;
+            state.moreAddress = '';
+            state.district = '';
+            state.city = '';
+            state.country = '';
             state.paymentMethod = '';
-            state.itemsPrice = 0;
-            state.shippingPrice = 0;
-            state.taxPrice = 0;
-            state.totalPrice = 0;
+            state.shippingPrice = '';
+            state.totalPrice = '';
             state.user = '';
+            state.product = '';
             state.isPaid = false;
-            state.paidAt = '';
             state.isDelivered = false;
-            state.deliveredAt = '';
-            state.isSuccessOrder = false;
         },
     },
 });
 
 // Action creators are generated for each case reducer function
-export const { addOrderProduct, removeOrderProduct, removeAllOrderProduct, RESET_ORDER_DATA } = orderSlide.actions;
+export const { updateOrder, RESET_ORDER_DATA } = orderSlide.actions;
 
 export default orderSlide.reducer;

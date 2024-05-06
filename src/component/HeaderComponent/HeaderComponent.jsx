@@ -15,7 +15,8 @@ import { searchProduct } from '../../redux/slide/productSlide';
 import { ShoppingCartOutlined } from '@ant-design/icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
-import { RESET_ORDER_DATA, addOrderProduct } from '~/redux/slide/orderSlide';
+import { addProductInCart } from '~/redux/slide/cartSlide';
+import { RESET_ORDER_DATA } from '~/redux/slide/orderSlide';
 import { getCartByUserId } from '~/service/OrderService';
 
 const cx = classNames.bind(styles);
@@ -25,7 +26,7 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const user = useSelector((state) => state.user);
-    const order = useSelector((state) => state.order);
+    const cart = useSelector((state) => state.cart);
     const [search, setSearch] = useState('');
     const initialLoad = useRef(true);
     const [hasFetchedCartData, setHasFetchedCartData] = useState(false); // kiểm tra đã useEffect hay chưa
@@ -46,12 +47,12 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
             getCartByUserId(userId)
                 .then((data) => {
                     if (mounted) {
-                        data.forEach((order) => {
-                            const orderItems = order.orderItems;
+                        data.forEach((cart) => {
+                            const cartItems = cart.cartItems;
 
-                            if (Array.isArray(orderItems) && orderItems.length > 0) {
-                                orderItems.forEach((item) => {
-                                    const orderItem = {
+                            if (Array.isArray(cartItems) && cartItems.length > 0) {
+                                cartItems.forEach((item) => {
+                                    const cartItem = {
                                         name: item.name,
                                         amount: item.amount,
                                         image: item.image,
@@ -61,7 +62,7 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
                                         discount: item.discount,
                                         type: item.type,
                                     };
-                                    dispatch(addOrderProduct({ orderItem }));
+                                    dispatch(addProductInCart({ cartItem }));
                                 });
                             }
                         });
@@ -194,7 +195,7 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
                             {!isHiddenCart && (
                                 <div
                                     className={cx('row_right-list')}
-                                    onClick={() => navigate('/order')}
+                                    onClick={() => navigate('/cart')}
                                     style={{ cursor: 'pointer' }}
                                 >
                                     <span
@@ -202,7 +203,7 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
                                     >
                                         Giỏ hàng
                                     </span>
-                                    <Badge count={order?.orderItems?.length} size="small">
+                                    <Badge count={cart?.cartItems?.length} size="small">
                                         <ShoppingCartOutlined style={{ width: '24px', height: '24px' }} />
                                     </Badge>
                                 </div>

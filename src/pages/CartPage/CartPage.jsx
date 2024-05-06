@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import styles from './Order.module.scss';
+import styles from './CartPage.module.scss';
 import classNames from 'classnames/bind';
 import { Row, Col, Checkbox, InputNumber } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -10,7 +10,7 @@ import cart_null from '~/assets/img_Global/cart-null.png';
 import chart from '~/assets/img_Global/chart.png';
 import ButtonComponent from '~/component/ButtonComponent/Buttoncomponent';
 import { useDispatch, useSelector } from 'react-redux';
-import { removeAllOrderProduct, removeOrderProduct } from '~/redux/slide/orderSlide';
+import { removeProductInCart, removeAllProductInCart } from '~/redux/slide/cartSlide';
 import { convertPrice } from '~/utils';
 import ModalComponent from '~/component/ModalComponent/ModalComponent';
 import { useNavigate } from 'react-router-dom';
@@ -19,8 +19,8 @@ import { getCartByUserId } from '~/service/OrderService';
 
 const cx = classNames.bind(styles);
 
-const OrderPage = () => {
-    const order = useSelector((state) => state.order);
+const CartPage = () => {
+    const cart = useSelector((state) => state.cart);
     const user = useSelector((state) => state.user);
     const [listChecked, setListChecked] = useState([]); // sét list check
     const [isModalOpen, setIsModalOpen] = useState(false); // mở modal
@@ -31,26 +31,26 @@ const OrderPage = () => {
     const userId = user?.id;
 
     const handleDeleteOrder = () => {
-        dispatch(removeOrderProduct({ idProduct: order?.orderItems[0]?.product }));
+        dispatch(removeProductInCart({ idProduct: cart?.cartItems[0]?.product }));
         if (userId) {
             getCartByUserId(userId)
                 .then((data) => {
                     let idCartOrder;
-                    data.forEach((order) => {
-                        const orderItems = order.orderItems;
+                    data.forEach((cart) => {
+                        const cartItems = cart.cartItems;
 
-                        if (Array.isArray(orderItems) && orderItems.length > 0) {
-                            orderItems.forEach((item) => {
-                                const orderItem = {
+                        if (Array.isArray(cartItems) && cartItems.length > 0) {
+                            cartItems.forEach((item) => {
+                                const cartItem = {
                                     product: item._id,
                                 };
-                                const idCart = orderItem?.product;
+                                const idCart = cartItem?.product;
                                 idCartOrder = idCart;
                             });
                         }
                     });
 
-                    if (idCartOrder === order?.orderItems[0]?.product) {
+                    if (idCartOrder === cart?.cartItems[0]?.product) {
                         const dataIDCart = data[0]?._id;
                         deleteCart(dataIDCart);
                     }
@@ -71,13 +71,11 @@ const OrderPage = () => {
         }
     };
 
-    console.log('order', order);
-
     // onchange check all
     const handleCheckAll = (e) => {
         if (e.target.checked) {
             const newListChecked = [];
-            order?.orderItems?.forEach((item) => {
+            cart?.cartItems?.forEach((item) => {
                 newListChecked.push(item?.product);
             });
             setListChecked(newListChecked);
@@ -88,15 +86,15 @@ const OrderPage = () => {
 
     // remove order
     const handleRemoveAllOrder = () => {
-        if (listChecked?.length === order?.orderItems?.length) {
-            dispatch(removeAllOrderProduct({ listChecked }));
+        if (listChecked?.length === cart?.cartItems?.length) {
+            dispatch(removeAllProductInCart({ listChecked }));
         }
     };
 
     // price product
     const priceMemo = useMemo(() => {
-        if (listChecked && order) {
-            const selectedItems = order.orderItems.filter((item) => listChecked.includes(item.product));
+        if (listChecked && cart) {
+            const selectedItems = cart.cartItems.filter((item) => listChecked.includes(item.product));
             const result = selectedItems.reduce((total, current) => {
                 return total + current.price * current.amount;
             }, 0);
@@ -104,18 +102,18 @@ const OrderPage = () => {
         } else {
             return 0;
         }
-    }, [listChecked, order]);
+    }, [listChecked, cart]);
 
     // discount
     const discountMemo = useMemo(() => {
-        if (listChecked && order) {
-            const itemDiscount = order?.orderItems?.filter((item) => listChecked.includes(item.product));
+        if (listChecked && cart) {
+            const itemDiscount = cart?.cartItems?.filter((item) => listChecked.includes(item.product));
             const result = itemDiscount.reduce((total, current) => {
                 return total + current.discount;
             }, 0);
             return result;
         }
-    }, [listChecked, order]);
+    }, [listChecked, cart]);
 
     // price end
     const totalPrice = useMemo(() => {
@@ -125,13 +123,13 @@ const OrderPage = () => {
     //   gửi state sang payment
 
     // id sản phẩm
-    const product = order?.orderItems[0]?.product;
+    const product = cart?.cartItems[0]?.product;
     const handlePayOrder = () => {
         if (!listChecked.length || !(user?.address || user?.city || user?.country)) {
             setIsModalOpen(true);
         } else if (listChecked.length === 1) {
             const selectedItemId = listChecked[0]; // ID của đối tượng đầu tiên trong listChecked
-            const selectedItem = order?.orderItems.find((item) => item.product === selectedItemId);
+            const selectedItem = cart?.cartItems.find((item) => item.product === selectedItemId);
             if (selectedItem) {
                 navigate('/payment', { state: { selectedItem, totalPrice, product } });
             }
@@ -190,7 +188,7 @@ const OrderPage = () => {
                     </span>
                 </div>
                 <div className={cx('create-row')}>
-                    {order?.orderItems.length > 0 ? (
+                    {cart?.cartItems.length > 0 ? (
                         <Row>
                             <Col xs={0} sm={17} style={{ paddingRight: '1%' }}>
                                 <div>
@@ -199,9 +197,9 @@ const OrderPage = () => {
                                         <span style={{ width: '36%' }}>
                                             <Checkbox
                                                 onChange={handleCheckAll}
-                                                checked={listChecked?.length === order?.orderItems?.length}
+                                                checked={listChecked?.length === cart?.cartItems?.length}
                                             />
-                                            Tất cả ({order?.orderItems?.length}) sản phẩm
+                                            Tất cả ({cart?.cartItems?.length}) sản phẩm
                                         </span>
                                         <span>Đơn giá</span>
                                         <span>Số lượng</span>
@@ -211,7 +209,7 @@ const OrderPage = () => {
                                         </span>
                                     </div>
                                     <div className={cx('scrollable-content')}>
-                                        {order?.orderItems?.map((orders, index) => {
+                                        {cart?.cartItems?.map((carts, index) => {
                                             return (
                                                 <div key={index} className={cx('product')}>
                                                     <div className={cx('type')}>
@@ -219,15 +217,15 @@ const OrderPage = () => {
                                                             <Checkbox /> Type
                                                         </div>
                                                         <img src={img_right_arrow} alt="right" width={18} height={18} />
-                                                        <div>{orders?.type || 'Đồ'}</div>
+                                                        <div>{carts?.type || 'Đồ'}</div>
                                                     </div>
                                                     <div className={cx('wrapper_content')}>
                                                         <Row style={{ display: 'flex', alignItems: 'center' }}>
                                                             <Col sm={1}>
                                                                 <Checkbox
                                                                     onChange={onChange}
-                                                                    value={orders.product}
-                                                                    checked={listChecked?.includes(orders.product)}
+                                                                    value={carts.product}
+                                                                    checked={listChecked?.includes(carts.product)}
                                                                 />
                                                                 {/* orders của map để lấy ra từng id chứ k phải order chung */}
                                                             </Col>
@@ -238,12 +236,12 @@ const OrderPage = () => {
                                                                             alt=""
                                                                             width={80}
                                                                             height={80}
-                                                                            src={orders?.image}
+                                                                            src={carts?.image}
                                                                         />
                                                                     </div>
                                                                     <div className={cx('img-title')}>
                                                                         <span className={cx('title_content')}>
-                                                                            {orders?.name}
+                                                                            {carts?.name}
                                                                             <div
                                                                                 style={{
                                                                                     color: '#999',
@@ -282,7 +280,7 @@ const OrderPage = () => {
                                                                         fontWeight: 600,
                                                                     }}
                                                                 >
-                                                                    {convertPrice(orders?.price)}
+                                                                    {convertPrice(carts?.price)}
                                                                     <sup>
                                                                         <u>đ</u>
                                                                     </sup>
@@ -299,7 +297,7 @@ const OrderPage = () => {
                                                                             color: 'rgb(0, 171, 86)',
                                                                         }}
                                                                     >
-                                                                        Giảm {orders?.discount || 10} %
+                                                                        Giảm {carts?.discount || 10} %
                                                                     </div>
                                                                 </div>
                                                             </Col>
@@ -308,7 +306,7 @@ const OrderPage = () => {
                                                                     <div className={cx('wrapper_add')}>
                                                                         <div className={cx('input')}>
                                                                             <InputNumber
-                                                                                value={orders?.amount}
+                                                                                value={carts?.amount}
                                                                                 readOnly
                                                                                 style={{ width: '30%', border: 'none' }}
                                                                             />
@@ -318,7 +316,7 @@ const OrderPage = () => {
                                                             </Col>
                                                             <Col sm={4}>
                                                                 <div style={{ paddingLeft: '2%' }}>
-                                                                    {convertPrice(orders?.price * orders?.amount)}
+                                                                    {convertPrice(carts?.price * carts?.amount)}
                                                                     <sup>
                                                                         <u>đ</u>
                                                                     </sup>
@@ -328,7 +326,7 @@ const OrderPage = () => {
                                                                 {/* xóa thì phải truyền đi cái id */}
                                                                 <div
                                                                     style={{ paddingLeft: '62%', cursor: 'pointer' }}
-                                                                    onClick={() => handleDeleteOrder(order?.product)}
+                                                                    onClick={() => handleDeleteOrder(cart?.product)}
                                                                 >
                                                                     <FontAwesomeIcon icon={faTrash} />
                                                                 </div>
@@ -469,7 +467,7 @@ const OrderPage = () => {
                                                 title="Thông báo"
                                                 onCancel={handleCancelModalProduct}
                                             >
-                                                Bạn chỉ được thanh toán 1 sản phẫm 1 lần
+                                                Bạn chỉ được thanh toán 1 sản phẩm 1 lần
                                             </ModalComponent>
                                         </div>
                                     </div>
@@ -489,4 +487,4 @@ const OrderPage = () => {
     );
 };
 
-export default OrderPage;
+export default CartPage;

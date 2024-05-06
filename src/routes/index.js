@@ -17,9 +17,9 @@ import PayInformation from '~/pages/PayInformation/PayInformation';
 import ReviewProduct from '~/pages/ReviewProduct/ReviewProduct';
 import FavoriteProduct from '~/pages/FavoriteProduct/FavoriteProduct';
 import MyComment from '~/pages/MyComment/MyCommnet';
+import CartPage from '~/pages/CartPage/CartPage';
 
 const { default: HomePage } = require('~/pages/HomePage/HomePage');
-const { default: OrderPage } = require('~/pages/OrderPage/OrderPage');
 
 export const routes = [
     {
@@ -29,8 +29,8 @@ export const routes = [
         isShowFooter: true,
     },
     {
-        path: '/order',
-        page: OrderPage,
+        path: '/cart',
+        page: CartPage,
         isShowHeader: true,
         isShowFooter: true,
     },
