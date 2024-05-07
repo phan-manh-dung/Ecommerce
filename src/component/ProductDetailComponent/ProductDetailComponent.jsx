@@ -25,7 +25,6 @@ import robot from '~/assets/img_Global/robot.png';
 import tay from '~/assets/img_Global/chaptay.png';
 import chamthan from '~/assets/img_Global/chamthan.png';
 import logoshop from '~/assets/img_Global/logoshop.png';
-
 import { Col, InputNumber, Row } from 'antd';
 import { MinusOutlined, PlusOutlined, StarFilled } from '@ant-design/icons';
 import ButtonComponent from '~/component/ButtonComponent/Buttoncomponent';
@@ -47,7 +46,7 @@ const ProductDetailComponent = ({ idProduct }) => {
     const [numProduct, setNumProduct] = useState(1);
     const [randomNumber, setRandomNumber] = useState('');
     const user = useSelector((state) => state.user);
-    const order = useSelector((state) => state.order);
+    const cart = useSelector((state) => state.cart);
     const navigate = useNavigate();
     const location = useLocation(); // lấy thông tin về đường dẫn hiện tại
     const dispatch = useDispatch();
@@ -73,7 +72,7 @@ const ProductDetailComponent = ({ idProduct }) => {
     };
 
     useEffect(() => {
-        const orderRedux = order?.orderItems?.find((item) => item.product === productsDetail?._id);
+        const orderRedux = cart?.cartItems?.find((item) => item.product === productsDetail?._id);
         if (
             orderRedux?.amount + numProduct <= orderRedux?.countInstock ||
             (!orderRedux && productsDetail?.countInStock > 0)

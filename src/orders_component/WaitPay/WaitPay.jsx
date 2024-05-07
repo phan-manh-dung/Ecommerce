@@ -3,7 +3,6 @@ import React from 'react';
 import styles from './WaitPay.module.scss';
 import classNames from 'classnames/bind';
 
-import find_pay from '~/assets/img_Global/find_pay.png';
 import FindPay from '~/component/FindPay/FindPay';
 
 const cx = classNames.bind(styles);

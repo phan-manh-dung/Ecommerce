@@ -1,6 +1,4 @@
 .wrapper_cancelled {
-    padding: 16px;
-    background-color: #fff;
     margin-top: 10px;
     .title {
         margin-bottom: 8px;
@@ -17,9 +15,27 @@
             }
         }
     }
+
+    .wrapper {
+        display: flex;
+        flex-direction: column;
+        -webkit-box-align: center;
+        align-items: center;
+        background-color: rgb(255, 255, 255);
+        width: 100%;
+        padding: 35px;
+    }
+    .order {
+        border-radius: 6px;
+        background-color: #fff;
+        padding: 10px;
+        margin: 10px 0 10px 0;
+    }
+
     .content {
         display: flex;
         flex-direction: row;
+        margin-top: 8px;
         padding: 16px 0px;
         border-bottom: 1px solid rgb(235, 235, 240);
         border-top: 1px solid rgb(235, 235, 240);

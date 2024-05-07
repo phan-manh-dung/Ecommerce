@@ -14,8 +14,9 @@ import { removeProductInCart, removeAllProductInCart } from '~/redux/slide/cartS
 import { convertPrice } from '~/utils';
 import ModalComponent from '~/component/ModalComponent/ModalComponent';
 import { useNavigate } from 'react-router-dom';
-import { deleteCart } from '~/service/OrderService';
+import { deleteCart, findCart } from '~/service/OrderService';
 import { getCartByUserId } from '~/service/OrderService';
+import { logDOM } from '@testing-library/react';
 
 const cx = classNames.bind(styles);
 
@@ -27,6 +28,8 @@ const CartPage = () => {
     const [isModalOpenProduct, setIsModalOpenProduct] = useState(false); // mở modal
     const dispatch = useDispatch(); // gửi action đến reducer
     const navigate = useNavigate(); // chuyển trang
+    const [isChecked, setIsChecked] = useState(false);
+    const [cartId, setCartId] = useState('');
 
     const userId = user?.id;
 
@@ -61,14 +64,14 @@ const CartPage = () => {
         }
     };
 
-    const onChange = (e) => {
-        if (listChecked.includes(e.target.value)) {
-            // nếu đã check rồi
-            const newListChecked = listChecked.filter((item) => item !== e.target.value);
-            setListChecked(newListChecked);
-        } else {
-            setListChecked([...listChecked, e.target.value]);
-        }
+    // check 1 sản phẩm
+
+    const onChangeOne = (e) => {
+        const newValue = !listChecked.includes(e.target.value);
+        setListChecked((prevListChecked) =>
+            newValue ? [...prevListChecked, e.target.value] : prevListChecked.filter((item) => item !== e.target.value),
+        );
+        setIsChecked(newValue);
     };
 
     // onchange check all
@@ -131,12 +134,30 @@ const CartPage = () => {
             const selectedItemId = listChecked[0]; // ID của đối tượng đầu tiên trong listChecked
             const selectedItem = cart?.cartItems.find((item) => item.product === selectedItemId);
             if (selectedItem) {
-                navigate('/payment', { state: { selectedItem, totalPrice, product } });
+                navigate('/payment', { state: { selectedItem, totalPrice, product, cartId } });
             }
+            findCart(userId, product);
         } else if (listChecked.length > 1) {
             setIsModalOpenProduct(true);
         }
     };
+
+    // find cart
+    useEffect(() => {
+        // Chỉ gọi API khi isChecked thay đổi và là true
+        if (isChecked) {
+            const fetchData = async () => {
+                try {
+                    const cartId = await findCart(userId, product, user?.access_token);
+                    setCartId(cartId);
+                } catch (error) {
+                    console.error('Error finding cart:', error);
+                }
+            };
+
+            fetchData();
+        }
+    }, [isChecked, userId, product]);
 
     const handleCancel = () => {
         setIsModalOpen(false);
@@ -223,7 +244,7 @@ const CartPage = () => {
                                                         <Row style={{ display: 'flex', alignItems: 'center' }}>
                                                             <Col sm={1}>
                                                                 <Checkbox
-                                                                    onChange={onChange}
+                                                                    onChange={onChangeOne}
                                                                     value={carts.product}
                                                                     checked={listChecked?.includes(carts.product)}
                                                                 />

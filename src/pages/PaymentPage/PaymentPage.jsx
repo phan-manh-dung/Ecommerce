@@ -24,7 +24,6 @@ import ButtonComponent from '~/component/ButtonComponent/Buttoncomponent';
 import { useDispatch, useSelector } from 'react-redux';
 import { useMutationHook } from '~/hook/useMutationHook';
 import * as ProductService from '~/service/ProductService';
-
 import * as OrderService from '~/service/OrderService';
 import { convertPrice } from '~/utils';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -43,10 +42,11 @@ const PaymentPage = () => {
     const navigate = useNavigate();
     const [openSystem, setOpenSystem] = useState(false);
     const [payment, setPayment] = useState('cash'); // thanh toán
-    const { totalPrice } = location.state || {}; // lấy data từ order
+    const { totalPrice } = location.state || {}; // lấy data từ cart page
     const idProduct = selectedItem?.product || selectedItem?._id; // lấy id
 
-    const { totalPriceProduct, numProduct, product } = location.state || {};
+    // lấy dữ liệu từ CartPage
+    const { totalPriceProduct, numProduct, product, cartId } = location.state || {};
 
     const initial = () => ({
         name: '',
@@ -99,13 +99,6 @@ const PaymentPage = () => {
     });
     const { isLoading, data, isSuccess, isError } = mutationAddOrder;
 
-    // delete trong giỏ hàng ở database
-    const mutationDeleteCart = useMutationHook((data) => {
-        const { id, token } = data;
-        const res = OrderService.deleteCart(id, token);
-        return res;
-    });
-
     const cancelOpenSystem = () => {
         setOpenSystem(false);
     };
@@ -151,10 +144,10 @@ const PaymentPage = () => {
                 orderItems: orderItem,
             });
             // gọi api mutationDeleteCart
-            mutationDeleteCart.mutate({
-                id: product,
-                token: user?.access_token,
-            });
+            // Kiểm tra xem cartId có tồn tại không
+            if (cartId) {
+                OrderService.deleteCart(cartId, user?.access_token);
+            }
         } else {
             clickOpenSystem();
         }

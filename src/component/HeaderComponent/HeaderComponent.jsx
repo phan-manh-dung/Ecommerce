@@ -16,7 +16,7 @@ import { ShoppingCartOutlined } from '@ant-design/icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 import { addProductInCart } from '~/redux/slide/cartSlide';
-import { RESET_ORDER_DATA } from '~/redux/slide/orderSlide';
+import { RESET_CART_DATA } from '~/redux/slide/cartSlide';
 import { getCartByUserId } from '~/service/OrderService';
 
 const cx = classNames.bind(styles);
@@ -89,7 +89,7 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
         localStorage.removeItem('isLoggedIn');
 
         dispatch(resetUser());
-        dispatch(RESET_ORDER_DATA());
+        dispatch(RESET_CART_DATA());
         setLoading(false);
     };
 

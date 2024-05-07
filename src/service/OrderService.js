@@ -77,3 +77,18 @@ export const deleteManyOrder = async (data, access_token) => {
     });
     return res.data;
 };
+
+export const findCart = async (id, productId, access_token) => {
+    try {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/order/find-cart/${id}`, {
+            params: { productId: productId },
+            headers: {
+                Authorization: `Bearer ${access_token}`,
+            },
+        });
+        return response.data.cartId;
+    } catch (error) {
+        console.error('Error finding cart:', error);
+        throw error;
+    }
+};

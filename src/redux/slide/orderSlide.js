@@ -1,5 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit';
-// import { getAllOrder } from '~/service/OrderService';
 
 const initialState = {
     orderItems: [],
@@ -56,27 +55,10 @@ export const orderSlide = createSlice({
             state.isPaid = isPaid;
             state.isDelivered = isDelivered;
         },
-        RESET_ORDER_DATA: (state) => {
-            // Reset tất cả dữ liệu order về trạng thái ban đầu
-            state.orderItems = [];
-            state.fullName = '';
-            state.phone = 0;
-            state.moreAddress = '';
-            state.district = '';
-            state.city = '';
-            state.country = '';
-            state.paymentMethod = '';
-            state.shippingPrice = '';
-            state.totalPrice = '';
-            state.user = '';
-            state.product = '';
-            state.isPaid = false;
-            state.isDelivered = false;
-        },
     },
 });
 
 // Action creators are generated for each case reducer function
-export const { updateOrder, RESET_ORDER_DATA } = orderSlide.actions;
+export const { updateOrder } = orderSlide.actions;
 
 export default orderSlide.reducer;

@@ -41,19 +41,6 @@ export const cartSlice = createSlice({
                 },
             });
         },
-        // addProductInCart: (state, action) => {
-        //     const { orderItem } = action.payload;
-        //     const itemOrder = state?.orderItems?.find((item) => item?.product === orderItem.product);
-        //     if (itemOrder) {
-        //         if (itemOrder.amount <= itemOrder.countInStock) {
-        //             itemOrder.amount += orderItem?.amount;
-        //             state.isSuccessOrder = true;
-        //             state.isErrorOrder = false;
-        //         }
-        //     } else {
-        //         state.orderItems.push(orderItem);
-        //     }
-        // },
 
         addProductInCart: (state, action) => {
             const { cartItem } = action.payload;
@@ -85,9 +72,24 @@ export const cartSlice = createSlice({
             state.cartItems = itemCarts;
             state.cartItemsSelected = itemCartsSelected;
         },
+        RESET_CART_DATA: (state) => {
+            // Reset tất cả dữ liệu order về trạng thái ban đầu
+            state.cartItems = [];
+            state.name = '';
+            state.amount = 0;
+            state.image = '';
+            state.price = 0;
+            state.product = '';
+            state.color = '';
+            state.discount = 0;
+            state.type = '';
+            state.isPaid = false;
+            state.isDelivered = false;
+        },
     },
 });
 
 // Action creators are generated for each case reducer function
-export const { updateCart, addProductInCart, removeProductInCart, removeAllProductInCart } = cartSlice.actions;
+export const { updateCart, addProductInCart, removeProductInCart, removeAllProductInCart, RESET_CART_DATA } =
+    cartSlice.actions;
 export default cartSlice.reducer;
