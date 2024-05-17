@@ -132,7 +132,6 @@ const HomePage = () => {
         const limit = context?.queryKey && context?.queryKey[1];
         const search = context?.queryKey && context?.queryKey[2];
         const res = await ProductService.getAllProduct(search, limit);
-
         return res;
     };
 

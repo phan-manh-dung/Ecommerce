@@ -3,11 +3,18 @@ import styles from './AllOrders.module.scss';
 import classNames from 'classnames/bind';
 
 import find_pay from '~/assets/img_Global/find_pay.png';
+import icon_sad from '~/assets/img_Global/icon_sad.png';
 
 import * as OrderService from '~/service/OrderService';
 import { useSelector } from 'react-redux';
 import { convertPrice } from '~/utils';
 import ModalComponent from '~/component/ModalComponent/ModalComponent';
+import ButtonComponent from '~/component/ButtonComponent/Buttoncomponent';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBan } from '@fortawesome/free-solid-svg-icons';
+import { useMutationHook } from '~/hook/useMutationHook';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutationHooks } from '~/hooks/useMutationHook';
 
 const cx = classNames.bind(styles);
 
@@ -15,6 +22,10 @@ const AllOrders = () => {
     const user = useSelector((state) => state.user);
     const [orders, setOrders] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false); // mở modal
+    // lấy id để xóa của order
+    const [idDelete, setIdDelete] = useState('');
+
+    const queryClient = useQueryClient();
 
     // tắt modal
     const handleCancel = () => {
@@ -22,9 +33,12 @@ const AllOrders = () => {
     };
 
     // mở modal
-    const modalAbortOrder = () => {
+    const modalAbortOrder = (id) => {
+        setIdDelete(id);
         setIsModalOpen(true);
     };
+
+    // api delete order
 
     useEffect(() => {
         const fetchOrders = async () => {
@@ -43,8 +57,33 @@ const AllOrders = () => {
         fetchOrders();
     }, [user]);
 
+    // mutation delete order
+    const mutationDeleted = useMutationHooks(
+        (data) => {
+            const { id, token } = data;
+            return OrderService.deleteOrderToCancelled(id, token);
+        },
+        {
+            onSuccess: () => {
+                alert('Hủy đơn hàng thành công');
+                // Sau khi xoá thành công, refetch lại dữ liệu orders
+                queryClient.invalidateQueries('orders');
+            },
+            onError: (error) => {
+                // Hiển thị thông báo lỗi hoặc xử lý lỗi
+                console.error('Error deleting order:', error);
+            },
+        },
+    );
+
+    // api hủy đơn hàng
+    const handleCancelOrder = (id) => {
+        mutationDeleted.mutate({ id, token: user?.access_token });
+        setIsModalOpen(false);
+    };
+
     return (
-        <div className={cx('wrapper_cancelled')}>
+        <div className={cx('wrapper_all-order')}>
             {!orders ? (
                 <div className={cx('wrapper')}>
                     <div>
@@ -56,6 +95,18 @@ const AllOrders = () => {
                 <div>
                     {orders.map((order, index) => (
                         <div key={index} className={cx('order')}>
+                            {/* trạng thái đơn hàng */}
+                            <div>
+                                {order?.status !== 'cancelled' ? (
+                                    <div></div>
+                                ) : (
+                                    <div>
+                                        <span style={{ paddingRight: '6px', color: '#C0C0C0' }}>Đã hủy</span>
+                                        <FontAwesomeIcon icon={faBan} color="#C0C0C0" />
+                                    </div>
+                                )}
+                            </div>
+
                             {/* Phần tử giao diện cho phần thông tin đơn hàng */}
                             <div className={cx('content')}>
                                 <div className={cx('content_left')}>
@@ -79,7 +130,7 @@ const AllOrders = () => {
                                     <div className={cx('price')}>
                                         {order.orderItems &&
                                             order.orderItems.length > 0 &&
-                                            convertPrice(order.orderItems[0].price)}{' '}
+                                            convertPrice(order.orderItems[0].price)}
                                         ₫
                                     </div>
                                 </div>
@@ -92,8 +143,11 @@ const AllOrders = () => {
                                     <div className={cx('total')}>{convertPrice(order.totalPrice)} ₫</div>
                                 </div>
                                 <div className={cx('button')}>
-                                    <div onClick={modalAbortOrder}>Hủy đơn hàng</div>
-
+                                    {order?.status !== 'cancelled' ? (
+                                        <div onClick={() => modalAbortOrder(order?._id)}>Hủy đơn hàng</div>
+                                    ) : (
+                                        <div>Mua lại</div>
+                                    )}
                                     <div>Theo dõi đơn</div>
                                 </div>
                             </div>
@@ -110,9 +164,23 @@ const AllOrders = () => {
                 title="Hủy đơn hàng"
                 onCancel={handleCancel}
             >
-                <div class="style-flex">
-                    <span>Bạn chưa có thông tin địa chỉ hoặc chưa chọn sản phẩm</span>
-                    <div></div>
+                <div className={cx('style-flex')}>
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <span>Bạn có muốn hủy đơn hàng không ? </span>
+                        <div>
+                            <img alt="icon_sad" src={icon_sad} width={18} height={18} />
+                        </div>
+                    </div>
+                    <div onClick={() => {}}>
+                        <ButtonComponent
+                            onClick={() => handleCancelOrder(idDelete)}
+                            textButton="Xác nhận"
+                            backgroundColor="#E54646"
+                        />
+                    </div>
+                    <div>
+                        <ButtonComponent onClick={handleCancel} textButton="Thoát" backgroundColor="deepskyblue" />
+                    </div>
                 </div>
             </ModalComponent>
         </div>

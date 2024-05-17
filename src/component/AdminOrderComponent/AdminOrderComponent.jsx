@@ -107,11 +107,11 @@ const AdminOrderComponent = () => {
     const mutationDeleted = useMutationHook((data) => {
         const { id, token } = data;
 
-        const res = OrderService.deleteOrder(id, token);
+        const res = OrderService.deleteOrderDatabaseByAdmin(id, token);
         return res;
     });
 
-    const handleDeleteOrder = () => {
+    const handleDeleteOrderByAdmin = () => {
         mutationDeleted.mutate(
             { id: idOrder, token: user?.access_token },
             {
@@ -523,7 +523,7 @@ const AdminOrderComponent = () => {
                     title="Xóa sản phẩm"
                     open={isModalOpenDelete}
                     onCancel={handleCancelDelete}
-                    onOk={handleDeleteOrder}
+                    onOk={handleDeleteOrderByAdmin}
                 >
                     <Loading isLoading={isLoadingDeleted}>
                         <div>Bạn có chắc xóa sản phẩm này không?</div>
