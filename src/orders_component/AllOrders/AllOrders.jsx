@@ -4,6 +4,8 @@ import classNames from 'classnames/bind';
 
 import find_pay from '~/assets/img_Global/find_pay.png';
 import icon_sad from '~/assets/img_Global/icon_sad.png';
+import xe_xanh from '~/assets/img_Global/xexanh.png';
+import indicator from '~/assets/img_Global/indicator.png';
 
 import * as OrderService from '~/service/OrderService';
 import { useSelector } from 'react-redux';
@@ -97,8 +99,21 @@ const AllOrders = () => {
                         <div key={index} className={cx('order')}>
                             {/* trạng thái đơn hàng */}
                             <div>
-                                {order?.status !== 'cancelled' ? (
-                                    <div></div>
+                                {order?.status !== 'cancelled' && order?.status === 'pending' ? (
+                                    <div className={cx('wrapper_pending')}>
+                                        <div className={cx('pending_car')}>
+                                            <img alt="xe_xanh" src={xe_xanh} width={20} height={20} />
+                                            <span style={{ fontSize: '1.3rem', color: '#00ab56', paddingLeft: '3px' }}>
+                                                Giao hàng 3 - 5 ngày
+                                            </span>
+                                        </div>
+                                        <div className={cx('pending_wait')}>
+                                            <img alt="indicator" src={indicator} width={20} height={20} />
+                                            <span style={{ paddingLeft: '3px', fontSize: '1.3rem', fontWeight: '600' }}>
+                                                Chờ xác nhận
+                                            </span>
+                                        </div>
+                                    </div>
                                 ) : (
                                     <div>
                                         <span style={{ paddingRight: '6px', color: '#C0C0C0' }}>Đã hủy</span>

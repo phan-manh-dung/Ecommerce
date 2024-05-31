@@ -89,6 +89,19 @@
             }
         }
     }
+    .wrapper_pending {
+        flex-direction: column;
+        .pending_car {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+        }
+        .pending_wait {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+        }
+    }
     .footer {
         display: flex;
         flex-direction: column;
