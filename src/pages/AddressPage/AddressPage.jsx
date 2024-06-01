@@ -36,6 +36,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import ListProfileComponent from '~/component/ListProfileComponent/ListProfileComponent';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Helmet } from 'react-helmet';
 
 const cx = classNames.bind(styles);
 
@@ -72,6 +73,9 @@ const AddressPage = () => {
 
     return (
         <div className={cx('container_address')}>
+            <Helmet>
+                <title>Địa chỉ của tôi</title>
+            </Helmet>
             <div className={cx('wrapper_address')}>
                 <div className={cx('wrapper-type')}>
                     <div className={cx('type-home')}>Trang chủ</div>

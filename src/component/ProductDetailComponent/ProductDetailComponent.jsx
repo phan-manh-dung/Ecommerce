@@ -40,6 +40,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronRight, faComment, faPlus, faStar } from '@fortawesome/free-solid-svg-icons';
 import ModalComponent from '../ModalComponent/ModalComponent';
 import AddressComponent from '../AddressComponent/AddressComponent';
+import { Helmet } from 'react-helmet';
 const cx = classNames.bind(styles);
 
 const ProductDetailComponent = ({ idProduct }) => {
@@ -195,6 +196,9 @@ const ProductDetailComponent = ({ idProduct }) => {
 
     return (
         <Loading isLoading={isLoading}>
+            <Helmet>
+                <title>Mua {productsDetail?.name || 'Sản phẩm'}</title>
+            </Helmet>
             <div className={cx('container_user')}>
                 <div className={cx('wrapper_user')}>
                     <div className={cx('wrapper-type')}>

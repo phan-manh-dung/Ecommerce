@@ -29,6 +29,9 @@ const ListProfileComponent = ({ index, name, width, height, src }) => {
         if (name === 'Đánh giá sản phẩm') {
             navigate('/my-review');
         }
+        if (name === 'Sản phẩm bạn đã xem') {
+            navigate('/my-watched');
+        }
         if (name === 'Sản phẩm yêu thích') {
             navigate('/my/favorite-product');
         }

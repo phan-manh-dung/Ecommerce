@@ -32,6 +32,7 @@ import {
     faRotateLeft,
 } from '@fortawesome/free-solid-svg-icons';
 import ListProfileComponent from '~/component/ListProfileComponent/ListProfileComponent';
+import { Helmet } from 'react-helmet';
 
 const cx = classNames.bind(styles);
 
@@ -68,11 +69,14 @@ const ReviewProduct = () => {
 
     return (
         <div className={cx('container_review')}>
+            <Helmet>
+                <title>Đánh giá của bạn</title>
+            </Helmet>
             <div className={cx('wrapper_review')}>
                 <div className={cx('wrapper-type')}>
                     <div className={cx('type-home')}>Trang chủ</div>
                     <img alt="right_arrow" src={img_right_arrow} width={18} height={18} />
-                    <span className={cx('type-title')}>Thông tin thanh toán</span>
+                    <span className={cx('type-title')}>Đánh giá sản phẩm</span>
                 </div>
                 <Row>
                     <Col xs={0} sm={5}>
@@ -146,7 +150,7 @@ const ReviewProduct = () => {
                         </div>
                     </Col>
                     <Col className={cx('col')} xs={0} sm={19} style={{ padding: '0 16px' }}>
-                        <div className={cx('information')}>Thông tin thanh toán </div>
+                        <div className={cx('information')}>Đánh giá sản phẩm </div>
                         <div className={cx('wrapper_right')}>
                             <div className={cx('element')}>
                                 <img

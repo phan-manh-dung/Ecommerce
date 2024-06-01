@@ -59,6 +59,7 @@ import * as ProductService from '~/service/ProductService';
 import { useSelector } from 'react-redux';
 import Loading from '~/component/LoadingComponent/Loading';
 import { useDebounce } from '~/hooks/useDebounce';
+import { Helmet } from 'react-helmet';
 
 const cx = classNames.bind(styles);
 
@@ -158,6 +159,9 @@ const HomePage = () => {
 
     return (
         <Loading isLoading={isLoading || loading}>
+            <Helmet>
+                <title>MD - Mua hàng nhanh chóng</title>
+            </Helmet>
             <div className={cx('container_home')}>
                 <div className={cx('container_main')}>
                     {typeProduct.map((item) => {

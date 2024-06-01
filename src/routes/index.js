@@ -125,6 +125,12 @@ export const routes = [
         isShowFooter: true,
     },
     {
+        path: '/my-watched',
+        page: ReviewProduct,
+        isShowHeader: true,
+        isShowFooter: true,
+    },
+    {
         path: '/my/favorite-product',
         page: FavoriteProduct,
         isShowHeader: true,
@@ -139,5 +145,7 @@ export const routes = [
     {
         path: '*',
         page: NotFoundPage,
+        isShowHeader: true,
+        isShowFooter: true,
     },
 ];

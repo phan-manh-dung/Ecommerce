@@ -36,6 +36,7 @@ import ListProfileComponent from '~/component/ListProfileComponent/ListProfileCo
 import AllLieComponent from '~/lies_component/AllLieComponent/AllLieComponent';
 import ProcessLieComponent from '~/lies_component/ProcessLieComponent/ProcessLieComponent';
 import SuccessLieComponent from '~/lies_component/SuccessLieComponent/SuccessLieComponent';
+import { Helmet } from 'react-helmet';
 
 const cx = classNames.bind(styles);
 
@@ -92,6 +93,9 @@ const ManagerLie = () => {
 
     return (
         <div className={cx('container_lie')}>
+            <Helmet>
+                <title>Đổi trả của tôi</title>
+            </Helmet>
             <div className={cx('wrapper_lie')}>
                 <div className={cx('wrapper-type')}>
                     <div className={cx('type-home')}>Trang chủ</div>

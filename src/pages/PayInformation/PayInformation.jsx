@@ -32,6 +32,7 @@ import {
     faRotateLeft,
 } from '@fortawesome/free-solid-svg-icons';
 import ListProfileComponent from '~/component/ListProfileComponent/ListProfileComponent';
+import { Helmet } from 'react-helmet';
 
 const cx = classNames.bind(styles);
 
@@ -68,6 +69,9 @@ const PayInformation = () => {
 
     return (
         <div className={cx('container_pay')}>
+            <Helmet>
+                <title>Thông tin thanh toán</title>
+            </Helmet>
             <div className={cx('wrapper_pay')}>
                 <div className={cx('wrapper-type')}>
                     <div className={cx('type-home')}>Trang chủ</div>

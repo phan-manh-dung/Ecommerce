@@ -38,6 +38,7 @@ import AllNotification from '~/notifications_component/AllNotification/AllNotifi
 import Promotion from '~/notifications_component/Promotion/Promotion';
 import OrderNotification from '~/notifications_component/OrderNotification/OrderNotification';
 import SystemNotification from '~/notifications_component/SystemNotification/SystemNotification';
+import { Helmet } from 'react-helmet';
 
 const cx = classNames.bind(styles);
 
@@ -96,6 +97,9 @@ const No_Notification = () => {
 
     return (
         <div className={cx('container_notification')}>
+            <Helmet>
+                <title>Thông báo của tôi</title>
+            </Helmet>
             <div className={cx('wrapper_notification')}>
                 <div className={cx('wrapper-type')}>
                     <div className={cx('type-home')}>Trang chủ</div>

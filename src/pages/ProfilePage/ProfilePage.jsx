@@ -42,6 +42,7 @@ import Loading from '~/component/LoadingComponent/Loading';
 import { updateUser, updateUserSlice } from '~/redux/slide/userSlide';
 import { getBase64 } from '~/utils';
 import AddressComponent from '~/component/AddressComponent/AddressComponent';
+import { Helmet } from 'react-helmet';
 
 const cx = classNames.bind(styles);
 
@@ -276,6 +277,9 @@ const ProfilePage = () => {
 
     return (
         <div className={cx('container_profile')}>
+            <Helmet>
+                <title>Tài khoản của bạn</title>
+            </Helmet>
             <Loading isLoading={isLoadingUpdated}>
                 <div className={cx('wrapper_profile')}>
                     <div className={cx('wrapper-type')}>

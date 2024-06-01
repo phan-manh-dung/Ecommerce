@@ -31,6 +31,7 @@ import { removeAllProductInCart } from '~/redux/slide/cartSlide';
 import ModalComponent from '~/component/ModalComponent/ModalComponent';
 
 import { updateOrder } from '../../redux/slide/orderSlide';
+import { Helmet } from 'react-helmet';
 
 const cx = classNames.bind(styles);
 
@@ -226,6 +227,9 @@ const PaymentPage = () => {
 
     return (
         <div className={cx('container_payment')}>
+            <Helmet>
+                <title>Thông tin thanh toán</title>
+            </Helmet>
             <div className={cx('wrapper_payment')}>
                 <div className={cx('title')}>
                     <span>Thanh toán</span>

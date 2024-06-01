@@ -25,6 +25,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import ListProfileComponent from '~/component/ListProfileComponent/ListProfileComponent';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Helmet } from 'react-helmet';
 
 const cx = classNames.bind(styles);
 
@@ -61,11 +62,14 @@ const FavoriteProduct = () => {
 
     return (
         <div className={cx('container_favorite')}>
+            <Helmet>
+                <title>Sản phẩm yêu thích của bạn</title>
+            </Helmet>
             <div className={cx('wrapper_favorite')}>
                 <div className={cx('wrapper-type')}>
                     <div className={cx('type-home')}>Trang chủ</div>
                     <img alt="right_arrow" src={img_right_arrow} width={18} height={18} />
-                    <span className={cx('type-title')}>Thông tin thanh toán</span>
+                    <span className={cx('type-title')}>Sản phẩm yêu thích</span>
                 </div>
                 <Row>
                     <Col xs={0} sm={5}>

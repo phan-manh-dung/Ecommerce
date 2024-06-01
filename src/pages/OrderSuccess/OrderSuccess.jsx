@@ -10,6 +10,7 @@ import ButtonComponent from '~/component/ButtonComponent/Buttoncomponent';
 import { useNavigate } from 'react-router-dom';
 import ch_play from '~/assets/img_Global/chplay.png';
 import app_store from '~/assets/img_Global/appstore.png';
+import { Helmet } from 'react-helmet';
 
 const cx = classNames.bind(styles);
 
@@ -26,6 +27,9 @@ const OrderSuccess = () => {
 
     return (
         <div className={cx('wrapper_order')}>
+            <Helmet>
+                <title>Đặt hàng thành công</title>
+            </Helmet>
             <div className={cx('container_order')}>
                 <div className={cx('title')}>
                     <span>Shop MD</span>

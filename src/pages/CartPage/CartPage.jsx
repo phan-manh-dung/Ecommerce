@@ -17,6 +17,7 @@ import { useNavigate } from 'react-router-dom';
 import { deleteCart, findCart } from '~/service/OrderService';
 import { getCartByUserId } from '~/service/OrderService';
 import { logDOM } from '@testing-library/react';
+import { Helmet } from 'react-helmet';
 
 const cx = classNames.bind(styles);
 
@@ -199,6 +200,9 @@ const CartPage = () => {
 
     return (
         <div className={cx('container_order')}>
+            <Helmet>
+                <title>Giỏ hàng | MD.com</title>
+            </Helmet>
             <div className={cx('wrapper_order')}>
                 <div className={cx('cart')}>
                     <span className={cx('cart-title')}>Giỏ hàng</span>

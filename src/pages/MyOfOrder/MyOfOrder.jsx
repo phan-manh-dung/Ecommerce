@@ -36,6 +36,7 @@ import Processing from '~/orders_component/Processing/Processing';
 import Delivered from '~/orders_component/Delivered/Delivered';
 import Transport from '~/orders_component/Transport/Transport';
 import Cancelled from '~/orders_component/Cancelled/Cancelled';
+import { Helmet } from 'react-helmet';
 
 const cx = classNames.bind(styles);
 
@@ -97,6 +98,9 @@ const MyOfOrder = () => {
 
     return (
         <div className={cx('container_my-order')}>
+            <Helmet>
+                <title>Đơn hàng của tôi</title>
+            </Helmet>
             <div className={cx('wrapper_my-order')}>
                 <div className={cx('wrapper-type')}>
                     <div className={cx('type-home')}>Trang chủ</div>

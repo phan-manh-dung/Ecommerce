@@ -1,0 +1,29 @@
+.container_found-page {
+    .wrapper_page {
+        text-align: center;
+        height: 400px;
+        h1 {
+            font-size: 72px;
+            text-align: center;
+        }
+    }
+    .footer {
+        text-align: center;
+        h2 {
+            font-size: 28px;
+            font-weight: bold;
+        }
+        a {
+            color: #fff !important;
+            padding: 10px 20px;
+            background: rgb(41, 118, 240);
+            margin: 20px 0;
+            display: inline-block;
+            border-radius: 8px;
+
+            &:hover {
+                background: rgb(41, 118, 240, 0.8);
+            }
+        }
+    }
+}
