@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
-import { Col, Radio, Row, Upload } from 'antd';
+import { Col, Row } from 'antd';
 import { useSelector } from 'react-redux';
 
-import styles from './ManagerLie.module.scss';
+import styles from './WatchProduct.module.scss';
 import classNames from 'classnames/bind';
 
 import img_right_arrow from '~/assets/img_Global/right_arrow.png';
@@ -33,16 +32,12 @@ import {
     faRotateLeft,
 } from '@fortawesome/free-solid-svg-icons';
 import ListProfileComponent from '~/component/ListProfileComponent/ListProfileComponent';
-import AllLieComponent from '~/lies_component/AllLieComponent/AllLieComponent';
-import ProcessLieComponent from '~/lies_component/ProcessLieComponent/ProcessLieComponent';
-import SuccessLieComponent from '~/lies_component/SuccessLieComponent/SuccessLieComponent';
 import { Helmet } from 'react-helmet';
 
 const cx = classNames.bind(styles);
 
-const ManagerLie = () => {
+const WatchProduct = () => {
     const user = useSelector((state) => state.user);
-    const [activeTab, setActiveTab] = useState('all');
 
     // dữ liệu map
     const arrImage = [
@@ -72,35 +67,16 @@ const ManagerLie = () => {
         'Hỗ trợ khách hàng',
     ];
 
-    const clickValue = (value) => {
-        setActiveTab(value);
-    };
-
-    // Hàm render component dựa trên tab đang được chọn
-    const renderComponent = () => {
-        switch (activeTab) {
-            case 'all':
-                return <AllLieComponent />;
-            case 'process':
-                return <ProcessLieComponent />;
-            case 'success':
-                return <SuccessLieComponent />;
-
-            default:
-                return null;
-        }
-    };
-
     return (
-        <div className={cx('container_lie')}>
+        <div className={cx('container_watch')}>
             <Helmet>
-                <title>Đổi trả của tôi</title>
+                <title>Sản phẩm bạn đã xem</title>
             </Helmet>
-            <div className={cx('wrapper_lie')}>
+            <div className={cx('wrapper_watch')}>
                 <div className={cx('wrapper-type')}>
                     <div className={cx('type-home')}>Trang chủ</div>
                     <img alt="right_arrow" src={img_right_arrow} width={18} height={18} />
-                    <span className={cx('type-title')}>Đổi trả của tôi</span>
+                    <span className={cx('type-title')}>Sản phẩm đã xem</span>
                 </div>
                 <Row>
                     <Col xs={0} sm={5}>
@@ -174,29 +150,16 @@ const ManagerLie = () => {
                         </div>
                     </Col>
                     <Col className={cx('col')} xs={0} sm={19} style={{ padding: '0 16px' }}>
-                        <div className={cx('information')}>Đổi trả của tôi</div>
-                        <div className={cx('wrapper_manager-lie')}>
-                            <div className={cx('list_bar')}>
-                                <div
-                                    onClick={() => clickValue('all')}
-                                    className={cx('style_bar', { active: activeTab === 'all' })}
-                                >
-                                    Tất cả
-                                </div>
-                                <div
-                                    onClick={() => clickValue('process')}
-                                    className={cx('style_bar', { active: activeTab === 'process' })}
-                                >
-                                    Đang tiến hành
-                                </div>
-                                <div
-                                    onClick={() => clickValue('success')}
-                                    className={cx('style_bar', { active: activeTab === 'success' })}
-                                >
-                                    Đã xong
-                                </div>
+                        <div className={cx('information')}>Sản phẩm đã xem </div>
+                        <div className={cx('wrapper_right')}>
+                            <div className={cx('element')}>
+                                <img
+                                    alt=""
+                                    src="https://frontend.tikicdn.com/_desktop-next/static/img/mascot_fail.svg"
+                                    width={200}
+                                />
+                                <div>Bạn chưa xem sản phẩm nào. Mua sắm thôi!</div>
                             </div>
-                            <div>{renderComponent()}</div>
                         </div>
                     </Col>
                 </Row>
@@ -205,4 +168,4 @@ const ManagerLie = () => {
     );
 };
 
-export default ManagerLie;
+export default WatchProduct;

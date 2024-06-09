@@ -36,6 +36,7 @@ const TypeProductPage = () => {
     const [typeProduct, setTypeProduct] = useState([]);
     const [loading, setLoading] = useState(false);
     const [showAddressModal, setShowAddressModal] = useState(false);
+    const [activeTab, setActiveTab] = useState('popular');
     const [panigate, setPanigate] = useState({
         page: 0,
         limit: 10,
@@ -104,6 +105,10 @@ const TypeProductPage = () => {
         setShowAddressModal(false);
     };
 
+    const clickValue = (value) => {
+        setActiveTab(value);
+    };
+
     return (
         <div className={cx('container_type-user')}>
             <div className={cx('wrapper-type')}>
@@ -130,7 +135,7 @@ const TypeProductPage = () => {
                                 <img alt="location" src={img_location} height={20} width={20} />
                                 <div className={cx('ship')}>Giao đến: </div>
                                 <span className={cx('address')}>
-                                    {user?.moreAddress},{user?.address},{user?.city}
+                                    {user?.moreAddress},{user?.district},{user?.city},{user?.country}
                                 </span>
                                 <span></span>
                             </div>
@@ -354,30 +359,39 @@ const TypeProductPage = () => {
                             </div>
                             <div className={cx('sort_list')}>
                                 <div className={cx('sort')}>
-                                    <div className={cx('sort_div')}>
+                                    <div
+                                        onClick={() => clickValue('popular')}
+                                        className={cx('sort_div', { active: activeTab === 'popular' })}
+                                    >
                                         <a src="/">Phổ biến</a>
                                     </div>
-                                    <div className={cx('sort_div')}>
+                                    <div
+                                        onClick={() => clickValue('selling')}
+                                        className={cx('sort_div', { active: activeTab === 'selling' })}
+                                    >
                                         <a src="/">Bán chạy</a>
                                     </div>
-                                    <div className={cx('sort_div')}>
+                                    <div
+                                        onClick={() => clickValue('newProduct')}
+                                        className={cx('sort_div', { active: activeTab === 'newProduct' })}
+                                    >
                                         <a src="/">Hàng mới</a>
                                     </div>
-                                    <div className={cx('sort_div')}>
+                                    <div
+                                        onClick={() => clickValue('lowToHeight')}
+                                        className={cx('sort_div', { active: activeTab === 'lowToHeight' })}
+                                    >
                                         <a src="/">Giá thấp đến cao</a>
                                     </div>
-                                    <div className={cx('sort_div')}>
+                                    <div
+                                        onClick={() => clickValue('hightToLow')}
+                                        className={cx('sort_div', { active: activeTab === 'hightToLow' })}
+                                    >
                                         <a src="/">Giá cao đến thấp</a>
                                     </div>
                                 </div>
                             </div>
-                            <div className={cx('wrapper_now-red')}>
-                                <div className={cx('now_red')}>
-                                    <div style={{ display: 'flex' }} className="icon">
-                                        <img alt="now_red" src={img_now_red} width={24} height={12} />
-                                    </div>
-                                </div>
-                            </div>
+
                             <div className={cx('container_user1')}>
                                 <div className={cx('user1')}>
                                     {typeProduct?.map((products, index) => {

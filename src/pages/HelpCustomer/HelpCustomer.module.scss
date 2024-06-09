@@ -1,0 +1,108 @@
+.container_help {
+    background-color: var(--primary-color-body);
+    .wrapper_manager-help {
+        .list_bar {
+            cursor: pointer;
+            background: rgb(255, 255, 255);
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            overflow: hidden;
+            position: sticky;
+            top: 0px;
+            z-index: 10;
+            border-bottom: 1px solid rgb(235, 235, 240);
+            margin-bottom: 12px;
+
+            .style_bar {
+                width: 33.3333%;
+                padding: 12px 0px;
+                text-align: center;
+                color: rgb(128, 128, 137);
+                border-bottom: none;
+
+                &:hover {
+                    width: 33.3333%;
+                    padding: 12px 0px;
+                    text-align: center;
+                    color: rgb(13, 92, 182);
+                    border-bottom: 2px solid rgb(13, 92, 182);
+                }
+            }
+        }
+    }
+}
+
+.wrapper-type {
+    display: flex;
+    align-items: center;
+    padding: 10px 0 10px 35px;
+    .type-home {
+        color: rgb(128, 128, 137);
+        font-size: 14px;
+        line-height: 20px;
+        font-weight: 300;
+        white-space: nowrap;
+    }
+
+    .type-title {
+        font-size: 14px;
+        line-height: 20px;
+        font-weight: 300;
+        white-space: nowrap;
+        color: rgb(56, 56, 61);
+    }
+}
+
+.container_left {
+    padding: 0 10px 0 28px;
+    .wrapper_left {
+    }
+
+    .user {
+        display: flex;
+        padding: 2px 0;
+        align-items: center;
+        margin-bottom: 12px;
+    }
+    .left_list {
+        padding: 7px 18px;
+
+        a {
+            color: rgb(2, 2, 7);
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+        &:hover {
+            background-color: rgb(235, 235, 240);
+        }
+    }
+
+    .wrapper_form {
+        border-radius: 50%;
+        -webkit-box-pack: center;
+        justify-content: center;
+        display: flex;
+        -webkit-box-align: center;
+        align-items: center;
+        object-fit: cover;
+    }
+}
+
+.col {
+    .information {
+        font-size: 18px;
+        line-height: 32px;
+        margin: 4px 0px 12px;
+        color: rgb(19, 39, 56);
+    }
+}
+
+.active {
+    width: 33.3333% !important;
+    padding: 12px 0px !important;
+    text-align: center !important;
+    color: rgb(13, 92, 182) !important;
+    border-bottom: 2px solid rgb(13, 92, 182) !important;
+}

@@ -163,7 +163,7 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
                             </div>
                             <div
                                 className={cx('row_right-list')}
-                                style={{ width: '15%', justifyContent: 'space-between', display: 'flex' }}
+                                style={{ width: '21%', justifyContent: 'space-between', display: 'flex' }}
                             >
                                 <img src={logo_astra} alt="astra" style={{ width: '24px', height: '24px' }} />
                                 <span
@@ -173,7 +173,7 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
                                         paddingLeft: '5px',
                                     }}
                                 >
-                                    Astra
+                                    Bán hàng
                                 </span>
                             </div>
                             {user?.access_token ? (

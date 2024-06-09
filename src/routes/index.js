@@ -18,6 +18,8 @@ import ReviewProduct from '~/pages/ReviewProduct/ReviewProduct';
 import FavoriteProduct from '~/pages/FavoriteProduct/FavoriteProduct';
 import MyComment from '~/pages/MyComment/MyCommnet';
 import CartPage from '~/pages/CartPage/CartPage';
+import WatchProduct from '~/pages/WatchProduct/WatchProduct';
+import HelpCustomer from '~/pages/HelpCustomer/HelpCustomer';
 
 const { default: HomePage } = require('~/pages/HomePage/HomePage');
 
@@ -126,7 +128,7 @@ export const routes = [
     },
     {
         path: '/my-watched',
-        page: ReviewProduct,
+        page: WatchProduct,
         isShowHeader: true,
         isShowFooter: true,
     },
@@ -139,6 +141,12 @@ export const routes = [
     {
         path: '/my-comment',
         page: MyComment,
+        isShowHeader: true,
+        isShowFooter: true,
+    },
+    {
+        path: '/customer/help',
+        page: HelpCustomer,
         isShowHeader: true,
         isShowFooter: true,
     },

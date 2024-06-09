@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Col, Radio, Row, Upload } from 'antd';
 import { useSelector } from 'react-redux';
 
-import styles from './ManagerLie.module.scss';
+import styles from './HelpCustomer.module.scss';
 import classNames from 'classnames/bind';
 
 import img_right_arrow from '~/assets/img_Global/right_arrow.png';
@@ -40,7 +40,7 @@ import { Helmet } from 'react-helmet';
 
 const cx = classNames.bind(styles);
 
-const ManagerLie = () => {
+const HelpCustomer = () => {
     const user = useSelector((state) => state.user);
     const [activeTab, setActiveTab] = useState('all');
 
@@ -92,15 +92,15 @@ const ManagerLie = () => {
     };
 
     return (
-        <div className={cx('container_lie')}>
+        <div className={cx('container_help')}>
             <Helmet>
-                <title>Đổi trả của tôi</title>
+                <title>Trung tâm trợ giúp</title>
             </Helmet>
-            <div className={cx('wrapper_lie')}>
+            <div className={cx('wrapper_help')}>
                 <div className={cx('wrapper-type')}>
                     <div className={cx('type-home')}>Trang chủ</div>
                     <img alt="right_arrow" src={img_right_arrow} width={18} height={18} />
-                    <span className={cx('type-title')}>Đổi trả của tôi</span>
+                    <span className={cx('type-title')}>Hỗ trợ khách hàng</span>
                 </div>
                 <Row>
                     <Col xs={0} sm={5}>
@@ -174,8 +174,8 @@ const ManagerLie = () => {
                         </div>
                     </Col>
                     <Col className={cx('col')} xs={0} sm={19} style={{ padding: '0 16px' }}>
-                        <div className={cx('information')}>Đổi trả của tôi</div>
-                        <div className={cx('wrapper_manager-lie')}>
+                        <div className={cx('information')}>Trung tâm trợ giúp</div>
+                        <div className={cx('wrapper_manager-help')}>
                             <div className={cx('list_bar')}>
                                 <div
                                     onClick={() => clickValue('all')}
@@ -205,4 +205,4 @@ const ManagerLie = () => {
     );
 };
 
-export default ManagerLie;
+export default HelpCustomer;

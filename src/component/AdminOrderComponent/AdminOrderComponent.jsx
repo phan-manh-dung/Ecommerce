@@ -192,11 +192,13 @@ const AdminOrderComponent = () => {
         }
     }, [form, stateOrderDetails, isModalOpen]);
 
+    console.log('order', order?.data);
+
     const dataTable = order?.data?.length
         ? order.data.map((orders) => {
-              const fullName = orders?.shippingAddress.fullName;
-              const address = orders?.shippingAddress.address;
-              const phone = orders?.shippingAddress.phone;
+              const fullName = orders?.fullName;
+              const address = orders?.address;
+              const phone = orders?.phone;
               return {
                   fullName,
                   address,
@@ -269,8 +271,6 @@ const AdminOrderComponent = () => {
         );
     };
 
-    console.log('data', dataTable);
-
     const columns = [
         {
             title: 'Name Customer',
@@ -282,7 +282,7 @@ const AdminOrderComponent = () => {
         },
         {
             title: 'Address',
-            dataIndex: 'address',
+            dataIndex: 'country',
             render: (text) => <a>{text}</a>,
             sorter: (a, b) => a.name.localeCompare(b.name),
             sortDirections: ['ascend', 'descend'],
@@ -322,7 +322,7 @@ const AdminOrderComponent = () => {
 
         {
             title: 'Total Price',
-            dataIndex: 'itemsPrice',
+            dataIndex: 'totalPrice',
             render: (text) => <a>{text}</a>,
             sorter: (a, b) => a.sold - b.sold,
             sortDirections: ['ascend', 'descend'],

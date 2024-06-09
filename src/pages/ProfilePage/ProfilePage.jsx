@@ -570,7 +570,7 @@ const ProfilePage = () => {
                                                                         Số điện thoại
                                                                     </span>
                                                                     <div>
-                                                                        <div>
+                                                                        <div style={{ padding: '0px 11px' }}>
                                                                             <div className={cx('style-flex')}>
                                                                                 <span style={{ fontSize: '12px' }}>
                                                                                     {getPhoneCode(user?.country)}
@@ -611,7 +611,7 @@ const ProfilePage = () => {
                                                                     <span style={{ padding: '4px 11px' }}>
                                                                         Địa chỉ Email
                                                                     </span>
-                                                                    <div>
+                                                                    <div style={{ maxWidth: '100%', width: '300px' }}>
                                                                         <Input
                                                                             onInput={handleOnchangeEmail}
                                                                             value={user?.email}

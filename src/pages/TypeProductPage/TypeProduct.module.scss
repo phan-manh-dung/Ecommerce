@@ -5,7 +5,7 @@
     .wrapper-type {
         display: flex;
         align-items: center;
-        padding: 10px 0;
+        padding: 10px 8px;
 
         .type-home {
             color: rgb(128, 128, 137);
@@ -277,9 +277,36 @@
 .sort_list {
     border: 1px solid #eee;
     position: relative;
+
+    .sort_div {
+        padding: 12px 0px;
+        text-align: center;
+        color: rgb(128, 128, 137);
+        border-bottom: none;
+
+        &:hover {
+            width: auto;
+            padding: 12px 0px;
+            text-align: center;
+            border-bottom: 2px solid rgb(13, 92, 182);
+        }
+    }
+
     .sort {
         padding: 16px 0 16px 0;
         display: flex;
+
+        cursor: pointer;
+        background: rgb(255, 255, 255);
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        overflow: hidden;
+        position: sticky;
+        top: 0px;
+        z-index: 10;
+        border-bottom: 1px solid rgb(235, 235, 240);
+        margin-bottom: 12px;
 
         a {
             text-decoration: none;
@@ -295,7 +322,7 @@
 }
 
 .sort_list a:hover {
-    color: #007bff;
+    color: rgb(13, 92, 182);
     font-size: 14px;
     font-weight: 600;
 }
@@ -322,4 +349,15 @@
         display: flex;
     }
     background-color: rgb(245, 245, 250);
+}
+
+// active
+.active {
+    width: auto !important;
+    padding: 12px 0px !important;
+    text-align: center !important;
+    a {
+        color: rgb(13, 92, 182) !important;
+    }
+    border-bottom: 2px solid rgb(13, 92, 182) !important;
 }
