@@ -399,7 +399,6 @@ const TypeProductPage = () => {
                                             <React.Fragment key={index}>
                                                 <CardComponent
                                                     key={products._id}
-                                                    //key={index}
                                                     countInStock={products.countInStock}
                                                     description={products.description}
                                                     image={products.image}

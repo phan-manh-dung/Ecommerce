@@ -48,10 +48,11 @@ const AdminOrderComponent = () => {
         if (res?.data) {
             setStateOrderDetails({
                 id: res?.data?._id,
-                fullName: res?.data?.shippingAddress?.fullName,
-                address: res?.data?.shippingAddress?.address,
-                phone: res?.data?.shippingAddress?.phone,
-                itemsPrice: res?.data?.itemsPrice,
+                fullName: res?.data?.fullName,
+                country: res?.data?.country,
+                city: res?.data?.city,
+                district: res?.data?.district,
+                phone: res?.data?.phone,
                 shippingPrice: res?.data?.shippingPrice,
                 totalPrice: res?.data?.totalPrice,
                 isPaid: res?.data?.isPaid,
@@ -403,14 +404,34 @@ const AdminOrderComponent = () => {
                         </Form.Item>
                         {/* address */}
                         <Form.Item
-                            label="Address"
-                            name="address"
-                            rules={[{ required: true, message: 'Please input your address!' }]}
+                            label="Country"
+                            name="country"
+                            rules={[{ required: true, message: 'Please input your country!' }]}
                         >
                             <Input
-                                value={setStateOrderDetails.address}
+                                value={setStateOrderDetails.country}
                                 onChange={handleOnChangeDetail}
-                                name="address"
+                                name="country"
+                            />
+                        </Form.Item>
+                        {/*city */}
+                        <Form.Item
+                            label="City"
+                            name="city"
+                            rules={[{ required: true, message: 'Please input your city!' }]}
+                        >
+                            <Input value={setStateOrderDetails.city} onChange={handleOnChangeDetail} name="city" />
+                        </Form.Item>
+                        {/*district */}
+                        <Form.Item
+                            label="District"
+                            name="district"
+                            rules={[{ required: true, message: 'Please input your district!' }]}
+                        >
+                            <Input
+                                value={setStateOrderDetails.district}
+                                onChange={handleOnChangeDetail}
+                                name="district"
                             />
                         </Form.Item>
                         {/* phone */}
@@ -420,18 +441,6 @@ const AdminOrderComponent = () => {
                             rules={[{ required: true, message: 'Please input your phone!' }]}
                         >
                             <Input value={setStateOrderDetails.phone} onChange={handleOnChangeDetail} name="phone" />
-                        </Form.Item>
-                        {/* item price */}
-                        <Form.Item
-                            label="Item Price"
-                            name="itemsPrice"
-                            rules={[{ required: true, message: 'Please input your itemsPrice!' }]}
-                        >
-                            <Input
-                                value={setStateOrderDetails.itemsPrice}
-                                onChange={handleOnChangeDetail}
-                                name="itemsPrice"
-                            />
                         </Form.Item>
                         {/* ship */}
                         <Form.Item

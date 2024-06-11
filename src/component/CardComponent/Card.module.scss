@@ -5,6 +5,9 @@
     color: rgb(39, 39, 42);
     word-break: break-word;
     padding-top: 2px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .user_wrapper-price {
