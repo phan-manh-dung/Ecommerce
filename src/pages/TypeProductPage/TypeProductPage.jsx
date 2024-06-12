@@ -34,9 +34,12 @@ const TypeProductPage = () => {
     const user = useSelector((state) => state.user);
     const { state } = useLocation();
     const [typeProduct, setTypeProduct] = useState([]);
+    const [productSort, setProductSort] = useState([]);
     const [loading, setLoading] = useState(false);
     const [showAddressModal, setShowAddressModal] = useState(false);
     const [activeTab, setActiveTab] = useState('popular');
+    // lấy type
+    const typeOfProduct = typeProduct[0] && typeProduct[0].type;
     const [panigate, setPanigate] = useState({
         page: 0,
         limit: 10,
@@ -46,7 +49,7 @@ const TypeProductPage = () => {
     const fetchProductType = async (type, page, limit) => {
         setLoading(true);
         const res = await ProductService.getProductType(type, page, limit);
-        if (res?.status == 'OK') {
+        if (res?.status === 'OK') {
             setLoading(false);
             setTypeProduct(res?.data); // hàm này để sét giá trị vào type
             setPanigate({ ...panigate, total: res?.totalPage });
@@ -105,8 +108,31 @@ const TypeProductPage = () => {
         setShowAddressModal(false);
     };
 
+    // api sort product low to height
+    const filterByPriceLowToHeight = async (type) => {
+        const res = await ProductService.filterByPriceLowToHeight(type);
+        if (res?.status === 'OK') {
+            const sortedProducts = res?.data.sort((a, b) => a.price - b.price);
+            setProductSort(sortedProducts);
+        }
+    };
+
+    // api sort product height to low
+    const filterByPriceHeightToLow = async (type) => {
+        const res = await ProductService.filterByPriceHeightToLow(type);
+        if (res?.status === 'OK') {
+            const sortedProducts = res?.data.sort((a, b) => b.price - a.price);
+            setProductSort(sortedProducts);
+        }
+    };
+
     const clickValue = (value) => {
         setActiveTab(value);
+        if (value === 'lowToHeight') {
+            filterByPriceLowToHeight(typeOfProduct);
+        } else if (value === 'hightToLow') {
+            filterByPriceHeightToLow(typeOfProduct);
+        }
     };
 
     return (
@@ -381,7 +407,7 @@ const TypeProductPage = () => {
                                         onClick={() => clickValue('lowToHeight')}
                                         className={cx('sort_div', { active: activeTab === 'lowToHeight' })}
                                     >
-                                        <a src="/">Giá thấp đến cao</a>
+                                        <a>Giá thấp đến cao</a>
                                     </div>
                                     <div
                                         onClick={() => clickValue('hightToLow')}
@@ -394,25 +420,66 @@ const TypeProductPage = () => {
 
                             <div className={cx('container_user1')}>
                                 <div className={cx('user1')}>
-                                    {typeProduct?.map((products, index) => {
-                                        return (
-                                            <React.Fragment key={index}>
-                                                <CardComponent
-                                                    key={products._id}
-                                                    countInStock={products.countInStock}
-                                                    description={products.description}
-                                                    image={products.image}
-                                                    name={products.name}
-                                                    price={products.price}
-                                                    rating={products.rating}
-                                                    type={products.type}
-                                                    discount={products.discount}
-                                                    sold={products.sold}
-                                                    id={products._id}
-                                                />
-                                            </React.Fragment>
-                                        );
-                                    })}
+                                    {activeTab === 'lowToHeight'
+                                        ? productSort?.map((products, index) => {
+                                              return (
+                                                  <React.Fragment key={index}>
+                                                      <CardComponent
+                                                          key={products._id}
+                                                          countInStock={products.countInStock}
+                                                          description={products.description}
+                                                          image={products.image}
+                                                          name={products.name}
+                                                          price={products.price}
+                                                          rating={products.rating}
+                                                          type={products.type}
+                                                          discount={products.discount}
+                                                          sold={products.sold}
+                                                          id={products._id}
+                                                      />
+                                                  </React.Fragment>
+                                              );
+                                          })
+                                        : activeTab === 'heightToLow'
+                                        ? productSort?.map((products, index) => {
+                                              return (
+                                                  <React.Fragment key={index}>
+                                                      <CardComponent
+                                                          key={products._id}
+                                                          countInStock={products.countInStock}
+                                                          description={products.description}
+                                                          image={products.image}
+                                                          name={products.name}
+                                                          price={products.price}
+                                                          rating={products.rating}
+                                                          type={products.type}
+                                                          discount={products.discount}
+                                                          sold={products.sold}
+                                                          id={products._id}
+                                                      />
+                                                  </React.Fragment>
+                                              );
+                                          })
+                                        : // Hiển thị danh sách sản phẩm ban đầu
+                                          typeProduct?.map((products, index) => {
+                                              return (
+                                                  <React.Fragment key={index}>
+                                                      <CardComponent
+                                                          key={products._id}
+                                                          countInStock={products.countInStock}
+                                                          description={products.description}
+                                                          image={products.image}
+                                                          name={products.name}
+                                                          price={products.price}
+                                                          rating={products.rating}
+                                                          type={products.type}
+                                                          discount={products.discount}
+                                                          sold={products.sold}
+                                                          id={products._id}
+                                                      />
+                                                  </React.Fragment>
+                                              );
+                                          })}
                                 </div>
                             </div>
                         </div>

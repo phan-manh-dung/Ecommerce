@@ -57,7 +57,22 @@ export const deleteManyProduct = async (data, access_token) => {
     });
     return res.data;
 };
+
 export const getAllTypeProduct = async () => {
     const res = await axios.get(`${process.env.REACT_APP_API_URL}/product/get-all-type`);
+    return res.data;
+};
+
+export const filterByPriceLowToHeight = async (type) => {
+    const res = await axios.get(`${process.env.REACT_APP_API_URL}/product/filter-price-low-to-height`, {
+        params: { type },
+    });
+    return res.data;
+};
+
+export const filterByPriceHeightToLow = async (type) => {
+    const res = await axios.get(`${process.env.REACT_APP_API_URL}/product/filter-price-height-to-low`, {
+        params: { type },
+    });
     return res.data;
 };
