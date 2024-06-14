@@ -76,3 +76,16 @@ export const filterByPriceHeightToLow = async (type) => {
     });
     return res.data;
 };
+export const getNewProduct = async (type) => {
+    const res = await axios.get(`${process.env.REACT_APP_API_URL}/product/new-products`, {
+        params: { type },
+    });
+    return res.data;
+};
+
+export const getSellingProduct = async (type) => {
+    const res = await axios.get(`${process.env.REACT_APP_API_URL}/product/selling`, {
+        params: { type },
+    });
+    return res.data;
+};

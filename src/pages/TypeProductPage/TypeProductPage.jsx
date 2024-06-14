@@ -35,6 +35,8 @@ const TypeProductPage = () => {
     const { state } = useLocation();
     const [typeProduct, setTypeProduct] = useState([]);
     const [productSort, setProductSort] = useState([]);
+    const [newProduct, setNewProduct] = useState([]);
+    const [sellingProduct, setSellingProduct] = useState([]);
     const [loading, setLoading] = useState(false);
     const [showAddressModal, setShowAddressModal] = useState(false);
     const [activeTab, setActiveTab] = useState('popular');
@@ -126,12 +128,31 @@ const TypeProductPage = () => {
         }
     };
 
+    const getNewProduct = async (type) => {
+        const res = await ProductService.getNewProduct(type);
+        if (res?.status === 'OK') {
+            setNewProduct(res?.data);
+        }
+    };
+    const getSellingProduct = async (type) => {
+        const res = await ProductService.getSellingProduct(type);
+        if (res?.status === 'OK') {
+            setSellingProduct(res?.data);
+        }
+    };
+
     const clickValue = (value) => {
         setActiveTab(value);
         if (value === 'lowToHeight') {
             filterByPriceLowToHeight(typeOfProduct);
         } else if (value === 'hightToLow') {
             filterByPriceHeightToLow(typeOfProduct);
+        } else if (value === 'newProduct') {
+            getNewProduct(typeOfProduct);
+        } else if (value === 'popular') {
+            fetchProductType(typeOfProduct, panigate.page, panigate.limit);
+        } else if (value === 'selling') {
+            getSellingProduct(typeOfProduct);
         }
     };
 
@@ -460,8 +481,47 @@ const TypeProductPage = () => {
                                                   </React.Fragment>
                                               );
                                           })
-                                        : // Hiển thị danh sách sản phẩm ban đầu
-                                          typeProduct?.map((products, index) => {
+                                        : activeTab === 'newProduct'
+                                        ? newProduct?.map((products, index) => {
+                                              return (
+                                                  <React.Fragment key={index}>
+                                                      <CardComponent
+                                                          key={products._id}
+                                                          countInStock={products.countInStock}
+                                                          description={products.description}
+                                                          image={products.image}
+                                                          name={products.name}
+                                                          price={products.price}
+                                                          rating={products.rating}
+                                                          type={products.type}
+                                                          discount={products.discount}
+                                                          sold={products.sold}
+                                                          id={products._id}
+                                                      />
+                                                  </React.Fragment>
+                                              );
+                                          })
+                                        : activeTab === 'selling'
+                                        ? sellingProduct?.map((products, index) => {
+                                              return (
+                                                  <React.Fragment key={index}>
+                                                      <CardComponent
+                                                          key={products._id}
+                                                          countInStock={products.countInStock}
+                                                          description={products.description}
+                                                          image={products.image}
+                                                          name={products.name}
+                                                          price={products.price}
+                                                          rating={products.rating}
+                                                          type={products.type}
+                                                          discount={products.discount}
+                                                          sold={products.sold}
+                                                          id={products._id}
+                                                      />
+                                                  </React.Fragment>
+                                              );
+                                          })
+                                        : typeProduct?.map((products, index) => {
                                               return (
                                                   <React.Fragment key={index}>
                                                       <CardComponent
