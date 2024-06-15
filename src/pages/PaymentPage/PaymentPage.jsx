@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import QRCode from 'qrcode';
 import styles from './Payment.module.scss';
 import classNames from 'classnames/bind';
 
@@ -17,6 +18,7 @@ import atm from '~/assets/img_Global/atm_noi_dia.png';
 import asa from '~/assets/img_Global/asa.png';
 import chu_t from '~/assets/img_Global/chut.png';
 import free_ship from '~/assets/img_Global/free_ship.png';
+import quet_qr from '~/assets/img_Global/quet_qr.png';
 import { Checkbox, Col, Radio, Row, message } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronRight, faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -43,11 +45,12 @@ const PaymentPage = () => {
     const navigate = useNavigate();
     const [openSystem, setOpenSystem] = useState(false);
     const [payment, setPayment] = useState('cash'); // thanh toán
+    const [showModalMomo, setShowModalMomo] = useState(false);
     const { totalPrice } = location.state || {}; // lấy data từ cart page
     const idProduct = selectedItem?.product || selectedItem?._id; // lấy id
 
     // lấy dữ liệu từ CartPage
-    const { totalPriceProduct, numProduct, product, cartId } = location.state || {};
+    const { totalPriceProduct, numProduct, cartId } = location.state || {};
 
     const initial = () => ({
         name: '',
@@ -102,6 +105,7 @@ const PaymentPage = () => {
 
     const cancelOpenSystem = () => {
         setOpenSystem(false);
+        setShowModalMomo(false);
     };
 
     // dữ liệu gán cho order
@@ -118,6 +122,51 @@ const PaymentPage = () => {
     ];
 
     // thay đổi dữ liệu vào redux
+    // const handleAddOrder = () => {
+    //     if (
+    //         user?.access_token &&
+    //         user?.city &&
+    //         user?.country &&
+    //         user?.district &&
+    //         user?.name &&
+    //         user?.moreAddress &&
+    //         user?.id
+    //     ) {
+    //         mutationAddOrder.mutate({
+    //             token: user?.access_token,
+    //             fullName: user?.name,
+    //             phone: user?.phone,
+    //             moreAddress: user?.moreAddress,
+    //             district: user?.district,
+    //             city: user?.city,
+    //             country: user?.country,
+    //             paymentMethod: payment,
+    //             itemsPrice: totalPrice,
+    //             shippingPrice: deliveryPriceMemo,
+    //             totalPrice: totalPriceMemo,
+    //             user: user?.id,
+    //             product: selectedItem?._id || idProduct,
+    //             orderItems: orderItem,
+    //         });
+    //         // gọi api mutationDeleteCart
+    //         // Kiểm tra xem cartId có tồn tại không
+    //         if (cartId) {
+    //             OrderService.deleteCart(cartId, user?.access_token);
+    //         }
+    //     } else {
+    //         clickOpenSystem();
+    //     }
+    // };
+
+    // kiểm tra paymentMethod
+    const handlePaymentMethod = async () => {
+        if (payment === 'momo') {
+            setShowModalMomo(true);
+        } else {
+            handleAddOrder();
+        }
+    };
+
     const handleAddOrder = () => {
         if (
             user?.access_token &&
@@ -219,6 +268,20 @@ const PaymentPage = () => {
     const convertUpdate = () => {
         navigate('/profile-user');
     };
+
+    //show qr code
+    useEffect(() => {
+        if (showModalMomo) {
+            const canvas = document.getElementById('qr_code');
+            QRCode.toCanvas(
+                canvas,
+                `http://localhost:4000/api/momo/create-payment?amount=${totalPriceMemo}`,
+                (error) => {
+                    if (error) console.error(error);
+                },
+            );
+        }
+    }, [showModalMomo, totalPriceMemo]);
 
     // payment
     const handlePaymentChange = (selectedPayment) => {
@@ -561,7 +624,7 @@ const PaymentPage = () => {
                                                 <img alt="free_ship" src={free_ship} width={81} />
                                                 <span className={cx('title-free_ship')}> đã được áp dụng</span>
                                             </div>
-                                            <div className={cx('button_success')} onClick={() => handleAddOrder()}>
+                                            <div className={cx('button_success')} onClick={() => handlePaymentMethod()}>
                                                 <ButtonComponent
                                                     textButton="Đặt hàng"
                                                     backgroundColor="rgb(255, 66, 78)"
@@ -608,6 +671,54 @@ const PaymentPage = () => {
 
                     <div style={{ paddingTop: '10px', textAlign: 'center' }} onClick={convertUpdate}>
                         <ButtonComponent width="20%" backgroundColor="green" textButton="Cập nhật" />
+                    </div>
+                </ModalComponent>
+                {/* modal momo */}
+                <ModalComponent title="" footer={null} open={showModalMomo} onCancel={cancelOpenSystem}>
+                    <div className={cx('container_modal-momo')}>
+                        <div className={cx('wrapper_momo')}>
+                            <div className={cx('title')}>
+                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                    <img alt="momo" src={momo} width={32} height={32} />
+                                    <span style={{ fontSize: '17px', fontWeight: '500' }}>Thanh toán bằng momo</span>
+                                </div>
+                                <div style={{ color: 'rgb(13, 92, 182)' }}>Đổi phương thức khác</div>
+                            </div>
+                            <div className={cx('qr_content')}>
+                                <div className={cx('left')}>
+                                    <div className={cx('qr_code')}>
+                                        <canvas id="qr_code" style={{ height: '300', width: '300' }}></canvas>
+                                    </div>
+                                    <div className={cx('qr_price')}>
+                                        <span style={{ color: 'rgb(128, 128, 137) ' }}>Tổng tiền: </span>
+                                        <b style={{ fontSize: '16px' }}>{convertPrice(totalPriceMemo)}</b>
+                                    </div>
+                                </div>
+                                <div className={cx('right')}>
+                                    <div className={cx('qr_desc')}>
+                                        <h4>Quét mã QR để thanh toán</h4>
+                                        <div className={cx('step_description')}>
+                                            <span className={cx('step_number')}>1</span>
+                                            <p>
+                                                Mở <b>ứng dụng momo </b>trên điện thoại
+                                            </p>
+                                        </div>
+                                        <div className={cx('step_description')}>
+                                            <span className={cx('step_number')}>2</span>
+                                            <p>
+                                                Trên momo chọn biểu tượng
+                                                <img alt="img_qr" width={24} height={24} src={quet_qr} />
+                                                <b>quét mã QR</b>
+                                            </p>
+                                        </div>
+                                        <div className={cx('step_description')}>
+                                            <span className={cx('step_number')}>3</span>
+                                            <p>Quét mã QR ở trang này và thanh toán</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </ModalComponent>
             </div>
