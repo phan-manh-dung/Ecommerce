@@ -1,7 +1,6 @@
 import { Card } from 'antd';
 import React from 'react';
-import { StarFilled } from '@ant-design/icons';
-import laptop1 from '../../assets/img_products/laptop1.png';
+import { BorderBottomOutlined, StarFilled } from '@ant-design/icons';
 import img_now from '../../assets/img_Global/now.png';
 import img_genuine from '../../assets/img_Global/genuine.png';
 
@@ -18,13 +17,18 @@ const CardComponent = (props) => {
         // nhận id của homepage
         navigate(`/product-details/${id}`);
     };
+    const coverStyle = {
+        border: '1px solid #F0F0F0',
+        overflow: 'hidden', // Để che phần border không bị hiển thị ra bên ngoài hình ảnh
+    };
+
     return (
         <div onClick={() => handleDetailsProduct(id)}>
             <Card
                 hoverable
-                bodyStyle={{ padding: '10px' }}
+                bodyStyle={{ padding: '10px', borderTop: 'none' }}
                 style={{ width: 167, marginRight: '10px' }}
-                cover={<img alt="laptop1" src={image} />}
+                cover={<img alt="img" src={image} style={coverStyle} />}
             >
                 <div className={cx('genuine')}>
                     <img alt="genuine" src={img_genuine} width={89} height={20} />

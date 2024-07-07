@@ -150,6 +150,7 @@ export const routes = [
         isShowHeader: true,
         isShowFooter: true,
     },
+
     {
         path: '*',
         page: NotFoundPage,

@@ -140,6 +140,17 @@
     border-top: 1px solid #eee;
     border-bottom: 1px solid #eee;
     padding: 2px 0;
+
+    div {
+        margin: 5px 0;
+        padding: 2px 0;
+
+        &:hover {
+            border-radius: 4px;
+            cursor: pointer;
+            background-color: #bfecfa;
+        }
+    }
     .star {
         margin-left: 2px;
     }

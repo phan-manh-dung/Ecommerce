@@ -6,6 +6,7 @@ import SliderComponent from '~/component/SliderComponent/SliderComponent';
 import slider1 from '~/assets/img_Global/slide1.png';
 import slider2 from '~/assets/img_Global/slide2.png';
 import slider3 from '~/assets/img_Global/slide3.png';
+import topdeal from '~/assets/img_Global/titletopdeal.png';
 import { Col, Row } from 'antd';
 
 import TypeProductComponent from '~/component/TypeProductComponent/TypeProductComponent';
@@ -69,6 +70,7 @@ const HomePage = () => {
     const [limit, setLimit] = useState(6);
     const [loading, setLoading] = useState(false);
     const [typeProduct, setTypeProduct] = useState([]);
+    const [activeTab, setActiveTab] = useState('Túi thời trang');
     const arrImg = [
         img1,
         img2,
@@ -115,6 +117,10 @@ const HomePage = () => {
         'Thể thao dã ngoại',
         'Tai nghe',
     ];
+
+    const handleTabClick = (tab) => {
+        setActiveTab(tab); // Cập nhật trạng thái của tab khi người dùng click vào
+    };
 
     const arrDanhMuc = [img22, img23, img24, img25, img26, img27, img28, img29];
 
@@ -278,24 +284,56 @@ const HomePage = () => {
                         </div>
 
                         {/* wrapper card */}
-                        <div className={cx('wrapper_card')}>
-                            {product?.data?.map((products) => {
-                                return (
-                                    <CardComponent
-                                        key={products._id}
-                                        countInStock={products.countInStock}
-                                        description={products.description}
-                                        image={products.image}
-                                        name={products.name}
-                                        price={products.price}
-                                        rating={products.rating}
-                                        type={products.type}
-                                        discount={products.discount}
-                                        sold={products.sold}
-                                        id={products._id} // id này truyền qua card component để card truyền qua product  detail
-                                    />
-                                );
-                            })}
+
+                        <div className={cx('container_card')}>
+                            <div className={cx('title_card')}>
+                                <img alt="top deal" src={topdeal} width={204} height={32} />
+                            </div>
+                            <div className={cx('slider')}>
+                                <div
+                                    className={cx('category_product', { active: activeTab === 'Tui_thoi_trang' })}
+                                    onClick={() => handleTabClick('Tui_thoi_trang')}
+                                >
+                                    <span>Túi thời trang</span>
+                                </div>
+                                <div
+                                    className={cx('category_product', { active: activeTab === 'giay_dep_nam' })}
+                                    onClick={() => handleTabClick('giay_dep_nam')}
+                                >
+                                    <span>Giày - Dép nam</span>
+                                </div>
+                                <div
+                                    className={cx('category_product', { active: activeTab === 'do_dien_tu' })}
+                                    onClick={() => handleTabClick('do_dien_tu')}
+                                >
+                                    <span>Đồ điện tử</span>
+                                </div>
+                                <div
+                                    className={cx('category_product', { active: activeTab === 'lam_dep_suc_khoe' })}
+                                    onClick={() => handleTabClick('lam_dep_suc_khoe')}
+                                >
+                                    <span>Làm đẹp - sức khỏe</span>
+                                </div>
+                            </div>
+                            <div className={cx('wrapper_card')}>
+                                {product?.data?.map((products) => {
+                                    return (
+                                        <CardComponent
+                                            key={products._id}
+                                            countInStock={products.countInStock}
+                                            description={products.description}
+                                            image={products.image}
+                                            name={products.name}
+                                            price={products.price}
+                                            rating={products.rating}
+                                            type={products.type}
+                                            discount={products.discount}
+                                            sold={products.sold}
+                                            id={products._id} // id này truyền qua card component để card truyền qua product  detail
+                                        />
+                                    );
+                                })}
+                            </div>
                         </div>
 
                         {/* button more */}

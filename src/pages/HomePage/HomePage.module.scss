@@ -4,6 +4,56 @@
     padding: 0 20px;
     background-color: var(--primary-color-body);
     padding-bottom: 26px;
+
+    .container_card {
+        background-color: #fff;
+        border-radius: 6px;
+        .title_card {
+            padding: 8px 10px;
+        }
+        .slider {
+            gap: 8px;
+            transform: translateX(0px);
+            transition: all 0.5s ease-in-out 0s;
+            display: inline-flex;
+            padding: 0px 10px;
+            .category_product {
+                flex-direction: row;
+                padding: 0px 16px;
+                height: 32px;
+                background: rgb(255, 255, 255);
+                -webkit-box-align: center;
+                align-items: center;
+                border-radius: 16px;
+                font-size: 14px;
+                line-height: 150%;
+                cursor: pointer;
+                display: flex;
+                text-align: center;
+                border: 1px solid rgb(221, 221, 227);
+                color: rgb(39, 39, 42);
+                span {
+                    white-space: nowrap;
+                    display: -webkit-box;
+                    -webkit-box-orient: vertical;
+                    -webkit-line-clamp: 1;
+                }
+            }
+        }
+        .wrapper_card {
+            padding: 20px 16px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: space-between;
+        }
+    }
+}
+
+.category_product.active {
+    color: rgb(10, 104, 255) !important;
+    border: 1px solid rgb(10, 104, 255) !important;
+    font-weight: 600 !important;
 }
 
 .scrollable-content {
@@ -90,12 +140,6 @@
 .see_more {
     text-align: center;
     padding: 10px 0;
-}
-
-.wrapper_card {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
 }
 
 // contaier imgs

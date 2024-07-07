@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import styles from './AdminOrder.module.scss';
 import classNames from 'classnames/bind';
 import { Button, Input, Space, Form } from 'antd';
@@ -192,8 +192,6 @@ const AdminOrderComponent = () => {
             form.setFieldsValue(initial());
         }
     }, [form, stateOrderDetails, isModalOpen]);
-
-    console.log('order', order?.data);
 
     const dataTable = order?.data?.length
         ? order.data.map((orders) => {
@@ -391,12 +389,16 @@ const AdminOrderComponent = () => {
                         form={form}
                     >
                         {/* id */}
-                        <Form.Item label="Id" name="id" rules={[{ required: true, message: 'Please input your id!' }]}>
+                        <Form.Item
+                            label="Id Order"
+                            name="id"
+                            rules={[{ required: true, message: 'Please input your id!' }]}
+                        >
                             <Input value={setStateOrderDetails._id} onChange={handleOnChangeDetail} name="id" />
                         </Form.Item>
                         {/* name */}
                         <Form.Item
-                            label="Name"
+                            label="Name Customer"
                             name="fullName"
                             rules={[{ required: true, message: 'Please input your fullName!' }]}
                         >
@@ -442,6 +444,7 @@ const AdminOrderComponent = () => {
                         >
                             <Input value={setStateOrderDetails.phone} onChange={handleOnChangeDetail} name="phone" />
                         </Form.Item>
+
                         {/* ship */}
                         <Form.Item
                             label="Ship"

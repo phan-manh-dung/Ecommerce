@@ -350,11 +350,17 @@
                 margin-right: 40px;
                 width: 45%;
 
-                .qr_code {
+                .wrapper_qr_code {
                     background: rgb(255, 255, 255);
                     box-shadow: rgba(40, 40, 43, 0.16) 0px 2px 8px;
                     border-radius: 8px;
                     padding: 12px;
+
+                    .qr_code {
+                        max-width: 100%;
+                        width: 160px !important;
+                        height: 160px !important;
+                    }
                 }
                 .qr_price {
                     display: flex;
