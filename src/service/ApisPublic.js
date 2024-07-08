@@ -48,22 +48,24 @@ export const apiMomoService = (amount, orderId, orderInfo) =>
     });
 
 // callback momo
-export const callBackDataMomo = async (orderId) => {
-    try {
-        const response = await axiosDefault({
-            method: 'post',
-            url: 'http://localhost:4000/api/momo/callback',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            data: { orderId },
-        });
-        return response.data;
-    } catch (error) {
-        console.error('Error checking transaction status:', error);
-        throw error;
-    }
-};
+// export const callBackDataMomo = async (orderId) => {
+//     try {
+//         console.log('Sending request to backend with orderId:', orderId);
+//         const response = await axiosDefault({
+//             method: 'post',
+//             url: 'http://localhost:4000/api/momo/callback',
+//             headers: {
+//                 'Content-Type': 'application/json',
+//             },
+//             data: { orderId },
+//         });
+//         console.log('Received response from backend:', response.data);
+//         return response.data;
+//     } catch (error) {
+//         console.error('Error checking transaction status:', error);
+//         throw error;
+//     }
+// };
 
 export const checkTransactionStatus = async (orderId) => {
     try {

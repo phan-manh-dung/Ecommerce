@@ -12,6 +12,7 @@ import { useSelector } from 'react-redux';
 import Loading from '../LoadingComponent/Loading';
 import * as message from '~/component/Message/Message';
 import DrawerComponent from '../DrawerComponent/DrawerComponent';
+import moment from 'moment-timezone';
 
 const cx = classNames.bind(styles);
 
@@ -42,6 +43,11 @@ const AdminOrderComponent = () => {
     const [stateOrderDetails, setStateOrderDetails] = useState(initial());
     const [form] = Form.useForm(); // form dữ liệu
 
+    // convert date và thời gian VN
+    const convertToVietnamTime = (utcTime) => {
+        return moment(utcTime).tz('Asia/Ho_Chi_Minh').format('YYYY-MM-DD HH:mm:ss');
+    };
+
     // get detail product on service
     const fetchGetDetailProduct = async (idOrder) => {
         const res = await OrderService.getDetailsOrder(idOrder);
@@ -57,8 +63,8 @@ const AdminOrderComponent = () => {
                 totalPrice: res?.data?.totalPrice,
                 isPaid: res?.data?.isPaid,
                 isDelivered: res?.data?.isDelivered,
-                createdAt: res?.data?.createdAt,
-                updatedAt: res?.data?.updatedAt,
+                createdAt: convertToVietnamTime(res?.data?.createdAt),
+                updatedAt: convertToVietnamTime(res?.data?.updatedAt),
                 paymentMethod: res?.data?.paymentMethod,
             });
         }

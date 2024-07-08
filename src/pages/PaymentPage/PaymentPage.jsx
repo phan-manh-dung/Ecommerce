@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import QRCode from 'qrcode';
 import styles from './Payment.module.scss';
 import classNames from 'classnames/bind';
@@ -31,10 +31,17 @@ import { convertPrice } from '~/utils';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { removeAllProductInCart } from '~/redux/slide/cartSlide';
 import ModalComponent from '~/component/ModalComponent/ModalComponent';
-import { apiMomoCallback, apiMomoService, checkPaymentMethod, checkTransactionStatus } from '../../service/ApisPublic';
+import {
+    apiMomoCallback,
+    apiMomoService,
+    callBackDataMomo,
+    checkPaymentMethod,
+    checkTransactionStatus,
+} from '../../service/ApisPublic';
 
 import { updateOrder } from '../../redux/slide/orderSlide';
 import { Helmet } from 'react-helmet';
+import axios from 'axios';
 
 const cx = classNames.bind(styles);
 
@@ -53,11 +60,13 @@ const PaymentPage = () => {
     const [payUrl, setPayUrl] = useState('');
     const { totalPrice } = location.state || {}; // lấy data từ cart page
     const idProduct = selectedItem?.product || selectedItem?._id; // lấy id
-
     // lấy dữ liệu từ CartPage
     const { totalPriceProduct, numProduct, cartId } = location.state || {};
     // lấy orderIdMoMo
     const [orderIdMoMo, setOrderIdMoMo] = useState('');
+    // kiểm tra trạng thái thanh toán momo
+    const [isPolling, setIsPolling] = useState(true);
+    const pollingRef = useRef(true);
 
     const initial = () => ({
         name: '',
@@ -165,31 +174,6 @@ const PaymentPage = () => {
     //     }
     // };
 
-    // kiểm tra paymentMethod
-    const handlePaymentMethod = async () => {
-        if (payment === 'momo') {
-            setOrderDataPayMomo({
-                token: user?.access_token,
-                fullName: user?.name,
-                phone: user?.phone,
-                moreAddress: user?.moreAddress,
-                district: user?.district,
-                city: user?.city,
-                country: user?.country,
-                paymentMethod: payment,
-                itemsPrice: totalPrice,
-                shippingPrice: deliveryPriceMemo,
-                totalPrice: totalPriceMemo,
-                user: user?.id,
-                product: selectedItem?._id || idProduct,
-                orderItems: orderItem,
-            });
-            setShowModalMomo(true);
-        } else {
-            handleAddOrder();
-        }
-    };
-
     const handleAddOrder = () => {
         if (
             user?.access_token &&
@@ -198,7 +182,8 @@ const PaymentPage = () => {
             user?.district &&
             user?.name &&
             user?.moreAddress &&
-            user?.id
+            user?.id &&
+            payment === 'cash'
         ) {
             mutationAddOrder.mutate({
                 token: user?.access_token,
@@ -209,20 +194,106 @@ const PaymentPage = () => {
                 city: user?.city,
                 country: user?.country,
                 paymentMethod: payment,
-                itemsPrice: totalPrice,
                 shippingPrice: deliveryPriceMemo,
                 totalPrice: totalPriceMemo,
                 user: user?.id,
                 product: selectedItem?._id || idProduct,
                 orderItems: orderItem,
             });
+
+            // Kiểm tra xem cartId có tồn tại không
             if (cartId) {
                 OrderService.deleteCart(cartId, user?.access_token);
             }
+        } else if (
+            user?.access_token &&
+            user?.city &&
+            user?.country &&
+            user?.district &&
+            user?.name &&
+            user?.moreAddress &&
+            user?.id &&
+            payment === 'momo'
+        ) {
+            // Hiển thị modal QR và bắt đầu kiểm tra trạng thái thanh toán
+            setShowModalMomo(true);
+            setIsPolling(true);
         } else {
             clickOpenSystem();
         }
     };
+
+    // Show QR code pay with MOMO
+    useEffect(() => {
+        if (showModalMomo) {
+            const orderId = `${Date.now()}`;
+            setOrderIdMoMo(orderId);
+            const orderInfo = `${selectedItem?.name}`;
+
+            apiMomoService(totalPriceMemo, orderId, orderInfo)
+                .then((data) => {
+                    if (data.payUrl) {
+                        setPayUrl(data.payUrl);
+                        const canvas = document.getElementById('id_qr_code');
+                        QRCode.toCanvas(canvas, data.qrCodeUrl, (error) => {
+                            if (error) console.error(error);
+                        });
+                    }
+                })
+                .catch((error) => console.error('Error payment with momo', error));
+        }
+    }, [showModalMomo, totalPriceMemo]);
+
+    const [statusMomo, setStatusMomo] = useState(false);
+    console.log('statusMomo', statusMomo);
+
+    // Check status transaction with MoMo
+    useEffect(() => {
+        // nếu điều kiện không có thì thoát không chạy
+        if (!orderIdMoMo || !isPolling) return;
+        const intervalId = setInterval(async () => {
+            // pollingRef = true thì chạy , = false thì return(dừng)
+            if (!pollingRef.current) return;
+            try {
+                const data = await checkTransactionStatus(orderIdMoMo);
+                if (data.resultCode === 0) {
+                    pollingRef.current = false;
+                    setIsPolling(false);
+                    setStatusMomo(true);
+                    setShowModalMomo(false);
+                }
+            } catch (error) {
+                console.error('Error polling transaction status:', error);
+            }
+        }, 5000);
+        // Dọn dẹp interval khi component bị unmount hoặc khi orderIdMoMo thay đổi
+        return () => clearInterval(intervalId);
+    }, [orderIdMoMo, isPolling]);
+
+    // tự động
+    useEffect(() => {
+        if (statusMomo === true && payment === 'momo') {
+            mutationAddOrder.mutate({
+                token: user?.access_token,
+                fullName: user?.name,
+                phone: user?.phone,
+                moreAddress: user?.moreAddress,
+                district: user?.district,
+                city: user?.city,
+                country: user?.country,
+                paymentMethod: payment,
+                shippingPrice: deliveryPriceMemo,
+                totalPrice: totalPriceMemo,
+                user: user?.id,
+                product: selectedItem?._id || idProduct,
+                orderItems: orderItem,
+            });
+
+            if (cartId) {
+                OrderService.deleteCart(cartId, user?.access_token);
+            }
+        }
+    }, [statusMomo, payment]);
 
     // update product
     const updateProduct = async () => {
@@ -289,40 +360,6 @@ const PaymentPage = () => {
     const convertUpdate = () => {
         navigate('/profile-user');
     };
-
-    //show qr code
-    useEffect(() => {
-        if (showModalMomo) {
-            const orderId = `${Date.now()}`;
-            setOrderIdMoMo(orderId);
-            const orderInfo = `${selectedItem?.name}`;
-
-            apiMomoService(totalPriceMemo, orderId, orderInfo)
-                .then((data) => {
-                    if (data.payUrl) {
-                        setPayUrl(data.payUrl);
-                        const canvas = document.getElementById('id_qr_code');
-                        QRCode.toCanvas(canvas, data.qrCodeUrl, (error) => {
-                            if (error) console.error(error);
-                        });
-                    }
-                })
-                .catch((error) => console.error('Error payment with momo', error));
-        }
-    }, [showModalMomo, totalPriceMemo]);
-
-    // kiểm tra trạng thái thanh toán với momo
-    useEffect(() => {
-        if (orderIdMoMo) {
-            checkStatus(orderIdMoMo);
-        }
-    }, [orderIdMoMo]);
-
-    const checkStatus = async (orderId) => {
-        const status = await checkTransactionStatus(orderId);
-        console.log('status:', status.resultCode);
-    };
-    console.log('orderIdMoMo:', orderIdMoMo);
 
     // payment
     const handlePaymentChange = (selectedPayment) => {
@@ -665,7 +702,7 @@ const PaymentPage = () => {
                                                 <img alt="free_ship" src={free_ship} width={81} />
                                                 <span className={cx('title-free_ship')}> đã được áp dụng</span>
                                             </div>
-                                            <div className={cx('button_success')} onClick={() => handlePaymentMethod()}>
+                                            <div className={cx('button_success')} onClick={() => handleAddOrder()}>
                                                 <ButtonComponent
                                                     textButton="Đặt hàng"
                                                     backgroundColor="rgb(255, 66, 78)"
