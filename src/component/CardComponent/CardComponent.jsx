@@ -3,6 +3,7 @@ import React from 'react';
 import { BorderBottomOutlined, StarFilled } from '@ant-design/icons';
 import img_now from '../../assets/img_Global/now.png';
 import img_genuine from '../../assets/img_Global/genuine.png';
+import topdeal from '../../assets/img_Global/topdealsmall.png';
 
 import styles from './Card.module.scss';
 import classNames from 'classnames/bind';
@@ -30,6 +31,9 @@ const CardComponent = (props) => {
                 style={{ width: 167, marginRight: '10px' }}
                 cover={<img alt="img" src={image} style={coverStyle} />}
             >
+                <div className={cx('genuine')}>
+                    <img alt="top deal" src={topdeal} width={89} height={20} />
+                </div>
                 <div className={cx('genuine')}>
                     <img alt="genuine" src={img_genuine} width={89} height={20} />
                 </div>

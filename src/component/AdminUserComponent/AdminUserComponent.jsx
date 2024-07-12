@@ -26,7 +26,7 @@ const AdminUserComponent = () => {
     const [searchText, setSearchText] = useState('');
     const [searchChedColumn, setSearchedColumn] = useState('');
     const searchInput = useRef(null);
-    const user = useSelector((state) => state?.user); // truy xuất dữ liệu từ store
+    //  const user = useSelector((state) => state?.user); // truy xuất dữ liệu từ store
 
     const initial = () => ({
         name: '',
@@ -58,7 +58,18 @@ const AdminUserComponent = () => {
         return res;
     };
 
-    const queryUser = useQuery({ queryKey: ['user'], queryFn: getAllUsers });
+    // const queryUser = useQuery({ queryKey: ['user'], queryFn: getAllUsers });
+
+    // refetch là một hàm được trả về từ useQuery.
+    //sử dụng nó để gọi lại hàm queryFn và lấy dữ liệu mới khi cần thiết.
+    const {
+        isLoading: isLoadingUser,
+        data: user,
+        refetch: refetchOrders,
+    } = useQuery({
+        queryKey: ['user'],
+        queryFn: getAllUsers,
+    });
 
     const fetchGetDetailUser = async (rowSelected) => {
         const res = await UserService.getDetailUser(rowSelected); // rowselected là id
@@ -97,7 +108,7 @@ const AdminUserComponent = () => {
             { ids: ids, token: user?.access_token },
             {
                 onSettled: () => {
-                    queryUser.refetch();
+                    refetchOrders();
                 },
             },
         ); // xử lí tác vụ bất đồng bộ backend
@@ -159,7 +170,7 @@ const AdminUserComponent = () => {
             { id: rowSelected, token: user?.access_token },
             {
                 onSettled: () => {
-                    queryUser.refetch();
+                    refetchOrders();
                 },
             },
         );
@@ -290,7 +301,7 @@ const AdminUserComponent = () => {
         {
             title: 'Name',
             dataIndex: 'name',
-            render: (text) => <a>{text}</a>,
+            render: (text) => <span>{text}</span>,
             sorter: (a, b) => a.name.localeCompare(b.name),
             sortDirections: ['ascend', 'descend'],
             ...getColumnSearchProps('name'),
@@ -298,43 +309,43 @@ const AdminUserComponent = () => {
         {
             title: 'Email',
             dataIndex: 'email',
-            render: (text) => <a>{text}</a>,
+            render: (text) => <span>{text}</span>,
             sorter: (a, b) => a.email.localeCompare(b.email),
             sortDirections: ['ascend', 'descend'],
         },
         {
             title: 'Admin',
             dataIndex: 'isAdmin',
-            render: (text) => <a>{text ? 'Có' : 'Không'}</a>,
+            render: (text) => <span>{text ? 'Có' : 'Không'}</span>,
         },
 
         {
             title: 'Phone',
             dataIndex: 'phone',
-            render: (text) => <a>{text}</a>,
+            render: (text) => <span>{text}</span>,
         },
 
         {
             title: 'Address',
             dataIndex: 'city',
-            render: (text) => <a>{text}</a>,
+            render: (text) => <span>{text}</span>,
             sorter: (a, b) => a.city.localeCompare(b.city),
             sortDirections: ['ascend', 'descend'],
         },
         {
             title: 'Birth',
             dataIndex: 'dateOfBirth',
-            render: (text) => <a>{text}</a>,
+            render: (text) => <span>{text}</span>,
         },
         {
             title: 'Sex',
             dataIndex: 'sex',
-            render: (text) => <a>{text}</a>,
+            render: (text) => <span>{text}</span>,
         },
         {
             title: 'Country',
             dataIndex: 'country',
-            render: (text) => <a>{text}</a>,
+            render: (text) => <span>{text}</span>,
         },
         {
             title: 'Action',
@@ -400,7 +411,7 @@ const AdminUserComponent = () => {
             { id: rowSelected, token: user?.access_token, ...stateUserDetails },
             {
                 onSettled: () => {
-                    queryUser.refetch();
+                    refetchOrders();
                 },
             },
         );

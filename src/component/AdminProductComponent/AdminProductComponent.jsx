@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import styles from './AdminProduct.module.scss';
 import classNames from 'classnames/bind';
 import { Button, Form, Input, Select, Space, Upload } from 'antd';
@@ -38,6 +38,8 @@ const AdminProductComponent = () => {
         newType: '',
         color: '',
         discount: '',
+        category: '',
+        origin: '',
     });
 
     const [stateProduct, setStateProduct] = useState(initial()); // khởi tạo state object với initial
@@ -47,7 +49,7 @@ const AdminProductComponent = () => {
 
     const mutation = useMutationHook((data) => {
         // tương tác với store cập nhật data
-        const { name, price, description, rating, image, type, countInStock, discount, color } = data;
+        const { name, price, description, rating, image, type, countInStock, discount, color, category, origin } = data;
         const res = ProductService.createProduct({
             name,
             price,
@@ -58,6 +60,8 @@ const AdminProductComponent = () => {
             countInStock,
             color,
             discount,
+            category,
+            origin,
         });
         return res;
     });
@@ -81,13 +85,21 @@ const AdminProductComponent = () => {
         return res;
     };
 
-    // useQuery
-    const queryProduct = useQuery({ queryKey: ['products'], queryFn: getAllProduct });
+    // refetch là một hàm được trả về từ useQuery.
+    //sử dụng nó để gọi lại hàm queryFn và lấy dữ liệu mới khi cần thiết.
+    const {
+        isLoading: isLoadingProducts,
+        data: products,
+        refetch: refetchOrders,
+    } = useQuery({
+        queryKey: ['products'],
+        queryFn: getAllProduct,
+    });
 
     const typeProduct = useQuery({ queryKey: ['type-product'], queryFn: fetchAllTypeProduct });
 
     // get detail product on service
-    const fetchGetDetailProduct = async (rowSelected) => {
+    const fetchGetDetailProduct = useCallback(async (rowSelected) => {
         const res = await ProductService.getDetailProduct(rowSelected); // rowselected là id
         if (res?.data) {
             setStateProductDetails({
@@ -103,7 +115,7 @@ const AdminProductComponent = () => {
             });
         }
         setIsLoadingUpdate(false);
-    };
+    }, []);
 
     // delete product id with token
     const mutationDeleted = useMutationHook((data) => {
@@ -125,7 +137,7 @@ const AdminProductComponent = () => {
             { ids: ids, token: user?.access_token },
             {
                 onSettled: () => {
-                    queryProduct.refetch();
+                    refetchOrders();
                 },
             },
         );
@@ -138,7 +150,7 @@ const AdminProductComponent = () => {
         } else {
             form.setFieldsValue(initial());
         }
-    }, [form, stateProductDetails, isModalOpen]);
+    }, [stateProductDetails, isModalOpen]);
 
     // fetch get detail
     useEffect(() => {
@@ -171,7 +183,7 @@ const AdminProductComponent = () => {
             { id: rowSelected, token: user?.access_token },
             {
                 onSettled: () => {
-                    queryProduct.refetch();
+                    refetchOrders();
                 },
             },
         );
@@ -200,12 +212,6 @@ const AdminProductComponent = () => {
         isError: isErrorDeletedMany,
     } = mutationDeletedMany;
 
-    // use query
-    const { isLoading: isLoadingProducts, data: products } = useQuery({
-        queryKey: ['products'],
-        queryFn: getAllProduct,
-    });
-
     useEffect(() => {
         if (rowSelected && isOpenDrawer) {
             setIsLoadingUpdate(true);
@@ -233,6 +239,8 @@ const AdminProductComponent = () => {
             countInStock: '',
             discount: '',
             color: '',
+            category: '',
+            origin: '',
         });
         form.resetFields();
     };
@@ -256,10 +264,12 @@ const AdminProductComponent = () => {
             countInStock: stateProduct.countInStock,
             discount: stateProduct.discount,
             color: stateProduct.color,
+            category: stateProduct.category,
+            origin: stateProduct.origin,
         };
         mutation.mutate(params, {
             onSettled: () => {
-                queryProduct.refetch();
+                refetchOrders();
             },
         });
     };
@@ -337,7 +347,7 @@ const AdminProductComponent = () => {
         {
             title: 'Name',
             dataIndex: 'name',
-            render: (text) => <a>{text}</a>,
+            render: (text) => <span>{text}</span>,
             sorter: (a, b) => a.name.localeCompare(b.name),
             sortDirections: ['ascend', 'descend'],
             ...getColumnSearchProps('name'),
@@ -345,7 +355,7 @@ const AdminProductComponent = () => {
         {
             title: 'Price',
             dataIndex: 'price',
-            render: (text) => <a>{text}</a>,
+            render: (text) => <span>{text}</span>,
             sorter: (a, b) => a.price - b.price,
             sortDirections: ['ascend', 'descend'],
             filters: [
@@ -369,7 +379,7 @@ const AdminProductComponent = () => {
         {
             title: 'Rating',
             dataIndex: 'rating',
-            render: (text) => <a>{text}</a>,
+            render: (text) => <span>{text}</span>,
             sorter: (a, b) => a.rating - b.rating,
             sortDirections: ['ascend', 'descend'],
             filters: [
@@ -392,7 +402,7 @@ const AdminProductComponent = () => {
         {
             title: 'Color',
             dataIndex: 'color',
-            render: (text) => <a>{text}</a>,
+            render: (text) => <span>{text}</span>,
             sorter: (a, b) => a.name.localeCompare(b.name),
             sortDirections: ['ascend', 'descend'],
         },
@@ -400,7 +410,7 @@ const AdminProductComponent = () => {
         {
             title: 'Type',
             dataIndex: 'type',
-            render: (text) => <a>{text}</a>,
+            render: (text) => <span>{text}</span>,
             sorter: (a, b) => a.name.localeCompare(b.name),
             sortDirections: ['ascend', 'descend'],
         },
@@ -408,7 +418,7 @@ const AdminProductComponent = () => {
         {
             title: 'Sold',
             dataIndex: 'sold',
-            render: (text) => <a>{text}</a>,
+            render: (text) => <span>{text}</span>,
             sorter: (a, b) => a.sold - b.sold,
             sortDirections: ['ascend', 'descend'],
             filters: [
@@ -431,7 +441,7 @@ const AdminProductComponent = () => {
         {
             title: 'Discount',
             dataIndex: 'discount',
-            render: (text) => <a>{text}</a>,
+            render: (text) => <span>{text}</span>,
             sorter: (a, b) => a.discount - b.discount,
             sortDirections: ['ascend', 'descend'],
             filters: [
@@ -454,7 +464,7 @@ const AdminProductComponent = () => {
         {
             title: 'Inventory',
             dataIndex: 'countInStock',
-            render: (text) => <a>{text}</a>,
+            render: (text) => <span>{text}</span>,
             sorter: (a, b) => a.countInStock - b.countInStock,
             sortDirections: ['ascend', 'descend'],
             filters: [
@@ -500,7 +510,7 @@ const AdminProductComponent = () => {
 
     // effect success and error
     useEffect(() => {
-        if (isSuccess && data?.status == 'OK') {
+        if (isSuccess && data?.status === 'OK') {
             message.success();
             handleCancel();
         } else if (isError) {
@@ -568,7 +578,7 @@ const AdminProductComponent = () => {
             { id: rowSelected, token: user?.access_token, ...stateProductDetails },
             {
                 onSettled: () => {
-                    queryProduct.refetch();
+                    refetchOrders();
                 },
             },
         );
@@ -706,6 +716,20 @@ const AdminProductComponent = () => {
                                 rules={[{ required: true, message: 'Please input your Discount!' }]}
                             >
                                 <Input value={stateProduct.discount} onChange={handleOnChange} name="discount" />
+                            </Form.Item>
+                            <Form.Item
+                                label="Category"
+                                name="Category"
+                                rules={[{ required: true, message: 'Please input your Category!' }]}
+                            >
+                                <Input value={stateProduct.category} onChange={handleOnChange} name="category" />
+                            </Form.Item>
+                            <Form.Item
+                                label="Made In"
+                                name="Made In"
+                                rules={[{ required: true, message: 'Please input your Made In!' }]}
+                            >
+                                <Input value={stateProduct.origin} onChange={handleOnChange} name="origin" />
                             </Form.Item>
 
                             {/* image  */}

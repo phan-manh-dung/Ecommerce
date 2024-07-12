@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styles from './AdminOrder.module.scss';
 import classNames from 'classnames/bind';
 import { Button, Input, Space, Form } from 'antd';
@@ -49,7 +49,7 @@ const AdminOrderComponent = () => {
     };
 
     // get detail product on service
-    const fetchGetDetailProduct = async (idOrder) => {
+    const fetchGetDetailProduct = useCallback(async (idOrder) => {
         const res = await OrderService.getDetailsOrder(idOrder);
         if (res?.data) {
             setStateOrderDetails({
@@ -68,8 +68,7 @@ const AdminOrderComponent = () => {
                 paymentMethod: res?.data?.paymentMethod,
             });
         }
-        // setIsLoadingUpdate(false);
-    };
+    }, []);
 
     // fetch get detail
     useEffect(() => {
@@ -104,12 +103,14 @@ const AdminOrderComponent = () => {
     };
 
     // use query
-    const { isLoading: isLoadingOrders, data: order } = useQuery({
+    const {
+        isLoading: isLoadingOrders,
+        data: order,
+        refetch: refetchOrders,
+    } = useQuery({
         queryKey: ['order'],
         queryFn: getAllOrder,
     });
-
-    const queryOrder = useQuery({ queryKey: ['order'], queryFn: getAllOrder });
 
     const mutationDeleted = useMutationHook((data) => {
         const { id, token } = data;
@@ -123,7 +124,7 @@ const AdminOrderComponent = () => {
             { id: idOrder, token: user?.access_token },
             {
                 onSettled: () => {
-                    queryOrder.refetch();
+                    refetchOrders();
                 },
             },
         );
@@ -167,7 +168,7 @@ const AdminOrderComponent = () => {
             { ids: ids, token: user?.access_token },
             {
                 onSettled: () => {
-                    queryOrder.refetch();
+                    refetchOrders();
                 },
             },
         );
@@ -197,22 +198,26 @@ const AdminOrderComponent = () => {
         } else {
             form.setFieldsValue(initial());
         }
-    }, [form, stateOrderDetails, isModalOpen]);
+    }, [stateOrderDetails, isModalOpen, form]);
 
-    const dataTable = order?.data?.length
-        ? order.data.map((orders) => {
-              const fullName = orders?.fullName;
-              const address = orders?.address;
-              const phone = orders?.phone;
-              return {
-                  fullName,
-                  address,
-                  phone,
-                  ...orders,
-                  key: orders._id,
-              };
-          })
-        : null;
+    // dữ liệu vào cột
+    const dataTable = useMemo(() => {
+        if (!order?.data?.length) return null;
+        return order.data.map((orders) => {
+            const fullName = orders?.fullName;
+            const address = orders?.address;
+            const phone = orders?.phone;
+            const orderItems = orders?.orderItems || [];
+            return {
+                fullName,
+                address,
+                phone,
+                orderItems,
+                ...orders,
+                key: orders._id,
+            };
+        });
+    }, [order]);
 
     // filter theo column
     const getColumnSearchProps = (dataIndex) => ({
@@ -276,27 +281,38 @@ const AdminOrderComponent = () => {
         );
     };
 
-    const columns = [
+    const columns = useMemo(() => [
         {
             title: 'Name Customer',
             dataIndex: 'fullName',
-            render: (text) => <a>{text}</a>,
-            sorter: (a, b) => a.name.localeCompare(b.name),
+            render: (text) => <span>{text}</span>,
+            sorter: (a, b) => a.fullName.localeCompare(b.fullName),
             sortDirections: ['ascend', 'descend'],
             ...getColumnSearchProps('fullName'),
         },
         {
+            title: 'Product name',
+            dataIndex: 'orderItems',
+            render: (orderItems) => (
+                <>
+                    {orderItems.map((item, index) => (
+                        <span key={index}>{item.name}</span>
+                    ))}
+                </>
+            ),
+        },
+        {
             title: 'Address',
             dataIndex: 'country',
-            render: (text) => <a>{text}</a>,
-            sorter: (a, b) => a.name.localeCompare(b.name),
+            render: (text) => <span>{text}</span>,
+            sorter: (a, b) => a.country.localeCompare(b.country),
             sortDirections: ['ascend', 'descend'],
         },
 
         {
             title: 'Phone',
             dataIndex: 'phone',
-            render: (text) => <a>{text}</a>,
+            render: (text) => <span>{text}</span>,
             //  sorter: (a, b) => a.rating - b.rating,
             sortDirections: ['ascend', 'descend'],
             filters: [
@@ -309,27 +325,27 @@ const AdminOrderComponent = () => {
                     value: '<=',
                 },
             ],
-            // onFilter: (value, record) => {
-            //     if (value === '>=') {
-            //         return Number(record.rating) >= 3;
-            //     }
-            //     return Number(record.rating) <= 3;
-            // },
+            onFilter: (value, record) => {
+                if (value === '>=') {
+                    return Number(record.rating) >= 3;
+                }
+                return Number(record.rating) <= 3;
+            },
         },
 
         {
             title: 'Payment Method',
             dataIndex: 'paymentMethod',
-            render: (text) => <a>{text}</a>,
-            sorter: (a, b) => a.name.localeCompare(b.name),
+            render: (text) => <span>{text}</span>,
+            sorter: (a, b) => a.paymentMethod.localeCompare(b.paymentMethod),
             sortDirections: ['ascend', 'descend'],
         },
 
         {
             title: 'Total Price',
             dataIndex: 'totalPrice',
-            render: (text) => <a>{text}</a>,
-            sorter: (a, b) => a.sold - b.sold,
+            render: (text) => <span>{text}</span>,
+            sorter: (a, b) => a.totalPrice - b.totalPrice,
             sortDirections: ['ascend', 'descend'],
             filters: [
                 {
@@ -341,20 +357,19 @@ const AdminOrderComponent = () => {
                     value: '<=',
                 },
             ],
-            // onFilter: (value, record) => {
-            //     if (value === '>=') {
-            //         return Number(record.sold) >= 3;
-            //     }
-            //     return Number(record.sold) <= 3;
-            // },
+            onFilter: (value, record) => {
+                if (value === '>=') {
+                    return Number(record.sold) >= 3;
+                }
+                return Number(record.sold) <= 3;
+            },
         },
         {
             title: 'Action',
             dataIndex: 'action',
             render: renderAction,
         },
-    ];
-
+    ]);
     return (
         <div className={cx('container_user')}>
             <div className={cx('wrapper_user')}>

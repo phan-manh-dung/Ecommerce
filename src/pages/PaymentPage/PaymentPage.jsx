@@ -66,6 +66,8 @@ const PaymentPage = () => {
     const [orderIdMoMo, setOrderIdMoMo] = useState('');
     // kiểm tra trạng thái thanh toán momo
     const [isPolling, setIsPolling] = useState(true);
+    // check trạng thái cho momo
+    const [statusMomo, setStatusMomo] = useState(false);
     const pollingRef = useRef(true);
 
     const initial = () => ({
@@ -137,43 +139,7 @@ const PaymentPage = () => {
         },
     ];
 
-    // thay đổi dữ liệu vào redux
-    // const handleAddOrder = () => {
-    //     if (
-    //         user?.access_token &&
-    //         user?.city &&
-    //         user?.country &&
-    //         user?.district &&
-    //         user?.name &&
-    //         user?.moreAddress &&
-    //         user?.id
-    //     ) {
-    //         mutationAddOrder.mutate({
-    //             token: user?.access_token,
-    //             fullName: user?.name,
-    //             phone: user?.phone,
-    //             moreAddress: user?.moreAddress,
-    //             district: user?.district,
-    //             city: user?.city,
-    //             country: user?.country,
-    //             paymentMethod: payment,
-    //             itemsPrice: totalPrice,
-    //             shippingPrice: deliveryPriceMemo,
-    //             totalPrice: totalPriceMemo,
-    //             user: user?.id,
-    //             product: selectedItem?._id || idProduct,
-    //             orderItems: orderItem,
-    //         });
-    //         // gọi api mutationDeleteCart
-    //         // Kiểm tra xem cartId có tồn tại không
-    //         if (cartId) {
-    //             OrderService.deleteCart(cartId, user?.access_token);
-    //         }
-    //     } else {
-    //         clickOpenSystem();
-    //     }
-    // };
-
+    // thêm order vào db
     const handleAddOrder = () => {
         if (
             user?.access_token &&
@@ -244,10 +210,7 @@ const PaymentPage = () => {
         }
     }, [showModalMomo, totalPriceMemo]);
 
-    const [statusMomo, setStatusMomo] = useState(false);
-    console.log('statusMomo', statusMomo);
-
-    // Check status transaction with MoMo
+    // Check status cho momo
     useEffect(() => {
         // nếu điều kiện không có thì thoát không chạy
         if (!orderIdMoMo || !isPolling) return;
@@ -270,7 +233,7 @@ const PaymentPage = () => {
         return () => clearInterval(intervalId);
     }, [orderIdMoMo, isPolling]);
 
-    // tự động
+    // kiểm tra trạng thái thanh toán thì add db
     useEffect(() => {
         if (statusMomo === true && payment === 'momo') {
             mutationAddOrder.mutate({
