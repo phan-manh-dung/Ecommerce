@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
+    _id: '',
     cartItems: [],
     name: '',
     amount: 0,
@@ -18,52 +19,42 @@ export const cartSlice = createSlice({
     reducers: {
         updateCart: (state, action) => {
             const {
-                name = '',
-                phone = '',
-                nameProduct = '',
-                amount = '',
-                image = '',
-                price = '',
-                discount = '',
-                color = '',
+                _id = '',
+                cartItems = [], // Cập nhật toàn bộ cartItems
             } = action.payload;
 
-            state.cartItems.push({
-                name,
-                phone,
-                cart: {
-                    nameProduct,
-                    amount,
-                    image,
-                    price,
-                    discount,
-                    color,
-                },
-            });
+            // Cập nhật _id và cartItems
+            state._id = _id;
+            state.cartItems = cartItems;
         },
 
         addProductInCart: (state, action) => {
-            const { cartItem } = action.payload;
-            const itemOrder = state?.cartItems?.find((item) => item?.product === cartItem.product);
+            const { cartItem, _id } = action.payload;
+            // dùng toString để chuyển kiểu cho objectId
+            const itemOrder = state.cartItems.find((item) => item.product.toString() === cartItem.product.toString());
             if (itemOrder) {
                 if (itemOrder.amount <= itemOrder.countInStock) {
-                    itemOrder.amount += cartItem?.amount;
+                    itemOrder.amount += cartItem.amount;
                     state.isSuccessOrder = true;
                     state.isErrorOrder = false;
                 }
             } else {
                 state.cartItems.push(cartItem);
             }
+            if (_id) {
+                state._id = _id; // Cập nhật _id nếu có
+            }
         },
         // đây là remove 1 sản phẩm trong giỏ hàng cart
         removeProductInCart: (state, action) => {
-            const { idProduct } = action.payload; // muốn cos id thì phải truy cập được id từ cart page
+            const { idProduct } = action.payload;
+            console.log('Removing product with ID redux:', idProduct);
             const itemCart = state?.cartItems?.filter((item) => item?.product !== idProduct);
             const itemCartSelected = state?.cartItemsSelected?.filter((item) => item?.product !== idProduct);
-
             state.cartItems = itemCart;
             state.cartItemsSelected = itemCartSelected;
         },
+
         // đây là remove nhiều sản phẩm trong giỏ hàng cart
         removeAllProductInCart: (state, action) => {
             const { listChecked } = action.payload;
@@ -74,6 +65,7 @@ export const cartSlice = createSlice({
         },
         RESET_CART_DATA: (state) => {
             // Reset tất cả dữ liệu order về trạng thái ban đầu
+            state._id = '';
             state.cartItems = [];
             state.name = '';
             state.amount = 0;

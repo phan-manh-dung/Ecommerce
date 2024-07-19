@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import styles from './CartPage.module.scss';
 import classNames from 'classnames/bind';
-import { Row, Col, Checkbox, InputNumber } from 'antd';
+import { Row, Col, Checkbox, InputNumber, message } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLocationDot, faTrash } from '@fortawesome/free-solid-svg-icons';
 import img_right_arrow from '~/assets/img_Global/right_arrow.png';
@@ -16,7 +16,6 @@ import ModalComponent from '~/component/ModalComponent/ModalComponent';
 import { useNavigate } from 'react-router-dom';
 import { deleteCart, findCart } from '~/service/OrderService';
 import { getCartByUserId } from '~/service/OrderService';
-import { logDOM } from '@testing-library/react';
 import { Helmet } from 'react-helmet';
 
 const cx = classNames.bind(styles);
@@ -30,38 +29,33 @@ const CartPage = () => {
     const dispatch = useDispatch(); // gửi action đến reducer
     const navigate = useNavigate(); // chuyển trang
     const [isChecked, setIsChecked] = useState(false);
-    const [cartId, setCartId] = useState('');
 
     const userId = user?.id;
 
-    const handleDeleteOrder = () => {
-        dispatch(removeProductInCart({ idProduct: cart?.cartItems[0]?.product }));
-        if (userId) {
-            getCartByUserId(userId)
-                .then((data) => {
-                    let idCartOrder;
-                    data.forEach((cart) => {
-                        const cartItems = cart.cartItems;
+    const handleDeleteProductInCart = async (productId) => {
+        if (!productId) {
+            message.error('Không tìm thấy sản phẩm để xóa');
+            return;
+        }
+        try {
+            const cartId = await findCart(userId, productId, user?.access_token);
 
-                        if (Array.isArray(cartItems) && cartItems.length > 0) {
-                            cartItems.forEach((item) => {
-                                const cartItem = {
-                                    product: item._id,
-                                };
-                                const idCart = cartItem?.product;
-                                idCartOrder = idCart;
-                            });
-                        }
-                    });
-
-                    if (idCartOrder === cart?.cartItems[0]?.product) {
-                        const dataIDCart = data[0]?._id;
-                        deleteCart(dataIDCart);
-                    }
+            if (!cartId) {
+                message.error('Không tìm thấy giỏ hàng để xóa');
+                return;
+            }
+            dispatch(removeProductInCart({ idProduct: productId }));
+            deleteCart(cartId, user?.access_token)
+                .then(() => {
+                    message.success('Sản phẩm đã được xóa khỏi giỏ hàng');
                 })
                 .catch((error) => {
+                    message.error('Xóa thất bại');
                     console.error(error);
                 });
+        } catch (error) {
+            console.error('Error finding cart:', error);
+            message.error('Xảy ra lỗi khi tìm giỏ hàng');
         }
     };
 
@@ -126,39 +120,25 @@ const CartPage = () => {
 
     //   gửi state sang payment
 
-    // id sản phẩm
-    const product = cart?.cartItems[0]?.product;
-    const handlePayOrder = () => {
+    const handlePayOrder = async () => {
         if (!listChecked.length || !(user?.address || user?.city || user?.country)) {
             setIsModalOpen(true);
         } else if (listChecked.length === 1) {
-            const selectedItemId = listChecked[0]; // ID của đối tượng đầu tiên trong listChecked
+            // value product của đối tượng đầu tiên trong listChecked
+            const selectedItemId = listChecked[0];
             const selectedItem = cart?.cartItems.find((item) => item.product === selectedItemId);
             if (selectedItem) {
-                navigate('/payment', { state: { selectedItem, totalPrice, product, cartId } });
+                try {
+                    const cartId = await findCart(userId, selectedItem.product, user?.access_token);
+                    navigate('/payment', { state: { selectedItem, totalPrice, cartId } });
+                } catch (error) {
+                    message.error('Xảy ra lỗi khi mua hàng');
+                }
             }
-            findCart(userId, product);
         } else if (listChecked.length > 1) {
             setIsModalOpenProduct(true);
         }
     };
-
-    // find cart
-    useEffect(() => {
-        // Chỉ gọi API khi isChecked thay đổi và là true
-        if (isChecked) {
-            const fetchData = async () => {
-                try {
-                    const cartId = await findCart(userId, product, user?.access_token);
-                    setCartId(cartId);
-                } catch (error) {
-                    console.error('Error finding cart:', error);
-                }
-            };
-
-            fetchData();
-        }
-    }, [isChecked, userId, product]);
 
     const handleCancel = () => {
         setIsModalOpen(false);
@@ -349,9 +329,18 @@ const CartPage = () => {
                                                             </Col>
                                                             <Col sm={1}>
                                                                 {/* xóa thì phải truyền đi cái id */}
+
                                                                 <div
-                                                                    style={{ paddingLeft: '62%', cursor: 'pointer' }}
-                                                                    onClick={() => handleDeleteOrder(cart?.product)}
+                                                                    key={index}
+                                                                    style={{
+                                                                        paddingLeft: '62%',
+                                                                        cursor: 'pointer',
+                                                                    }}
+                                                                    onClick={() =>
+                                                                        handleDeleteProductInCart(
+                                                                            cart?.cartItems?.[index]?.product,
+                                                                        )
+                                                                    }
                                                                 >
                                                                     <FontAwesomeIcon icon={faTrash} />
                                                                 </div>

@@ -99,3 +99,17 @@ export const apiServiceGoogle = (id) =>
             reject(error);
         }
     });
+
+export const findNameUser = async (id, access_token) => {
+    try {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/user/find-name/${id}`, {
+            headers: {
+                Authorization: `Bearer ${access_token}`,
+            },
+        });
+        return response.data.data; // trả về phản hồi toàn bộ của json
+    } catch (error) {
+        console.error('Error finding name user:', error);
+        throw error;
+    }
+};

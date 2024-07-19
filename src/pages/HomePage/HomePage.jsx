@@ -70,18 +70,20 @@ import { useSelector } from 'react-redux';
 import Loading from '~/component/LoadingComponent/Loading';
 import { useDebounce } from '~/hooks/useDebounce';
 import { Helmet } from 'react-helmet';
+import { useNavigate } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
 
 const HomePage = () => {
     const searchProduct = useSelector((state) => state?.product?.search);
     const searchDebounce = useDebounce(searchProduct, 500);
-    const [limit, setLimit] = useState(6);
-    const [loading, setLoading] = useState(false);
+    const [limit, setLimit] = useState(20);
+    //  const [loading, setLoading] = useState(false);
     const [typeProduct, setTypeProduct] = useState([]);
     const [activeTab, setActiveTab] = useState('tui_thoi_trang');
     const [activeTabImport, setActiveTabImport] = useState('banh_keo');
     const [activeTabSuggestDay, setActiveTabSuggestDay] = useState('for_you');
+    const navigate = useNavigate();
 
     const arrImg = [
         img1,
@@ -186,8 +188,43 @@ const HomePage = () => {
         fetchAllTypeProduct();
     }, []);
 
+    // button lood hết sản phẩm
+    const handleLoadMore = () => {
+        setLimit(product?.length);
+    };
+
+    // lọc sản phẩm theo loại cho đề xuất
+    const filterProducts = () => {
+        if (activeTabSuggestDay === 'for_you') {
+            return product?.data;
+        } else {
+            return product?.data?.filter((products) => products.type === activeTabSuggestDay);
+        }
+    };
+    const filteredProducts = filterProducts();
+    // điều kiện cho top deal
+    const filterProductTopDeal = () => {
+        return product?.data?.filter((products) => products.type === activeTab && products.discount >= 40);
+    };
+    const filteredProductTopDeal = filterProductTopDeal();
+    // điều kiện cho nhập khẩu chính hãng
+    const filterProductImport = () => {
+        return product?.data?.filter(
+            (products) => products.type === activeTabImport && products.originOfCountry !== 'vietnamese',
+        );
+    };
+    const filteredProductImport = filterProductImport();
+    // type
+    const handleClick = (name) => {
+        const productName = name
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .replace(/ /g, '_');
+        navigate(`/product/${productName}?name=${encodeURIComponent(name)}`);
+    };
+
     return (
-        <Loading isLoading={isLoading || loading}>
+        <Loading isLoading={isLoading}>
             <Helmet>
                 <title>MD - Mua hàng nhanh chóng</title>
             </Helmet>
@@ -224,13 +261,17 @@ const HomePage = () => {
                                 <div>
                                     <div className={cx('wrapper-left_title')}>
                                         {arrImg.map((imgSrc, index) => (
-                                            <div key={index} className="wrapper-left_title">
+                                            <div
+                                                key={index}
+                                                className="wrapper-left_title"
+                                                onClick={() => handleClick(arr2[index])}
+                                            >
                                                 <div className={cx('container-img_title')}>
                                                     <div className="img_left">
                                                         <img src={imgSrc} alt="img" width={32} height={32} />
                                                     </div>
                                                     <div className="title_left" style={{ paddingLeft: '10px' }}>
-                                                        {arr2[index]} {/* Hiển thị tiêu đề từ mảng arr2 */}
+                                                        {arr2[index]}
                                                     </div>
                                                 </div>
                                             </div>
@@ -250,7 +291,7 @@ const HomePage = () => {
                                                     <img src={imgSrc} alt="img" width={32} height={32} />
                                                 </div>
                                                 <div className="title_left" style={{ paddingLeft: '10px' }}>
-                                                    {arrTitleDanhMuc[index]} {/* Hiển thị tiêu đề từ mảng arr2 */}
+                                                    {arrTitleDanhMuc[index]}
                                                 </div>
                                             </div>
                                         </div>
@@ -330,51 +371,47 @@ const HomePage = () => {
                             </div>
                             <div className={cx('slider')}>
                                 <div
-                                    className={cx('category_product', { active: activeTab === 'tui_thoi_trang' })}
-                                    onClick={() => handleTabClick('tui_thoi_trang')}
+                                    className={cx('category_product', { active: activeTab === 'Túi thời trang' })}
+                                    onClick={() => handleTabClick('Túi thời trang')}
                                 >
                                     <span>Túi thời trang</span>
                                 </div>
                                 <div
-                                    className={cx('category_product', { active: activeTab === 'giay_dep_nam' })}
-                                    onClick={() => handleTabClick('giay_dep_nam')}
+                                    className={cx('category_product', { active: activeTab === 'Giày - Dép' })}
+                                    onClick={() => handleTabClick('Giày - Dép')}
                                 >
-                                    <span>Giày - Dép nam</span>
+                                    <span>Giày - Dép </span>
                                 </div>
                                 <div
-                                    className={cx('category_product', { active: activeTab === 'do_dien_tu' })}
-                                    onClick={() => handleTabClick('do_dien_tu')}
+                                    className={cx('category_product', { active: activeTab === 'Đồ điện tử' })}
+                                    onClick={() => handleTabClick('Đồ điện tử')}
                                 >
                                     <span>Đồ điện tử</span>
                                 </div>
                                 <div
-                                    className={cx('category_product', { active: activeTab === 'lam_dep_suc_khoe' })}
-                                    onClick={() => handleTabClick('lam_dep_suc_khoe')}
+                                    className={cx('category_product', { active: activeTab === 'Làm đẹp sức khỏe' })}
+                                    onClick={() => handleTabClick('Làm đẹp sức khỏe')}
                                 >
                                     <span>Làm đẹp - sức khỏe</span>
                                 </div>
                             </div>
                             <div className={cx('wrapper_card')}>
-                                {product?.data?.map((products) => {
-                                    if (products?.category === 'top_deal') {
-                                        return (
-                                            <CardComponent
-                                                key={products._id}
-                                                countInStock={products.countInStock}
-                                                description={products.description}
-                                                image={products.image}
-                                                name={products.name}
-                                                price={products.price}
-                                                rating={products.rating}
-                                                type={products.type}
-                                                discount={products.discount}
-                                                sold={products.sold}
-                                                id={products._id} // id này truyền qua card component để card truyền qua product  detail
-                                            />
-                                        );
-                                    }
-                                    return null;
-                                })}
+                                {filteredProductTopDeal?.map((products) => (
+                                    <CardComponent
+                                        key={products._id}
+                                        countInStock={products.countInStock}
+                                        description={products.description}
+                                        image={products.image}
+                                        name={products.name}
+                                        price={products.price}
+                                        rating={products.rating}
+                                        type={products.type}
+                                        discount={products.discount}
+                                        sold={products.sold}
+                                        originOfCountry={products.originOfCountry}
+                                        id={products._id}
+                                    />
+                                ))}
                             </div>
                         </div>
 
@@ -386,59 +423,54 @@ const HomePage = () => {
                             <div className={cx('slider')}>
                                 <div
                                     className={cx('category_product', 'ct_import', {
-                                        activeImport: activeTabImport === 'banh_keo',
+                                        activeImport: activeTabImport === 'Bánh kẹo',
                                     })}
-                                    onClick={() => handleTabClickImport('banh_keo')}
+                                    onClick={() => handleTabClickImport('Bánh kẹo')}
                                 >
                                     <span>Bánh kẹo</span>
                                 </div>
                                 <div
                                     className={cx('category_product', 'ct_import', {
-                                        activeImport: activeTabImport === 'thuc_pham_chuc_nang',
+                                        activeImport: activeTabImport === 'Thực phẩm chức năng',
                                     })}
-                                    onClick={() => handleTabClickImport('thuc_pham_chuc_nang')}
+                                    onClick={() => handleTabClickImport('Thực phẩm chức năng')}
                                 >
                                     <span>Thực phẩm chức năng</span>
                                 </div>
                                 <div
                                     className={cx('category_product', 'ct_import', {
-                                        activeImport: activeTabImport === 'do_dien_tu',
+                                        activeImport: activeTabImport === 'Đồ điện tử',
                                     })}
-                                    onClick={() => handleTabClickImport('do_dien_tu')}
+                                    onClick={() => handleTabClickImport('Đồ điện tử')}
                                 >
                                     <span>Đồ điện tử</span>
                                 </div>
                                 <div
                                     className={cx('category_product', 'ct_import', {
-                                        activeImport: activeTabImport === 'my_pham',
+                                        activeImport: activeTabImport === 'Mỹ phẩm',
                                     })}
-                                    onClick={() => handleTabClickImport('my_pham')}
+                                    onClick={() => handleTabClickImport('Mỹ phẩm')}
                                 >
                                     <span>Mỹ phẩm</span>
                                 </div>
                             </div>
                             <div className={cx('wrapper_card')}>
-                                {product?.data?.map((products) => {
-                                    if (products?.category === 'import') {
-                                        return (
-                                            <CardComponent
-                                                key={products._id}
-                                                countInStock={products.countInStock}
-                                                description={products.description}
-                                                image={products.image}
-                                                name={products.name}
-                                                price={products.price}
-                                                rating={products.rating}
-                                                type={products.type}
-                                                discount={products.discount}
-                                                sold={products.sold}
-                                                // id này truyền qua card component để card truyền qua product  detail
-                                                id={products._id}
-                                            />
-                                        );
-                                    }
-                                    return null;
-                                })}
+                                {filteredProductImport?.map((products) => (
+                                    <CardComponent
+                                        key={products._id}
+                                        countInStock={products.countInStock}
+                                        description={products.description}
+                                        image={products.image}
+                                        name={products.name}
+                                        price={products.price}
+                                        rating={products.rating}
+                                        type={products.type}
+                                        discount={products.discount}
+                                        sold={products.sold}
+                                        originOfCountry={products.originOfCountry}
+                                        id={products._id}
+                                    />
+                                ))}
                             </div>
                         </div>
 
@@ -459,9 +491,9 @@ const HomePage = () => {
                                 </div>
                                 <div
                                     className={cx('child_list', {
-                                        activeSuggest: activeTabSuggestDay === 'book',
+                                        activeSuggest: activeTabSuggestDay === 'Sách vở',
                                     })}
-                                    onClick={() => handleTabSuggestDay('book')}
+                                    onClick={() => handleTabSuggestDay('Sách vở')}
                                 >
                                     <img
                                         src={storebook}
@@ -474,47 +506,45 @@ const HomePage = () => {
                                 </div>
                                 <div
                                     className={cx('child_list', {
-                                        activeSuggest: activeTabSuggestDay === 'sport',
+                                        activeSuggest: activeTabSuggestDay === 'Thể thao',
                                     })}
-                                    onClick={() => handleTabSuggestDay('sport')}
+                                    onClick={() => handleTabSuggestDay('Thể thao')}
                                 >
                                     <img src={thethao} alt="img" width={40} height={40} />
                                     <div>Thể thao -50%</div>
                                 </div>
                                 <div
                                     className={cx('child_list', {
-                                        activeSuggest: activeTabSuggestDay === 'house_ware',
+                                        activeSuggest: activeTabSuggestDay === 'Đồ gia dụng',
                                     })}
-                                    onClick={() => handleTabSuggestDay('house_ware')}
+                                    onClick={() => handleTabSuggestDay('Đồ gia dụng')}
                                 >
                                     <img src={giadung} alt="img" width={40} height={40} />
                                     <div>Gia dụng -50%</div>
                                 </div>
                             </div>
                             <div className={cx('wrapper_card')}>
-                                {product?.data?.map((products) => {
-                                    return (
-                                        <CardComponent
-                                            key={products._id}
-                                            countInStock={products.countInStock}
-                                            description={products.description}
-                                            image={products.image}
-                                            name={products.name}
-                                            price={products.price}
-                                            rating={products.rating}
-                                            type={products.type}
-                                            discount={products.discount}
-                                            sold={products.sold}
-                                            id={products._id}
-                                            // id này truyền qua card component để card truyền qua product  detail
-                                        />
-                                    );
-                                })}
+                                {filteredProducts?.map((products) => (
+                                    <CardComponent
+                                        key={products._id}
+                                        countInStock={products.countInStock}
+                                        description={products.description}
+                                        image={products.image}
+                                        name={products.name}
+                                        price={products.price}
+                                        rating={products.rating}
+                                        type={products.type}
+                                        discount={products.discount}
+                                        sold={products.sold}
+                                        originOfCountry={products.originOfCountry}
+                                        id={products._id}
+                                    />
+                                ))}
                             </div>
                         </div>
 
                         {/* button more */}
-                        <div className={cx('see_more')} onClick={() => setLimit((prev) => prev + 1)}>
+                        <div className={cx('see_more')} onClick={handleLoadMore}>
                             <ButtonComponent color="#fff" backgroundColor="#0099FF" textButton="Xem thêm" />
                         </div>
                     </Col>

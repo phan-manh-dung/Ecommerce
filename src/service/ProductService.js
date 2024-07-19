@@ -63,6 +63,11 @@ export const getAllTypeProduct = async () => {
     return res.data;
 };
 
+export const getAllColorProduct = async () => {
+    const res = await axios.get(`${process.env.REACT_APP_API_URL}/product/get-all-color`);
+    return res.data;
+};
+
 export const filterByPriceLowToHeight = async (type) => {
     const res = await axios.get(`${process.env.REACT_APP_API_URL}/product/filter-price-low-to-height`, {
         params: { type },
@@ -76,6 +81,7 @@ export const filterByPriceHeightToLow = async (type) => {
     });
     return res.data;
 };
+
 export const getNewProduct = async (type) => {
     const res = await axios.get(`${process.env.REACT_APP_API_URL}/product/new-products`, {
         params: { type },
@@ -87,5 +93,10 @@ export const getSellingProduct = async (type) => {
     const res = await axios.get(`${process.env.REACT_APP_API_URL}/product/selling`, {
         params: { type },
     });
+    return res.data;
+};
+
+export const createVote = async (data) => {
+    const res = await axios.post(`${process.env.REACT_APP_API_URL}/product/create-vote`, data);
     return res.data;
 };

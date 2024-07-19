@@ -29,7 +29,7 @@ import * as ProductService from '~/service/ProductService';
 import * as OrderService from '~/service/OrderService';
 import { convertPrice } from '~/utils';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { removeAllProductInCart } from '~/redux/slide/cartSlide';
+import { removeAllProductInCart, removeProductInCart } from '~/redux/slide/cartSlide';
 import ModalComponent from '~/component/ModalComponent/ModalComponent';
 import {
     apiMomoCallback,
@@ -54,8 +54,6 @@ const PaymentPage = () => {
     const [openSystem, setOpenSystem] = useState(false);
     const [payment, setPayment] = useState('cash'); // thanh toán
     const [showModalMomo, setShowModalMomo] = useState(false);
-    // sét data cho qr code
-    const [orderDataPayMomo, setOrderDataPayMomo] = useState(null);
     // url
     const [payUrl, setPayUrl] = useState('');
     const { totalPrice } = location.state || {}; // lấy data từ cart page
@@ -83,6 +81,8 @@ const PaymentPage = () => {
         discount: '',
         sold: '',
     });
+
+    console.log(' location.state', location.state);
 
     const [productData, setProductData] = useState(initial); // sét data
 
@@ -301,12 +301,10 @@ const PaymentPage = () => {
         if (isSuccess) {
             updateProduct();
             // trước khi success phải xóa số lượng tồn ở trong redux và xóa ở trong giỏ hàng
-            // nhưng chưa xóa trong  database
-            const productToRemove = selectedItem?.product; // lấy id của product
-            dispatch(removeAllProductInCart({ listChecked: productToRemove }));
+            const productToRemove = selectedItem?.product || selectedItem?._id; // lấy id của product
+            dispatch(removeProductInCart({ idProduct: productToRemove }));
 
             message.success('Đặt hàng thành công');
-            // gửi dữ liệu sang cho trang orderSuccess
             navigate('/orderSuccess', {
                 state: {
                     payment,
@@ -318,7 +316,12 @@ const PaymentPage = () => {
         } else if (isError) {
             message.error('Đặt hàng thất bại');
         }
-    }, [isSuccess, isError]); // Chỉ chạy lại khi handleAddOrder thay đổi
+    }, [isSuccess, isError]);
+
+    console.log('selectedItem', selectedItem);
+
+    const productToRemove = selectedItem?.product;
+    console.log('productToRemove', productToRemove);
 
     const convertUpdate = () => {
         navigate('/profile-user');

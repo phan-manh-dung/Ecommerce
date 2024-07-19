@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import styles from './TypeProduct.module.scss';
 import classNames from 'classnames/bind';
 
@@ -48,17 +48,25 @@ const TypeProductPage = () => {
         total: 1,
     });
 
-    const fetchProductType = async (type, page, limit) => {
+    // nhận query params
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const selectedProduct = queryParams.get('name');
+
+    const fetchProductType = useCallback(async (type, page, limit) => {
         setLoading(true);
-        const res = await ProductService.getProductType(type, page, limit);
-        if (res?.status === 'OK') {
-            setLoading(false);
-            setTypeProduct(res?.data); // hàm này để sét giá trị vào type
-            setPanigate({ ...panigate, total: res?.totalPage });
-        } else {
+        try {
+            const res = await ProductService.getProductType(type, page, limit);
+            if (res?.status === 'OK') {
+                setTypeProduct(res?.data); // Hàm này để set giá trị vào type
+                setPanigate((prev) => ({ ...prev, total: res?.totalPage }));
+            }
+        } catch (error) {
+            console.error('Error fetching product type:', error);
+        } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
     useEffect(() => {
         if (state) {
@@ -161,7 +169,7 @@ const TypeProductPage = () => {
             <div className={cx('wrapper-type')}>
                 <div className={cx('type-home')}>Trang chủ</div>
                 <img alt="right_arrow" src={img_right_arrow} width={18} height={18} />
-                <span className={cx('type-title')}> {typeProduct[0] && typeProduct[0].type} </span>
+                <span className={cx('type-title')}> {(typeProduct[0] && typeProduct[0].type) || selectedProduct} </span>
             </div>
 
             <Row>
@@ -382,9 +390,11 @@ const TypeProductPage = () => {
                     <div className={cx('wrapper_right')}>
                         <div className={cx('right')}>
                             <div className={cx('search')}>
-                                <h2 className={cx('search-title')}>{typeProduct[0] && typeProduct[0].type}</h2>
+                                <h2 className={cx('search-title')}>
+                                    {(typeProduct[0] && typeProduct[0].type) || selectedProduct}
+                                </h2>
                             </div>
-                            <div className="slider_container">
+                            <div className={cx('slider_container')}>
                                 <div className={cx('slide')}>
                                     <div className={cx('wrapper_slide')}>
                                         <img
@@ -438,7 +448,6 @@ const TypeProductPage = () => {
                                     </div>
                                 </div>
                             </div>
-
                             <div className={cx('container_user1')}>
                                 <div className={cx('user1')}>
                                     {activeTab === 'lowToHeight'

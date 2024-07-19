@@ -25,20 +25,25 @@ export function getItem(label, key, icon, children, type) {
     };
 }
 
-export const renderOptions = (arr) => {
+export const renderOptions = (arr, isType) => {
     let results = [];
     if (arr) {
-        results = arr?.map((opt) => {
-            return {
-                value: opt,
-                label: opt,
-            };
+        results = arr.map((opt) => ({
+            value: opt,
+            label: opt,
+        }));
+    }
+    if (isType) {
+        results.push({
+            label: 'Thêm type',
+            value: 'add_type',
+        });
+    } else {
+        results.push({
+            label: 'Thêm màu',
+            value: 'add_color',
         });
     }
-    results.push({
-        label: 'Thêm type',
-        value: 'add_type',
-    });
     return results;
 };
 

@@ -1,20 +1,18 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styles from './ProductDetail.module.scss';
 import classNames from 'classnames/bind';
+import io from 'socket.io-client';
 
 import img_right_arrow from '~/assets/img_Global/right_arrow.png';
 import img_left_arrow from '~/assets/img_Global/img_left_arrow.png';
 import img_pay from '~/assets/img_Global/pay.png';
+import like from '~/assets/img_Global/like.png';
+import cmt from '~/assets/img_Global/comment.png';
+import binhluan from '~/assets/img_Global/binhluan.png';
+import chiase from '~/assets/img_Global/chiase.png';
 
 import img1 from '~/assets/img_Global/slide10.jpg';
 import User1 from '~/assets/img_products/dongu1.jpg';
-import User2 from '~/assets/img_products/dongu2.jpg';
-import User3 from '~/assets/img_products/dongu3.jpg';
-import User4 from '~/assets/img_products/dongu4.jpg';
-import User5 from '~/assets/img_products/dongu5.jpg';
-import User6 from '~/assets/img_products/donu6.jpg';
-import User7 from '~/assets/img_products/donu7.jpg';
-import User8 from '~/assets/img_products/donu8.jpg';
 import the from '~/assets/img_category/uudaithevi.jpg';
 import offical from '~/assets/img_Global/offical.jpg';
 import img111 from '~/assets/img_Global/111.png';
@@ -25,48 +23,61 @@ import robot from '~/assets/img_Global/robot.png';
 import tay from '~/assets/img_Global/chaptay.png';
 import chamthan from '~/assets/img_Global/chamthan.png';
 import logoshop from '~/assets/img_Global/logoshop.png';
-import { Col, InputNumber, Row } from 'antd';
+import { Col, InputNumber, Rate, Row, Upload } from 'antd';
 import { MinusOutlined, PlusOutlined, StarFilled } from '@ant-design/icons';
 import ButtonComponent from '~/component/ButtonComponent/Buttoncomponent';
 import * as ProductService from '~/service/ProductService';
+import * as UserService from '~/service/UserService';
+import * as OrderService from '~/service/OrderService';
 import { createCart } from '~/service/OrderService';
 import { useQuery } from '@tanstack/react-query';
 import Loading from '../LoadingComponent/Loading';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { addProductInCart } from '~/redux/slide/cartSlide';
-import { convertPrice } from '~/utils';
+import { addProductInCart, updateCart } from '~/redux/slide/cartSlide';
+import { convertPrice, getBase64 } from '~/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronRight, faComment, faPlus, faStar } from '@fortawesome/free-solid-svg-icons';
 import ModalComponent from '../ModalComponent/ModalComponent';
 import AddressComponent from '../AddressComponent/AddressComponent';
 import { Helmet } from 'react-helmet';
+import { message } from 'antd';
+import TextArea from 'antd/es/input/TextArea';
+import { Button } from 'antd';
 const cx = classNames.bind(styles);
+const socket = io('http://localhost:4000');
 
 const ProductDetailComponent = ({ idProduct }) => {
     const [numProduct, setNumProduct] = useState(1);
-    const [randomNumber, setRandomNumber] = useState('');
     const user = useSelector((state) => state.user);
     const cart = useSelector((state) => state.cart);
     const navigate = useNavigate();
     const location = useLocation(); // lấy thông tin về đường dẫn hiện tại
     const dispatch = useDispatch();
-    const arrImageUsers = [User2, User3, User4, User5, User6, User7, User8];
     const [startIndex, setStartIndex] = useState(0);
     const imagesToShow = 6;
-    const visibleImages = arrImageUsers.slice(startIndex, startIndex + imagesToShow);
     const [openSystem, setOpenSystem] = useState(false);
     const [showAddressModal, setShowAddressModal] = useState(false);
     // Mảng lưu trữ các ID sản phẩm đã thêm vào giỏ hàng
     const [addedProducts, setAddedProducts] = useState([]);
+    const [activeColor, setActiveColor] = useState('red');
+    const [activeTabFilter, setActiveTabFilter] = useState('moi_nhat');
 
-    function generateRandom() {
-        return `${Math.floor(Math.random() * 10)}${Math.floor(Math.random() * 10)}`;
-    }
+    const [hasPurchased, setHasPurchased] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    // value rating and comment
+    const [rating, setRating] = useState(0);
+    const [comment, setComment] = useState('');
+    const [images, setImages] = useState([]);
+    const [comments, setComments] = useState([]);
+    // name user
+    const [dataNameUser, setDataNameUser] = useState([]);
+    const [checkSubmitVote, setCheckSubmitVote] = useState(false);
 
-    useEffect(() => {
-        setRandomNumber(generateRandom());
-    }, []);
+    const handleTabClickFilter = (tabFilter) => {
+        setActiveTabFilter(tabFilter);
+    };
 
     const onChange = (value) => {
         setNumProduct(Number(value));
@@ -98,7 +109,7 @@ const ProductDetailComponent = ({ idProduct }) => {
 
     const showNextImages = () => {
         const nextIndex = startIndex + imagesToShow;
-        if (nextIndex < arrImageUsers.length) {
+        if (nextIndex < productsDetail?.additionalImages.length) {
             setStartIndex(nextIndex);
         }
     };
@@ -116,6 +127,7 @@ const ProductDetailComponent = ({ idProduct }) => {
             return res.data;
         }
     };
+
     const { isLoading, data: productsDetail } = useQuery(['product-details', idProduct], fetchGetDetailProduct, {
         enabled: !!idProduct,
     });
@@ -135,12 +147,16 @@ const ProductDetailComponent = ({ idProduct }) => {
         }
     };
 
-    const handleOrderDispatch = async () => {
+    const handleOrderDispatch = useCallback(async () => {
         const userId = user?.id; // Lấy userId của người dùng đã đăng nhập
         const productId = productsDetail?._id;
 
+        if (!userId || !productId) {
+            alert('Lỗi xảy ra khi thêm sản phẩm vào giỏ hàng');
+            return;
+        }
+
         if (!addedProducts.includes(productId)) {
-            // Kiểm tra xem sản phẩm đã được thêm chưa
             const cartItem = {
                 name: productsDetail?.name,
                 amount: numProduct,
@@ -152,23 +168,121 @@ const ProductDetailComponent = ({ idProduct }) => {
                 type: productsDetail?.type,
             };
 
-            // Dispatch đơn hàng và thông tin userId vào Redux
-            dispatch(addProductInCart({ cartItem, userId }));
-            setAddedProducts([...addedProducts, productId]); // Thêm ID sản phẩm vào mảng
+            setAddedProducts([...addedProducts, productId]);
+            setLoading(true);
+            setError(null);
 
             try {
                 const data = {
                     userId,
                     ...cartItem,
                 };
-                const result = await createCart(data); // Gửi dữ liệu lên backend thông qua hàm createCart
+                const result = await createCart(data);
+                if (result) {
+                    message.success('Đã thêm sản phẩm vào giỏ hàng');
+                    dispatch(addProductInCart({ cartItem, _id: result?.data?._id }));
+                } else {
+                    message.error('Không thêm được sản phẩm vào giỏ hàng');
+                }
             } catch (error) {
-                console.error('Lỗi khi gửi dữ liệu:', error);
+                setError('Có lỗi xảy ra khi gửi dữ liệu.');
+            } finally {
+                setLoading(false);
             }
         } else {
-            alert('Bạn đã có sản phẩm này trong giỏ hàng');
+            message.warning('Bạn đã có sản phẩm này trong giỏ hàng');
+        }
+    }, [user, productsDetail, addedProducts, dispatch, numProduct]);
+
+    const userId = user?.id;
+    const accessToken = user?.access_token;
+    const productId = productsDetail?._id;
+
+    // effect kiểm tra xem người dùng đã mua sản phẩm chưa
+    useEffect(() => {
+        const fetchPurchaseStatus = async () => {
+            if (!userId || !productId || !accessToken) {
+                setError('Missing userId, productId, or accessToken');
+                setLoading(false);
+                return;
+            }
+            try {
+                const purchased = await OrderService.checkIfUserPurchasedProduct(userId, productId, accessToken);
+                setHasPurchased(purchased);
+            } catch (err) {
+                setError('Error checking purchase status');
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchPurchaseStatus();
+    }, [userId, productId, accessToken]);
+
+    // submit đánh giá
+    const handleSubmitVote = async () => {
+        if (rating === 0 || comment.trim() === '') {
+            message.error('Vui lòng nhập đánh giá và gửi sao');
+            return;
+        }
+        setRating(0);
+        setComment('');
+        setCheckSubmitVote(true);
+        message.success('Đánh giá của bạn đã được gửi thành công');
+
+        const payload = {
+            productId,
+            userId,
+            rating,
+            comment,
+            images,
+        };
+        const response = await ProductService.createVote(payload);
+        return response.data;
+    };
+
+    // add ảnh
+    const handleUploadChange = async ({ fileList }) => {
+        const imageList = await Promise.all(fileList.map((file) => getBase64(file.originFileObj)));
+        setImages(imageList);
+    };
+
+    useEffect(() => {
+        // Lắng nghe sự kiện 'newComment'
+        socket.on('newComment', (newComment) => {
+            setComments((prevComments) => [newComment, ...prevComments]);
+        });
+
+        return () => {
+            socket.off('newComment');
+        };
+    }, []);
+
+    console.log('comment socket', comments[0]?.data?.userId);
+
+    const idSocket = comments[0]?.data?.userId;
+
+    // tìm tên người dùng
+    const handleFindNameUser = async () => {
+        const userData = await UserService.findNameUser(idSocket);
+        if (userData) {
+            setDataNameUser(userData);
+        } else {
+            console.log('User not found');
         }
     };
+
+    // Gọi hàm xử lý
+    useEffect(() => {
+        if (checkSubmitVote && idSocket) {
+            handleFindNameUser();
+            setCheckSubmitVote(false);
+        }
+    }, [checkSubmitVote, idSocket]);
+
+    console.log('dataNameUser', dataNameUser);
+    console.log('checkSubmitVote', checkSubmitVote);
 
     const handleAddOrderProductCart = () => {
         if (!user?.id) {
@@ -176,6 +290,14 @@ const ProductDetailComponent = ({ idProduct }) => {
         } else {
             handleOrderDispatch();
         }
+    };
+
+    const handleRateChange = (value) => {
+        setRating(value);
+    };
+
+    const handleReviewChange = (event) => {
+        setComment(event.target.value);
     };
 
     const clickOpenSystem = () => {
@@ -192,6 +314,10 @@ const ProductDetailComponent = ({ idProduct }) => {
 
     const handleCloseAddressModal = () => {
         setShowAddressModal(false);
+    };
+
+    const handleActiveColor = (color) => {
+        setActiveColor(color);
     };
 
     return (
@@ -212,7 +338,7 @@ const ProductDetailComponent = ({ idProduct }) => {
                     </div>
                     <div className={cx('wrapper_row')}>
                         <Row>
-                            <Col sm={16} className={cx('scrollable-content')}>
+                            <Col sm={16} style={{}}>
                                 <Row>
                                     <Col xs={0} sm={12}>
                                         <div className={cx('user_left')}>
@@ -222,7 +348,7 @@ const ProductDetailComponent = ({ idProduct }) => {
 
                                             <div>
                                                 <div className={cx('img_list')}>
-                                                    {visibleImages.map((current, index) => (
+                                                    {productsDetail?.additionalImages?.map((current, index) => (
                                                         <div key={index} className={cx('img')}>
                                                             <img alt="anh" src={current} width={45} height={45} />
                                                         </div>
@@ -242,7 +368,8 @@ const ProductDetailComponent = ({ idProduct }) => {
                                                             </div>
                                                         </div>
                                                     )}
-                                                    {startIndex + imagesToShow < arrImageUsers.length && (
+                                                    {startIndex + imagesToShow <
+                                                        productsDetail?.additionalImages.length && (
                                                         <div onClick={showNextImages} className={cx('button_right')}>
                                                             <div className={cx('button')}>
                                                                 <img
@@ -279,8 +406,10 @@ const ProductDetailComponent = ({ idProduct }) => {
                                                 <div className={cx('wrapper_center')}>
                                                     <div className={cx('center1')}>
                                                         <div className={cx('brand')}>
-                                                            Thương hiệu:{' '}
-                                                            <div style={{ color: 'rgb(13, 92, 182)' }}> OCM</div>{' '}
+                                                            <span>Thương hiệu:</span>
+                                                            <div style={{ color: 'rgb(13, 92, 182)' }}>
+                                                                {productsDetail?.brand || 'Không có'}
+                                                            </div>
                                                         </div>
                                                         <div className={cx('name')}>{productsDetail?.name}</div>
                                                         <div className={cx('star')}>
@@ -292,7 +421,7 @@ const ProductDetailComponent = ({ idProduct }) => {
                                                                         className={cx('star_icon')}
                                                                         key={index}
                                                                         style={{
-                                                                            fontSize: '10px',
+                                                                            fontSize: '15px',
                                                                             color:
                                                                                 index < productsDetail?.rating
                                                                                     ? '#ffce3d'
@@ -302,6 +431,7 @@ const ProductDetailComponent = ({ idProduct }) => {
                                                                         }}
                                                                     />
                                                                 ))}
+                                                            <span className={cx('')}>()</span>
                                                             <span className={cx('comment')}>Đã bán</span>
                                                             <span className={cx('sold')}>
                                                                 {productsDetail?.sold || 0}
@@ -314,27 +444,49 @@ const ProductDetailComponent = ({ idProduct }) => {
                                                                     <u>đ</u>
                                                                 </sup>
                                                             </div>
-                                                            {productsDetail?.discount && (
+                                                            {productsDetail?.discount ? (
                                                                 <div className={cx('discount')}>
                                                                     - {productsDetail?.discount}%
                                                                 </div>
+                                                            ) : (
+                                                                <div></div>
                                                             )}
                                                         </div>
-                                                        <div className={cx('color')}>{productsDetail?.color}</div>
-                                                        <div className={cx('choose_color')}>
-                                                            <div className={cx('choose')}>
-                                                                <img alt="img" src={User1} width={38} height={38} />
+                                                        <div className={cx('color')}>Màu</div>
+                                                        <div className={cx('choose_color_container')}>
+                                                            <div
+                                                                className={cx('choose_color', {
+                                                                    active: activeColor === 'red',
+                                                                })}
+                                                                onClick={() => handleActiveColor('red')}
+                                                            >
+                                                                <div className={cx('choose')}>
+                                                                    <img alt="img" src={User1} width={38} height={38} />
+                                                                </div>
+                                                                <div className={cx('choose_name')}>
+                                                                    {productsDetail?.color}
+                                                                </div>
                                                             </div>
-                                                            <div className={cx('choose_name')}>
-                                                                {productsDetail?.color} {randomNumber}
+                                                            <div
+                                                                className={cx('choose_color', {
+                                                                    active: activeColor === 'blue',
+                                                                })}
+                                                                onClick={() => handleActiveColor('blue')}
+                                                            >
+                                                                <div className={cx('choose')}>
+                                                                    <img alt="img" src={User1} width={38} height={38} />
+                                                                </div>
+                                                                <div className={cx('choose_name')}>
+                                                                    {productsDetail?.color}
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                        <div className={cx('choose_color')}>
-                                                            <div className={cx('choose')}>
-                                                                <img alt="img" src={User1} width={38} height={38} />
-                                                            </div>
-                                                            <div className={cx('choose_name')}>
-                                                                {productsDetail?.color} {randomNumber}
+                                                            <div className={cx('choose_color')}>
+                                                                <div className={cx('choose')}>
+                                                                    <img alt="img" src={User1} width={38} height={38} />
+                                                                </div>
+                                                                <div className={cx('choose_name')}>
+                                                                    {productsDetail?.color}
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -442,7 +594,7 @@ const ProductDetailComponent = ({ idProduct }) => {
                                                                         paddingRight: '2%',
                                                                     }}
                                                                 >
-                                                                    Mạnh Dũng
+                                                                    MD
                                                                 </span>
                                                                 <img alt="shop" src={offical} width={72} height={20} />
                                                             </div>
@@ -572,7 +724,7 @@ const ProductDetailComponent = ({ idProduct }) => {
                                                 <div className={cx('wrapper_description')}>
                                                     <div className={cx('description')}>
                                                         <span style={{ color: 'rgb(128, 128, 137)' }}>Xuất xứ</span>
-                                                        <span>Việt nam</span>
+                                                        <span>{productsDetail?.originOfCountry}</span>
                                                     </div>
                                                     <div className={cx('description', 'des2')}>
                                                         <span style={{ color: 'rgb(128, 128, 137)' }}>Chất liệu</span>
@@ -580,18 +732,13 @@ const ProductDetailComponent = ({ idProduct }) => {
                                                     </div>
                                                     <div className={cx('description')}>
                                                         <span style={{ color: 'rgb(128, 128, 137)' }}>Thương hiệu</span>
-                                                        <span>OCM</span>
+                                                        <span>{productsDetail?.brand || 'Chưa có'}</span>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div className={cx('center')}>
                                                 <div className={cx('information')}>Mô tả sản phẩm</div>
-                                                <div>
-                                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Error
-                                                    repellat laudantium omnis praesentium commodi sunt voluptates
-                                                    maiores maxime quis perspiciatis. Asperiores aut atque eligendi vero
-                                                    quas ullam nam quaerat consectetur.
-                                                </div>
+                                                <div>{productsDetail?.description || 'Không có mô tả nào'}</div>
                                             </div>
                                         </div>
                                     </Col>
@@ -604,37 +751,28 @@ const ProductDetailComponent = ({ idProduct }) => {
                                                     <Col sm={24}>
                                                         <div className={cx('container_row-footer')}>
                                                             <Row>
-                                                                <Col sm={6} className={cx('wrapper_left')}>
+                                                                <Col sm={10} className={cx('wrapper_left')}>
                                                                     <div className={cx('information')}>
                                                                         Khách hàng đánh giá
                                                                     </div>
                                                                     <p style={{ paddingTop: '2%' }}>Tổng quan</p>
                                                                     <div className={cx('wrapper-star')}>
                                                                         <div className={cx('star')}>
-                                                                            <div className={cx('vote')}>
-                                                                                {productsDetail?.rating}
+                                                                            <div className={cx('vote')}>0</div>
+                                                                            <div>
+                                                                                <StarFilled
+                                                                                    className={cx('star_icon')}
+                                                                                    style={{
+                                                                                        fontSize: '20px',
+
+                                                                                        width: 30,
+                                                                                        height: 30,
+                                                                                    }}
+                                                                                />
                                                                             </div>
-                                                                            {Array(5)
-                                                                                .fill(null)
-                                                                                .map((_, index) => (
-                                                                                    <StarFilled
-                                                                                        className={cx('star_icon')}
-                                                                                        key={index}
-                                                                                        style={{
-                                                                                            fontSize: '20px',
-                                                                                            color:
-                                                                                                index <
-                                                                                                productsDetail?.rating
-                                                                                                    ? '#ffce3d'
-                                                                                                    : 'gray',
-                                                                                            width: 40,
-                                                                                            height: 40,
-                                                                                        }}
-                                                                                    />
-                                                                                ))}
                                                                         </div>
                                                                     </div>
-                                                                    <p style={{ color: '#999' }}>(16 đánh giá)</p>
+                                                                    <p style={{ color: '#999' }}>(Chưa có đánh giá)</p>
                                                                     <div style={{ padding: '2px' }}>
                                                                         {Array(5)
                                                                             .fill(null)
@@ -732,16 +870,242 @@ const ProductDetailComponent = ({ idProduct }) => {
                                                                     </div>
                                                                 </Col>
 
-                                                                <Col sm={18} className={cx('wrapper_right')}>
+                                                                <Col sm={14} className={cx('wrapper_right')}>
                                                                     <div>
-                                                                        <strong>Tất cả hình ảnh ({0})</strong>
+                                                                        <strong>
+                                                                            Tất cả hình ảnh (
+                                                                            {productsDetail?.additionalImages.length})
+                                                                        </strong>
                                                                     </div>
-                                                                    <div className={cx('img-img')}></div>
+                                                                    <div className={cx('img-grid')}>
+                                                                        {productsDetail?.additionalImages.map(
+                                                                            (current, index) => (
+                                                                                <div
+                                                                                    key={index}
+                                                                                    className={cx('img-img')}
+                                                                                >
+                                                                                    <img
+                                                                                        alt=""
+                                                                                        src={current}
+                                                                                        width={40}
+                                                                                        height={40}
+                                                                                    />
+                                                                                </div>
+                                                                            ),
+                                                                        )}
+                                                                    </div>
                                                                 </Col>
                                                             </Row>
                                                         </div>
                                                     </Col>
                                                 </Row>
+                                            </div>
+
+                                            {/* phần show đánh giá sản phẩm */}
+                                            <div className={cx('review_comment')}>
+                                                <div className={cx('review_user')}>
+                                                    <div className={cx('user_inner')}>
+                                                        <div className={cx('user_avatar')}>
+                                                            <div>
+                                                                <img
+                                                                    style={{ margin: '0 8px 0 0' }}
+                                                                    alt=""
+                                                                    src={img1}
+                                                                    width={40}
+                                                                    height={40}
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <div className={cx('user_name')}>Phan Mạnh Dũng</div>
+                                                            <div className={cx('user_date')}>Đã tham gia</div>
+                                                        </div>
+                                                    </div>
+                                                    <div className={cx('user_info')}>
+                                                        <div>
+                                                            <img
+                                                                style={{ margin: '0 8px 0 0' }}
+                                                                alt=""
+                                                                src={cmt}
+                                                                width={20}
+                                                                height={20}
+                                                            />
+                                                            Đã viết
+                                                        </div>
+                                                        <span>196 đánh giá</span>
+                                                    </div>
+                                                    <div
+                                                        style={{
+                                                            border: '0.5px solid rgb(235, 235, 240)',
+                                                            marginTop: '9px',
+                                                        }}
+                                                    ></div>
+                                                    <div className={cx('user_info')}>
+                                                        <div>
+                                                            <img
+                                                                style={{ margin: '0 8px 0 0' }}
+                                                                alt=""
+                                                                src={like}
+                                                                width={20}
+                                                                height={20}
+                                                            />
+                                                            Đã nhận
+                                                        </div>
+                                                        <span>Cảm ơn</span>
+                                                    </div>
+                                                    <div></div>
+                                                </div>
+                                                <div className={cx('review_vote')}>
+                                                    <div className={cx('rating_title')}>
+                                                        <div>
+                                                            {' '}
+                                                            <StarFilled />{' '}
+                                                        </div>
+                                                        <div>Cực kì hài lòng</div>
+                                                    </div>
+                                                    <div className={cx('seller_name-attribute')}>
+                                                        <div className={cx('seller-name')}>
+                                                            <span>Đã mua hàng</span>
+                                                        </div>
+                                                    </div>
+                                                    <div className={cx('comment_content')}></div>
+                                                    <div className={cx('review_images')}>
+                                                        <img alt="" src={img1} width={77} height={77} />
+                                                    </div>
+                                                    <div className={cx('create_date')}>
+                                                        <div className={cx('comment_attribute')}>
+                                                            <div className={cx('item')}>
+                                                                <span>Xanh lá</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div className={cx('comment_share')}>
+                                                        <div className={cx('wrapper_like')}>
+                                                            <span className={cx('like_span')}>
+                                                                <img alt="" src={like} width={24} height={24} />
+                                                                <span>1</span>
+                                                            </span>
+                                                            <span className={cx('reply_span')}>
+                                                                <img alt="" src={binhluan} width={24} height={24} />
+                                                                Bình luận
+                                                            </span>
+                                                        </div>
+                                                        <div className={cx('wrapper_share')}>
+                                                            <img alt="" src={chiase} width={24} height={24} />
+                                                            Chia sẻ
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* phần đánh giá sản phẩm cho người dùng đã mua*/}
+                                            <div>
+                                                {hasPurchased === true ? (
+                                                    <div className={cx('write_vote')}>
+                                                        <div className={cx('wrapper_label')}>
+                                                            <span className={cx('span_child1')}>Đánh giá sản phẩm</span>
+                                                            <span className={cx('span_child2')}>Mức độ ưa thích</span>
+                                                            <Rate onChange={handleRateChange} value={rating} />
+                                                        </div>
+                                                        <div style={{ width: '100%' }}>
+                                                            <TextArea
+                                                                rows={3}
+                                                                placeholder="Đánh giá của bạn"
+                                                                value={comment}
+                                                                onChange={handleReviewChange}
+                                                            />
+                                                        </div>
+                                                        <div className={cx('wrapper_btn')}>
+                                                            <div>
+                                                                <Button
+                                                                    color="#fff"
+                                                                    type="primary"
+                                                                    style={{ width: 'auto' }}
+                                                                    onClick={handleSubmitVote}
+                                                                >
+                                                                    Gửi đánh giá
+                                                                </Button>
+                                                            </div>
+                                                            <div>
+                                                                <Upload
+                                                                    multiple
+                                                                    showUploadList={false}
+                                                                    onChange={handleUploadChange}
+                                                                >
+                                                                    <Button>Select Images</Button>
+                                                                </Upload>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                ) : (
+                                                    <div>
+                                                        <div className={cx('container_filter-star')}>
+                                                            <div className={cx('filter-review__label')}>Lọc theo</div>
+                                                            <div className={cx('filter-review__inner')}>
+                                                                <div
+                                                                    className={cx('review_filter_item', {
+                                                                        activeFilter: activeTabFilter === 'moi_nhat',
+                                                                    })}
+                                                                    onClick={() => handleTabClickFilter('moi_nhat')}
+                                                                >
+                                                                    <span className={cx('filter-review__text')}>
+                                                                        Mới nhất
+                                                                    </span>
+                                                                </div>
+                                                                <div
+                                                                    className={cx('review_filter_item', {
+                                                                        activeFilter: activeTabFilter === '5sao',
+                                                                    })}
+                                                                    onClick={() => handleTabClickFilter('5sao')}
+                                                                >
+                                                                    <span className={cx('filter-review__text')}>
+                                                                        5 sao
+                                                                    </span>
+                                                                </div>
+                                                                <div
+                                                                    className={cx('review_filter_item', {
+                                                                        activeFilter: activeTabFilter === '4sao',
+                                                                    })}
+                                                                    onClick={() => handleTabClickFilter('4sao')}
+                                                                >
+                                                                    <span className={cx('filter-review__text')}>
+                                                                        4 sao
+                                                                    </span>
+                                                                </div>
+                                                                <div
+                                                                    className={cx('review_filter_item', {
+                                                                        activeFilter: activeTabFilter === '3sao',
+                                                                    })}
+                                                                    onClick={() => handleTabClickFilter('3sao')}
+                                                                >
+                                                                    <span className={cx('filter-review__text')}>
+                                                                        3 sao
+                                                                    </span>
+                                                                </div>
+                                                                <div
+                                                                    className={cx('review_filter_item', {
+                                                                        activeFilter: activeTabFilter === '2sao',
+                                                                    })}
+                                                                    onClick={() => handleTabClickFilter('2sao')}
+                                                                >
+                                                                    <span className={cx('filter-review__text')}>
+                                                                        2 sao
+                                                                    </span>
+                                                                </div>
+                                                                <div
+                                                                    className={cx('review_filter_item', {
+                                                                        activeFilter: activeTabFilter === '1sao',
+                                                                    })}
+                                                                    onClick={() => handleTabClickFilter('1sao')}
+                                                                >
+                                                                    <span className={cx('filter-review__text')}>
+                                                                        1 sao
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                )}
                                             </div>
                                         </Col>
                                     </Row>
@@ -752,11 +1116,40 @@ const ProductDetailComponent = ({ idProduct }) => {
                                     <Col xs={0} sm={24}>
                                         <div className={cx('container_right')}>
                                             <div className={cx('wrapper_right')}>
-                                                <div className={cx('right_User')}>
+                                                <div className={cx('right_user')}>
                                                     <div>
-                                                        <img alt="" src={User1} width={40} height={40} />
+                                                        <img
+                                                            alt=""
+                                                            style={{ borderRadius: '50%' }}
+                                                            src={logoshop}
+                                                            width={40}
+                                                            height={40}
+                                                        />
                                                     </div>
-                                                    <div className={cx('title_right')}>Đỏ 89 free size</div>
+                                                    <div className={cx('shop')}>
+                                                        <div
+                                                            className={cx('title_right')}
+                                                            style={{ lineHeight: '1.5', fontWeight: '600' }}
+                                                        >
+                                                            MD
+                                                        </div>
+                                                        <div className={cx('wrap_shop')}>
+                                                            <div className={cx('item')}>
+                                                                <img alt="" src={offical} width={72} height={20} />
+                                                            </div>
+                                                            <div className={cx('content')}>
+                                                                4.7{' '}
+                                                                <FontAwesomeIcon
+                                                                    icon={faStar}
+                                                                    style={{ color: 'rgb(255,203,33)' }}
+                                                                />{' '}
+                                                                |{' '}
+                                                                <span style={{ color: 'rgb(128, 128, 137)' }}>
+                                                                    (5.4tr+ đánh giá)
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                                 <div className={cx('quantity')}>
                                                     <div>

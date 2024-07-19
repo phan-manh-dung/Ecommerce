@@ -5,9 +5,10 @@ import { Badge, Col, Popover, Row } from 'antd';
 import InputSearch from '../InputSearch/InputSearch';
 import logo_shop from '../../assets/img_Global/logoshop.png';
 import logo_home from '../../assets/img_Global/home.png';
+import homeBold from '../../assets/img_Global/homebold.png';
 import logo_user from '../../assets/img_Global/user.png';
 import logo_astra from '../../assets/img_Global/astra.png';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import * as UserService from '~/service/UserService';
 import { resetUser } from '~/redux/slide/userSlide';
@@ -30,6 +31,7 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
     const [search, setSearch] = useState('');
     const initialLoad = useRef(true);
     const [hasFetchedCartData, setHasFetchedCartData] = useState(false); // kiểm tra đã useEffect hay chưa
+    const location = useLocation();
 
     const handleNavigate = () => {
         navigate('/sign-in');
@@ -57,7 +59,7 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
                                         amount: item.amount,
                                         image: item.image,
                                         price: item.price,
-                                        product: item._id,
+                                        product: item.product,
                                         color: item.color,
                                         discount: item.discount,
                                         type: item.type,
@@ -78,7 +80,7 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
         return () => {
             mounted = false;
         };
-    }, [userId, dispatch]);
+    }, [userId, dispatch, isLoggedIn, hasFetchedCartData]);
 
     const handleLogOut = async () => {
         setLoading(true);
@@ -154,11 +156,30 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
                     <Col span={10}>
                         <div className={cx('row_right')}>
                             <div className={cx('row_right-list')}>
-                                <img src={logo_home} alt="home" style={{ width: '24px', height: '24px' }} />
-                                <span style={{ fontSize: '14px', color: 'rgb(128, 128, 137)', paddingLeft: '5px' }}>
-                                    <a href="/" style={{ textDecoration: 'none', color: '#999' }}>
-                                        Trang chủ
-                                    </a>
+                                <img
+                                    src={location.pathname === '/' ? homeBold : logo_home}
+                                    alt="home"
+                                    style={{ width: '24px', height: '24px' }}
+                                />
+                                <span
+                                    style={{
+                                        fontSize: '14px',
+                                        color: 'rgb(128, 128, 137)',
+                                        paddingLeft: '5px',
+                                    }}
+                                >
+                                    {location.pathname === '/' ? (
+                                        <a
+                                            href="/"
+                                            style={{ textDecoration: 'none', color: '#0a68ff', fontWeight: 'bold' }}
+                                        >
+                                            Trang chủ
+                                        </a>
+                                    ) : (
+                                        <a href="/" style={{ textDecoration: 'none', color: '#999' }}>
+                                            Trang chủ
+                                        </a>
+                                    )}
                                 </span>
                             </div>
                             <div
@@ -198,14 +219,41 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
                                     onClick={() => navigate('/cart')}
                                     style={{ cursor: 'pointer' }}
                                 >
-                                    <span
-                                        style={{ fontSize: '14px', color: 'rgb(128, 128, 137)', paddingRight: '5px' }}
-                                    >
-                                        Giỏ hàng
-                                    </span>
-                                    <Badge count={cart?.cartItems?.length} size="small">
-                                        <ShoppingCartOutlined style={{ width: '24px', height: '24px' }} />
-                                    </Badge>
+                                    {location.pathname === '/cart' ? (
+                                        <div>
+                                            <span
+                                                style={{
+                                                    fontSize: '14px',
+                                                    fontWeight: 'bold',
+                                                    color: '#0a68ff',
+                                                    paddingRight: '5px',
+                                                }}
+                                            >
+                                                Giỏ hàng
+                                            </span>
+                                            <Badge count={cart?.cartItems?.length} size="small">
+                                                <ShoppingCartOutlined
+                                                    style={{ width: '24px', height: '24px', color: '#0a68ff' }}
+                                                />
+                                            </Badge>
+                                        </div>
+                                    ) : (
+                                        <div>
+                                            <span
+                                                style={{
+                                                    fontSize: '14px',
+                                                    color: 'rgb(128, 128, 137)',
+
+                                                    paddingRight: '5px',
+                                                }}
+                                            >
+                                                Giỏ hàng
+                                            </span>
+                                            <Badge count={cart?.cartItems?.length} size="small">
+                                                <ShoppingCartOutlined style={{ width: '24px', height: '24px' }} />
+                                            </Badge>
+                                        </div>
+                                    )}
                                 </div>
                             )}
                         </div>

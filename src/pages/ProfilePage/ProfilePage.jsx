@@ -51,8 +51,8 @@ const ProfilePage = () => {
     const dispatch = useDispatch();
 
     const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-    const [phone, setPhone] = useState('');
+    const [email, setEmail] = useState(user?.email || '');
+    const [phone, setPhone] = useState(user?.phone || '');
     const [avatar, setAvatar] = useState('');
     const [sex, setSex] = useState('');
     const [country, setCountry] = useState('');

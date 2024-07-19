@@ -2,7 +2,6 @@ import { axiosJWT } from './UserService';
 import axios from 'axios';
 
 export const createOrder = async (data, access_token, userId) => {
-    console.log('access_token', { access_token, data });
     const res = await axiosJWT.post(`${process.env.REACT_APP_API_URL}/order/create/${data.user}`, data, {
         headers: {
             token: `Bearer ${access_token}`,
@@ -87,10 +86,11 @@ export const deleteManyOrder = async (data, access_token) => {
     return res.data;
 };
 
+// tìm id của cart để xóa
 export const findCart = async (id, productId, access_token) => {
     try {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/order/find-cart/${id}`, {
-            params: { productId: productId },
+            params: { productId },
             headers: {
                 Authorization: `Bearer ${access_token}`,
             },
@@ -98,6 +98,21 @@ export const findCart = async (id, productId, access_token) => {
         return response.data.cartId;
     } catch (error) {
         console.error('Error finding cart:', error);
+        throw error;
+    }
+};
+
+export const checkIfUserPurchasedProduct = async (id, productId, access_token) => {
+    try {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/order/check-purchased/${id}`, {
+            params: { productId: productId },
+            headers: {
+                Authorization: `Bearer ${access_token}`,
+            },
+        });
+        return response.data.purchased;
+    } catch (error) {
+        console.error('Error finding order:', error);
         throw error;
     }
 };

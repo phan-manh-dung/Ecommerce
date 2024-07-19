@@ -50,15 +50,15 @@ const AddressComponent = ({ showAddressModal, handleCloseAddressModal }) => {
 
     // đang lỗi api
 
-    // useEffect(() => {
-    //     const fetchPublicProvince = async () => {
-    //         const response = await apiGetPublicProvinces();
-    //         if (response.status === 200) {
-    //             setArrProvinces(response?.data.results);
-    //         }
-    //     };
-    //     fetchPublicProvince();
-    // }, []);
+    useEffect(() => {
+        const fetchPublicProvince = async () => {
+            const response = await apiGetPublicProvinces();
+            if (response.status === 200) {
+                setArrProvinces(response?.data.results);
+            }
+        };
+        fetchPublicProvince();
+    }, []);
 
     useEffect(() => {
         const fetPublicDistrict = async () => {
