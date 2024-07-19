@@ -114,7 +114,6 @@ const AdminOrderComponent = () => {
 
     const mutationDeleted = useMutationHook((data) => {
         const { id, token } = data;
-
         const res = OrderService.deleteOrderDatabaseByAdmin(id, token);
         return res;
     });

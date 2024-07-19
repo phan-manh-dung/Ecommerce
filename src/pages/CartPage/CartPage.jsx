@@ -14,21 +14,24 @@ import { removeProductInCart, removeAllProductInCart } from '~/redux/slide/cartS
 import { convertPrice } from '~/utils';
 import ModalComponent from '~/component/ModalComponent/ModalComponent';
 import { useNavigate } from 'react-router-dom';
-import { deleteCart, findCart } from '~/service/OrderService';
+import { deleteCart, findCart, findManyCart, deleteManyCart } from '~/service/OrderService';
 import { getCartByUserId } from '~/service/OrderService';
 import { Helmet } from 'react-helmet';
+import { useMutationHook } from '~/hook/useMutationHook';
 
 const cx = classNames.bind(styles);
 
 const CartPage = () => {
     const cart = useSelector((state) => state.cart);
     const user = useSelector((state) => state.user);
-    const [listChecked, setListChecked] = useState([]); // sét list check
-    const [isModalOpen, setIsModalOpen] = useState(false); // mở modal
-    const [isModalOpenProduct, setIsModalOpenProduct] = useState(false); // mở modal
+    const [listChecked, setListChecked] = useState([]);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isModalOpenProduct, setIsModalOpenProduct] = useState(false);
     const dispatch = useDispatch(); // gửi action đến reducer
     const navigate = useNavigate(); // chuyển trang
     const [isChecked, setIsChecked] = useState(false);
+    // mảng ids cart dùng để xóa
+    const [dataDeleteMany, setDataDeleteMany] = useState([]);
 
     const userId = user?.id;
 
@@ -39,6 +42,7 @@ const CartPage = () => {
         }
         try {
             const cartId = await findCart(userId, productId, user?.access_token);
+            console.log('cartId', cartId);
 
             if (!cartId) {
                 message.error('Không tìm thấy giỏ hàng để xóa');
@@ -82,12 +86,35 @@ const CartPage = () => {
         }
     };
 
-    // remove order
-    const handleRemoveAllOrder = () => {
-        if (listChecked?.length === cart?.cartItems?.length) {
-            dispatch(removeAllProductInCart({ listChecked }));
+    const handleRemoveAllCart = async () => {
+        if (listChecked.length > 0) {
+            try {
+                dispatch(removeAllProductInCart({ listChecked }));
+                await deleteManyCart(dataDeleteMany, user?.access_token);
+                message.success('Đã xóa hết giỏ hàng');
+            } catch (error) {
+                message.error('Xóa thất bại');
+                console.error('Error deleting carts:', error);
+            }
         }
     };
+
+    useEffect(() => {
+        const handleFindCarts = async () => {
+            try {
+                const carts = await findManyCart(userId, listChecked, user?.access_token);
+                setDataDeleteMany(carts);
+            } catch (error) {
+                console.error('Error finding carts:', error);
+            }
+        };
+
+        if (listChecked.length > 0) {
+            handleFindCarts();
+        }
+    }, [userId, listChecked, user?.access_token]);
+
+    // xóa many cart
 
     // price product
     const priceMemo = useMemo(() => {
@@ -209,7 +236,7 @@ const CartPage = () => {
                                         <span>Đơn giá</span>
                                         <span>Số lượng</span>
                                         <span>Thành tiền</span>
-                                        <span onClick={handleRemoveAllOrder}>
+                                        <span onClick={handleRemoveAllCart}>
                                             <FontAwesomeIcon icon={faTrash} />
                                         </span>
                                     </div>

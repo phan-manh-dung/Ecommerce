@@ -102,6 +102,26 @@ export const findCart = async (id, productId, access_token) => {
     }
 };
 
+export const findManyCart = async (id, productIds, access_token) => {
+    try {
+        const response = await axios.post(
+            `${process.env.REACT_APP_API_URL}/order/find-carts/${id}`,
+            {
+                productIds,
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${access_token}`,
+                },
+            },
+        );
+        return response.data.carts; // Giả sử response trả về mảng carts
+    } catch (error) {
+        console.error('Error finding carts:', error);
+        throw error;
+    }
+};
+
 export const checkIfUserPurchasedProduct = async (id, productId, access_token) => {
     try {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/order/check-purchased/${id}`, {
@@ -113,6 +133,20 @@ export const checkIfUserPurchasedProduct = async (id, productId, access_token) =
         return response.data.purchased;
     } catch (error) {
         console.error('Error finding order:', error);
+        throw error;
+    }
+};
+
+export const deleteManyCart = async (data, access_token) => {
+    try {
+        const res = await axios.post(`${process.env.REACT_APP_API_URL}/order/delete-many-cart`, data, {
+            headers: {
+                Authorization: `Bearer ${access_token}`, // Chỉnh sửa header thành Authorization
+            },
+        });
+        return res.data;
+    } catch (error) {
+        console.error('Error deleting carts:', error);
         throw error;
     }
 };

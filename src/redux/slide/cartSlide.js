@@ -48,7 +48,6 @@ export const cartSlice = createSlice({
         // đây là remove 1 sản phẩm trong giỏ hàng cart
         removeProductInCart: (state, action) => {
             const { idProduct } = action.payload;
-            console.log('Removing product with ID redux:', idProduct);
             const itemCart = state?.cartItems?.filter((item) => item?.product !== idProduct);
             const itemCartSelected = state?.cartItemsSelected?.filter((item) => item?.product !== idProduct);
             state.cartItems = itemCart;
