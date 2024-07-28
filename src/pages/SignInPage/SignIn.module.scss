@@ -1,224 +1,333 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
 
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
 }
 
 .header {
-    position: fixed;
-    width: 100%;
-    height: 60px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 100px;
-    z-index: 99;
-    background: transparent;
+  position: fixed;
+  width: 100%;
+  height: 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 100px;
+  z-index: 99;
+  background: transparent;
 }
+
 .header .nav a {
-    text-decoration: none;
-    color: #fff;
-    font-size: 20px;
-    margin-left: 20px;
-    font-weight: 600;
+  text-decoration: none;
+  color: #fff;
+  font-size: 20px;
+  margin-left: 20px;
+  font-weight: 600;
 }
 .nav a:hover {
-    border-bottom: 4px solid #fff;
-    transition: 0.5s;
+  border-bottom: 4px solid #fff;
+  transition: 0.5s;
 }
 .search i {
-    color: #fff;
-    font-size: 1.5em;
-    margin-left: 20px;
+  color: #fff;
+  font-size: 1.5em;
+  margin-left: 20px;
 }
 .background {
-    max-width: 100%;
-    width: 100%;
-    min-height: 120vh;
-    background-image: url('../../assets/img_Global/img_background.jpg');
-    background-position: center;
-    background-size: cover;
-    filter: blur(5px);
+  max-width: 100%;
+  width: 100%;
+  min-height: 120vh;
+  background-image: url('../../assets/img_Global/bg1.jpg');
+  background-position: center;
+  background-size: cover;
+  filter: blur(5px);
 }
 
 .home_back {
-    width: 40px;
-    padding-left: 10%;
-    margin-left: -70px;
+  width: 40px;
+  padding-left: 10%;
+  margin-left: -70px;
 }
 .home {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 75%;
-    height: 75%;
-    transform: translate(-50%, -50%);
-    background-image: url('../../assets/img_Global/img_background.jpg');
-    background-position: center;
-    background-size: cover;
-    display: flex;
-    margin-top: 10px;
-    border: 1px solid black;
-    border-radius: 10px;
-    border: none;
-    box-shadow: 5px 10px 10px 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  max-width: 100%;
+  width: 75%;
+  transform: translate(-50%, -50%);
+  background-image: url('../../assets/img_Global/bg1.jpg');
+  background-position: center;
+  background-size: cover;
+  display: flex;
+  margin-top: 10px;
+  border: 1px solid black;
+  border-radius: 14px;
+  border: none;
+  box-shadow: 5px 10px 10px 0;
 }
 .content {
-    display: flex;
-    flex-direction: column;
-    width: 700px;
-    padding: 100px 0;
-}
-.content a {
-    position: relative;
-    text-decoration: none;
-    color: #fff;
-    font-size: 3em;
-    font-weight: 700;
-    top: -40px;
-    left: 80px;
-}
-.content h2 {
+  display: flex;
+  flex-direction: column;
+  width: 700px;
+  padding: 100px 0;
+
+  h2 {
     font-size: 3.5em;
     text-align: center;
     color: #fff;
     letter-spacing: 10px;
-}
-.content h3 {
+  }
+  h3 {
     font-size: 2em;
     text-align: center;
     color: #fff;
-}
-.content pre {
+  }
+  pre {
     margin-top: 20px;
     text-align: center;
     font-size: 1em;
     color: #fff;
+  }
+
+  .wrapper_icon {
+    height: 42px;
+    div {
+      padding: 0 10px;
+      border-radius: 4px;
+      a {
+        font-size: 2.5rem;
+        color: #fff;
+        padding: 4px;
+      }
+      font-size: 3em;
+      font-weight: 700;
+    }
+    a:hover {
+      color: rgb(0, 255, 200);
+    }
+  }
 }
-.content .icon {
-    margin-top: 20px;
-    font-size: 1.5em;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-right: 36%;
+.wrapper_icon :hover {
+  box-shadow: 0px 0px 30px 1px rgba(0, 255, 117, 0.3);
 }
 
 .login {
-    width: 450px;
-    position: relative;
-    padding: 100px 30px;
-    backdrop-filter: blur(10px);
+  width: 450px;
+  position: relative;
+  padding: 20px 30px;
+  backdrop-filter: blur(10px);
 }
 .login h2 {
-    font-size: 2em;
-    text-align: center;
-    margin-bottom: 20px;
-    color: #fff;
+  font-size: 2em;
+  text-align: center;
+  margin-bottom: 20px;
+  color: #fff;
 }
 .login .input {
-    position: relative;
-    width: 100%;
-    height: 30px;
-    margin-bottom: 25px;
+  position: relative;
+  width: 100%;
+  height: 30px;
+  margin-bottom: 25px;
 }
 .login .input .input1 {
-    font-size: 16px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background: transparent;
-    border: none;
-    outline: none;
-    border-bottom: 2px solid #fff;
-    color: #fff;
-    width: 100%;
-    height: 100%;
+  font-size: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+  border: none;
+  outline: none;
+  border-bottom: 2px solid #fff;
+  color: #fff;
+  width: 100%;
+  height: 100%;
 }
 ::placeholder {
-    color: #fff;
-    font-size: 18px;
+  color: #fff;
+  font-size: 18px;
 }
 .login .input i {
-    position: relative;
-    right: -370px;
-    bottom: 27px;
-    color: #fff;
+  position: relative;
+  right: -370px;
+  bottom: 27px;
+  color: #fff;
 }
 .check {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
-    color: #fff;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  color: #fff;
 }
 .check a {
-    text-decoration: none;
-    color: #fff;
+  text-decoration: none;
+  color: #fff;
 }
 .check a:hover {
-    text-decoration: underline;
-}
-.login .button {
-    width: 100%;
-    height: 40px;
-}
-button {
-    width: 100%;
-    height: 40px;
-    background-color: rgb(66, 44, 48);
-    border: none;
-    outline: none;
-    font-size: 20px;
-    font-weight: 700;
-    border-radius: 7px;
-    color: #fff;
+  text-decoration: underline;
 }
 
-.button_social {
-    height: 30px;
-}
-button:active {
-    font-size: 25px;
-}
-.login .sign-up {
-    display: flex;
-    justify-content: center;
-}
-.login .sign-up span {
-    text-decoration: none;
-    color: #fff;
-    font-weight: 700;
-}
-.login .sign-up p {
-    color: #fff;
-}
-.sign-up span:hover {
-    text-decoration: underline;
-}
+.card {
+  background-image: linear-gradient(163deg, #00ff75 0%, #3700ff 100%);
+  border-top-right-radius: 14px;
+  border-bottom-right-radius: 14px;
+  transition: all 0.3s;
+  width: 350px;
 
-.icon_brand {
-    color: #fff;
-    padding-left: 15px;
-}
+  .card2 {
+    border-radius: 0;
+    transition: all 0.2s;
 
-.style_button-social {
-    padding: 5px 0;
-}
+    .form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding-left: 2em;
+      padding-right: 2em;
+      padding-bottom: 1rem;
+      background-color: #171717;
+      border-top-right-radius: 14px;
+      border-bottom-right-radius: 14px;
 
-.button_social {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-}
+      .heading {
+        text-align: center;
+        margin: 2em;
+        color: rgb(0, 255, 200);
+        font-size: 1.2em;
+      }
 
-.title_button {
-    padding-left: 5px;
-    font-weight: 100;
-    font-size: 1.6rem;
-    line-height: 1.2rem;
+      .field {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5em;
+        border-radius: 25px;
+        padding: 0.6em;
+        border: none;
+        outline: none;
+        color: white;
+        background-color: #171717;
+        box-shadow: inset 2px 5px 10px rgb(5, 5, 5);
+
+        .input-icon {
+          height: 1.3em;
+          width: 1.3em;
+          fill: rgb(0, 255, 200);
+        }
+
+        .input-field {
+          position: relative;
+          background: none;
+          border: none;
+          outline: none;
+          width: 100%;
+          color: rgb(0, 255, 200);
+        }
+        .input-field::placeholder {
+          font-size: 12px;
+          color: #aaa;
+        }
+
+        .span-field {
+          position: absolute;
+        }
+      }
+
+      .edit_field {
+        position: relative;
+      }
+
+      .wrapper_check {
+        float: right;
+        padding: 0.6rem;
+      }
+      .btn {
+        display: flex;
+        justify-content: center;
+        flex-direction: row;
+        margin-top: 1em;
+
+        .button1 {
+          cursor: pointer;
+          margin-right: 0.5em;
+          border: none;
+          outline: none;
+          transition: 0.4s ease-in-out;
+          background-image: linear-gradient(163deg, #00ff75 0%, #3700ff 100%);
+          color: rgb(0, 0, 0);
+          font-size: 1.4rem;
+        }
+        .button2 {
+          cursor: pointer;
+          border-radius: 5px;
+          border: none;
+          outline: none;
+          transition: 0.4s ease-in-out;
+          background-image: linear-gradient(163deg, #00ff75 0%, #3700ff 100%);
+          color: rgb(0, 0, 0);
+          font-size: 1.4rem;
+        }
+
+        .button1:hover {
+          background-image: linear-gradient(163deg, #00642f 0%, #13034b 100%);
+          color: rgb(0, 255, 200);
+        }
+        .button2:hover {
+          background-image: linear-gradient(163deg, #00642f 0%, #13034b 100%);
+          color: rgb(0, 255, 200);
+        }
+      }
+      .button3 {
+        margin-bottom: 0.5em;
+        cursor: pointer;
+        border-radius: 5px;
+        height: auto;
+        border: none;
+        outline: none;
+        transition: 0.4s ease-in-out;
+        background-image: linear-gradient(163deg, #00ff75 0%, #3700ff 100%);
+        color: rgb(0, 0, 0);
+        font-size: 1.4rem;
+        padding: 6px 0;
+      }
+      .button3:hover {
+        background-image: linear-gradient(163deg, #a00000fa 0%, #d10050 100%);
+        color: rgb(255, 255, 255);
+      }
+
+      .wrapper_button-social {
+        .button_social {
+          height: 28px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          cursor: pointer;
+          margin-right: 0.5em;
+          border: none;
+          outline: none;
+          transition: 0.4s ease-in-out;
+          background-image: linear-gradient(163deg, #7eae95 10%, #984461 100%);
+          color: rgb(0, 0, 0);
+          font-size: 1.4rem;
+          .title_button {
+            font-size: 1.4rem;
+          }
+        }
+        .button_social:hover {
+          background-image: linear-gradient(163deg, #00642f 0%, #13034b 100%);
+          color: rgb(0, 255, 200);
+        }
+      }
+    }
+  }
+}
+.card:hover {
+  box-shadow: 0px 0px 30px 1px rgba(0, 255, 117, 0.3);
+}
+.card2:hover {
+  transform: scale(0.98);
+  border-radius: 20px;
 }

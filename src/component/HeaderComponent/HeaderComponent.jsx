@@ -23,245 +23,229 @@ import { getCartByUserId } from '~/service/OrderService';
 const cx = classNames.bind(styles);
 
 function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
-    const [loading, setLoading] = useState(false);
-    const user = useSelector((state) => state.user);
-    const cart = useSelector((state) => state.cart);
-    const [search, setSearch] = useState('');
-    const initialLoad = useRef(true);
-    const [hasFetchedCartData, setHasFetchedCartData] = useState(false); // kiểm tra đã useEffect hay chưa
-    const location = useLocation();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const user = useSelector((state) => state.user);
+  const cart = useSelector((state) => state.cart);
+  const [search, setSearch] = useState('');
+  // kiểm tra đã useEffect hay chưa
+  const [hasFetchedCartData, setHasFetchedCartData] = useState(false);
+  const location = useLocation();
 
-    const handleNavigate = () => {
-        navigate('/sign-in');
-    };
+  const userId = user?.id;
 
-    // Trong bất kỳ component nào bạn muốn kiểm tra trạng thái đăng nhập
-    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+  const handleNavigate = () => {
+    navigate('/sign-in');
+  };
 
-    const userId = user?.id;
+  useEffect(() => {
+    let mounted = true;
 
-    useEffect(() => {
-        let mounted = true;
+    if (userId && mounted && !hasFetchedCartData) {
+      getCartByUserId(userId)
+        .then((data) => {
+          if (mounted) {
+            data.forEach((cart) => {
+              const cartItems = cart.cartItems;
 
-        if (isLoggedIn && userId && mounted && !hasFetchedCartData) {
-            getCartByUserId(userId)
-                .then((data) => {
-                    if (mounted) {
-                        data.forEach((cart) => {
-                            const cartItems = cart.cartItems;
-
-                            if (Array.isArray(cartItems) && cartItems.length > 0) {
-                                cartItems.forEach((item) => {
-                                    const cartItem = {
-                                        name: item.name,
-                                        amount: item.amount,
-                                        image: item.image,
-                                        price: item.price,
-                                        product: item.product,
-                                        color: item.color,
-                                        discount: item.discount,
-                                        type: item.type,
-                                    };
-                                    dispatch(addProductInCart({ cartItem }));
-                                });
-                            }
-                        });
-                        setHasFetchedCartData(true); // Đã thực hiện useEffect
-                        localStorage.removeItem('isLoggedIn');
-                    }
-                })
-                .catch((error) => {
-                    console.error(error);
+              if (Array.isArray(cartItems) && cartItems.length > 0) {
+                cartItems.forEach((item) => {
+                  const cartItem = {
+                    name: item.name,
+                    amount: item.amount,
+                    image: item.image,
+                    price: item.price,
+                    product: item.product,
+                    color: item.color,
+                    discount: item.discount,
+                    type: item.type,
+                  };
+                  dispatch(addProductInCart({ cartItem }));
                 });
-        }
+              }
+            });
+            // Đã thực hiện useEffect
+            setHasFetchedCartData(true);
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
 
-        return () => {
-            mounted = false;
-        };
-    }, [userId, dispatch, isLoggedIn, hasFetchedCartData]);
-
-    const handleLogOut = async () => {
-        setLoading(true);
-        await UserService.logOutUser();
-        // Xóa các token từ local storage sau khi đăng xuất thành công
-        localStorage.removeItem('access_token'); // xóa token thì mới dc
-        localStorage.removeItem('refresh_token');
-        localStorage.removeItem('isLoggedIn');
-
-        dispatch(resetUser());
-        dispatch(RESET_CART_DATA());
-        setLoading(false);
+    return () => {
+      mounted = false;
     };
+  }, [userId, dispatch, hasFetchedCartData]);
 
-    const onSearch = (e) => {
-        setSearch(e.target.value);
-        dispatch(searchProduct(e.target.value));
-    };
+  const handleLogOut = async () => {
+    setLoading(true);
+    await UserService.logOutUser();
+    // Xóa các token từ local storage sau khi đăng xuất thành công
+    localStorage.removeItem('access_token'); // xóa token thì mới dc
+    localStorage.removeItem('refresh_token');
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('commentsSocket');
 
-    // google
+    dispatch(resetUser());
+    dispatch(RESET_CART_DATA());
+    setLoading(false);
+  };
 
-    const content = (
-        <div className={cx('content-header')}>
-            <p
-                onClick={() => {
-                    navigate('/profile-user');
-                }}
-            >
-                Thông tin người dùng
-            </p>
-            <p
-                onClick={() => {
-                    navigate('/my-order');
-                }}
-            >
-                Đơn hàng của tôi
-            </p>
-            {user?.isAdmin && (
-                <p
-                    onClick={() => {
-                        navigate('/system/admin');
-                    }}
-                >
-                    Quản lí hệ thống
-                </p>
-            )}
-            <p
-                onClick={handleLogOut}
-                style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
-            >
-                Log out
-                <FontAwesomeIcon icon={faRightFromBracket} />
-            </p>
-        </div>
-    );
+  const onSearch = (e) => {
+    setSearch(e.target.value);
+    dispatch(searchProduct(e.target.value));
+  };
 
-    return (
-        <div className={cx('container_header')}>
-            <div className={cx('wrapper_header')}>
-                <Row className={cx('wrapper_row')}>
-                    <Col span={6} className={cx('row_left')}>
-                        <div>
-                            <a href="/" className={cx('row_left-home')}>
-                                <img style={{ width: '20%', height: '100%' }} src={logo_shop} alt="logo" />
-                            </a>
-                        </div>
-                    </Col>
-                    {!isHiddenSearch && (
-                        <Col span={8}>
-                            <InputSearch onChange={onSearch} />
-                        </Col>
-                    )}
-                    <Col span={10}>
-                        <div className={cx('row_right')}>
-                            <div className={cx('row_right-list')}>
-                                <img
-                                    src={location.pathname === '/' ? homeBold : logo_home}
-                                    alt="home"
-                                    style={{ width: '24px', height: '24px' }}
-                                />
-                                <span
-                                    style={{
-                                        fontSize: '14px',
-                                        color: 'rgb(128, 128, 137)',
-                                        paddingLeft: '5px',
-                                    }}
-                                >
-                                    {location.pathname === '/' ? (
-                                        <a
-                                            href="/"
-                                            style={{ textDecoration: 'none', color: '#0a68ff', fontWeight: 'bold' }}
-                                        >
-                                            Trang chủ
-                                        </a>
-                                    ) : (
-                                        <a href="/" style={{ textDecoration: 'none', color: '#999' }}>
-                                            Trang chủ
-                                        </a>
-                                    )}
-                                </span>
-                            </div>
-                            <div
-                                className={cx('row_right-list')}
-                                style={{ width: '21%', justifyContent: 'space-between', display: 'flex' }}
-                            >
-                                <img src={logo_astra} alt="astra" style={{ width: '24px', height: '24px' }} />
-                                <span
-                                    style={{
-                                        fontSize: '14px',
-                                        color: 'rgb(128, 128, 137)',
-                                        paddingLeft: '5px',
-                                    }}
-                                >
-                                    Bán hàng
-                                </span>
-                            </div>
-                            {user?.access_token ? (
-                                <>
-                                    <Popover content={content} trigger="hover">
-                                        <div style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
-                                            {user?.nickname || user?.name}
-                                        </div>
-                                    </Popover>
-                                </>
-                            ) : (
-                                <div className={cx('row_right-list')} onClick={handleNavigate}>
-                                    <img src={logo_user} alt="user" style={{ width: '24px', height: '24px' }} />
-                                    <span style={{ fontSize: '14px', color: 'rgb(128, 128, 137)', paddingLeft: '5px' }}>
-                                        Đăng nhập
-                                    </span>
-                                </div>
-                            )}
-                            {!isHiddenCart && (
-                                <div
-                                    className={cx('row_right-list')}
-                                    onClick={() => navigate('/cart')}
-                                    style={{ cursor: 'pointer' }}
-                                >
-                                    {location.pathname === '/cart' ? (
-                                        <div>
-                                            <span
-                                                style={{
-                                                    fontSize: '14px',
-                                                    fontWeight: 'bold',
-                                                    color: '#0a68ff',
-                                                    paddingRight: '5px',
-                                                }}
-                                            >
-                                                Giỏ hàng
-                                            </span>
-                                            <Badge count={cart?.cartItems?.length} size="small">
-                                                <ShoppingCartOutlined
-                                                    style={{ width: '24px', height: '24px', color: '#0a68ff' }}
-                                                />
-                                            </Badge>
-                                        </div>
-                                    ) : (
-                                        <div>
-                                            <span
-                                                style={{
-                                                    fontSize: '14px',
-                                                    color: 'rgb(128, 128, 137)',
+  // google
 
-                                                    paddingRight: '5px',
-                                                }}
-                                            >
-                                                Giỏ hàng
-                                            </span>
-                                            <Badge count={cart?.cartItems?.length} size="small">
-                                                <ShoppingCartOutlined style={{ width: '24px', height: '24px' }} />
-                                            </Badge>
-                                        </div>
-                                    )}
-                                </div>
-                            )}
-                        </div>
-                    </Col>
-                </Row>
+  const content = (
+    <div className={cx('content-header')}>
+      <p
+        onClick={() => {
+          navigate('/profile-user');
+        }}
+      >
+        Thông tin người dùng
+      </p>
+      <p
+        onClick={() => {
+          navigate('/my-order');
+        }}
+      >
+        Đơn hàng của tôi
+      </p>
+      {user?.isAdmin && (
+        <p
+          onClick={() => {
+            navigate('/system/admin');
+          }}
+        >
+          Quản lí hệ thống
+        </p>
+      )}
+      <p onClick={handleLogOut} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        Log out
+        <FontAwesomeIcon icon={faRightFromBracket} />
+      </p>
+    </div>
+  );
+
+  return (
+    <div className={cx('container_header')}>
+      <div className={cx('wrapper_header')}>
+        <Row className={cx('wrapper_row')}>
+          <Col span={6} className={cx('row_left')}>
+            <div>
+              <a href="/" className={cx('row_left-home')}>
+                <img style={{ width: '20%', height: '100%' }} src={logo_shop} alt="logo" />
+              </a>
             </div>
-        </div>
-    );
+          </Col>
+          {!isHiddenSearch && (
+            <Col span={8}>
+              <InputSearch onChange={onSearch} />
+            </Col>
+          )}
+          <Col span={10}>
+            <div className={cx('row_right')}>
+              <div className={cx('row_right-list')}>
+                <img
+                  src={location.pathname === '/' ? homeBold : logo_home}
+                  alt="home"
+                  style={{ width: '24px', height: '24px' }}
+                />
+                <span
+                  style={{
+                    fontSize: '14px',
+                    color: 'rgb(128, 128, 137)',
+                    paddingLeft: '5px',
+                  }}
+                >
+                  {location.pathname === '/' ? (
+                    <a href="/" style={{ textDecoration: 'none', color: '#0a68ff', fontWeight: 'bold' }}>
+                      Trang chủ
+                    </a>
+                  ) : (
+                    <a href="/" style={{ textDecoration: 'none', color: '#999' }}>
+                      Trang chủ
+                    </a>
+                  )}
+                </span>
+              </div>
+              <div
+                className={cx('row_right-list')}
+                style={{ width: '21%', justifyContent: 'space-between', display: 'flex' }}
+              >
+                <img src={logo_astra} alt="astra" style={{ width: '24px', height: '24px' }} />
+                <span
+                  style={{
+                    fontSize: '14px',
+                    color: 'rgb(128, 128, 137)',
+                    paddingLeft: '5px',
+                  }}
+                >
+                  Bán hàng
+                </span>
+              </div>
+              {user?.access_token ? (
+                <>
+                  <Popover content={content} trigger="hover">
+                    <div style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+                      {user?.nickname || user?.name}
+                    </div>
+                  </Popover>
+                </>
+              ) : (
+                <div className={cx('row_right-list')} onClick={handleNavigate}>
+                  <img src={logo_user} alt="user" style={{ width: '24px', height: '24px' }} />
+                  <span style={{ fontSize: '14px', color: 'rgb(128, 128, 137)', paddingLeft: '5px' }}>Đăng nhập</span>
+                </div>
+              )}
+              {!isHiddenCart && (
+                <div className={cx('row_right-list')} onClick={() => navigate('/cart')} style={{ cursor: 'pointer' }}>
+                  {location.pathname === '/cart' ? (
+                    <div>
+                      <span
+                        style={{
+                          fontSize: '14px',
+                          fontWeight: 'bold',
+                          color: '#0a68ff',
+                          paddingRight: '5px',
+                        }}
+                      >
+                        Giỏ hàng
+                      </span>
+                      <Badge count={cart?.cartItems?.length} size="small">
+                        <ShoppingCartOutlined style={{ width: '24px', height: '24px', color: '#0a68ff' }} />
+                      </Badge>
+                    </div>
+                  ) : (
+                    <div>
+                      <span
+                        style={{
+                          fontSize: '14px',
+                          color: 'rgb(128, 128, 137)',
+
+                          paddingRight: '5px',
+                        }}
+                      >
+                        Giỏ hàng
+                      </span>
+                      <Badge count={cart?.cartItems?.length} size="small">
+                        <ShoppingCartOutlined style={{ width: '24px', height: '24px' }} />
+                      </Badge>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </Col>
+        </Row>
+      </div>
+    </div>
+  );
 }
 
 export default HeaderComponent;
