@@ -106,3 +106,8 @@ export const getAllVotes = async () => {
   const res = await axios.get(`${process.env.REACT_APP_API_URL}/product/get-all-votes`);
   return res.data;
 };
+
+export const getVoteDetail = async (productId) => {
+  const res = await axios.get(`${process.env.REACT_APP_API_URL}/product/get-votes/${productId}`);
+  return res.data;
+};

@@ -1,25 +1,28 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import styles from './CartPage.module.scss';
 import classNames from 'classnames/bind';
+
 import { Row, Col, Checkbox, InputNumber, message } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLocationDot, faTrash } from '@fortawesome/free-solid-svg-icons';
-import img_right_arrow from '~/assets/img_Global/right_arrow.png';
-import img_oto from '~/assets/img_Global/oto.png';
-import cart_null from '~/assets/img_Global/cart-null.png';
-import chart from '~/assets/img_Global/chart.png';
-import ButtonComponent from '~/component/ButtonComponent/Buttoncomponent';
 import { useDispatch, useSelector } from 'react-redux';
 import { removeProductInCart, removeAllProductInCart } from '~/redux/slide/cartSlide';
 import { convertPrice } from '~/utils';
-import ModalComponent from '~/component/ModalComponent/ModalComponent';
 import { useNavigate } from 'react-router-dom';
 import { deleteCart, findCart, findManyCart, deleteManyCart } from '~/service/OrderService';
-import { getCartByUserId } from '~/service/OrderService';
 import { Helmet } from 'react-helmet';
-import { useMutationHook } from '~/hook/useMutationHook';
+
+import ButtonComponent from '~/component/ButtonComponent/Buttoncomponent';
+import ModalComponent from '~/component/ModalComponent/ModalComponent';
 
 const cx = classNames.bind(styles);
+
+const arrImageWeb = {
+  img_right_arrow: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722415609/bnhfdz5rrple0tfmdcyt.png',
+  img_oto: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722421968/q6jfciympr7krkqabqgn.png',
+  cart_null: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722421969/zbulzqthbd0lrng3gahd.png',
+  chart: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722421968/lpcx0lbtcygr2quwhljz.png',
+};
 
 const CartPage = () => {
   const cart = useSelector((state) => state.cart);
@@ -216,7 +219,11 @@ const CartPage = () => {
           <span>
             <FontAwesomeIcon icon={faLocationDot} style={{ color: '#999', marginRight: '3px' }} />
             <span style={{ fontSize: '13px', color: '#808089' }}>Giao đến:</span>
-            <u> {user?.address || user?.city}</u>
+            {user?.address && user?.city ? (
+              <span> {user?.address || user?.city}</span>
+            ) : (
+              <span className={cx('span-title')}>Thêm địa chỉ</span>
+            )}
           </span>
         </div>
         <div className={cx('create-row')}>
@@ -245,7 +252,7 @@ const CartPage = () => {
                             <div>
                               <Checkbox /> Type
                             </div>
-                            <img src={img_right_arrow} alt="right" width={18} height={18} />
+                            <img loading="lazy" src={arrImageWeb.img_right_arrow} alt="right" width={18} height={18} />
                             <div>{carts?.type || 'Đồ'}</div>
                           </div>
                           <div className={cx('wrapper_content')}>
@@ -261,7 +268,7 @@ const CartPage = () => {
                               <Col sm={10}>
                                 <div className={cx('img-content')}>
                                   <div>
-                                    <img alt="" width={80} height={80} src={carts?.image} />
+                                    <img loading="lazy" alt="" width={80} height={80} src={carts?.image} />
                                   </div>
                                   <div className={cx('img-title')}>
                                     <span className={cx('title_content')}>
@@ -281,7 +288,13 @@ const CartPage = () => {
                                           alignItems: 'center',
                                         }}
                                       >
-                                        <img alt="oto" src={img_oto} width={32} height={16} />
+                                        <img
+                                          loading="lazy"
+                                          alt="oto"
+                                          src={arrImageWeb.img_oto}
+                                          width={32}
+                                          height={16}
+                                        />
                                         <span style={{ paddingLeft: '2%' }}>Giao hàng siêu tốc</span>
                                       </div>
                                     </span>
@@ -301,7 +314,14 @@ const CartPage = () => {
                                   <sup>
                                     <u>đ</u>
                                   </sup>
-                                  <img alt="" src={chart} width={20} height={20} style={{ padding: '0 1%' }} />
+                                  <img
+                                    loading="lazy"
+                                    alt=""
+                                    src={arrImageWeb.chart}
+                                    width={20}
+                                    height={20}
+                                    style={{ padding: '0 1%' }}
+                                  />
                                   <div
                                     style={{
                                       fontSize: '11px',
@@ -478,7 +498,7 @@ const CartPage = () => {
             </Row>
           ) : (
             <div className={cx('cart_null')}>
-              <img alt="anh" src={cart_null} width={160} height={160} />
+              <img loading="lazy" alt="anh" src={arrImageWeb.cart_null} width={160} height={160} />
               <span>Giỏ hàng trống</span>
               <p>Bạn tham khảo thêm các sản phẩm được Shop MD gợi ý bên dưới nhé!</p>
             </div>

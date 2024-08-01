@@ -1,0 +1,116 @@
+.container_forgot {
+  background-image: url('../../assets/img_Global/bg1.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 15px;
+  .wrapper_forgot {
+    width: 670px;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+
+    .form_title {
+      background-image: url('../../assets/img_Global/bg-forgot.jpg');
+      display: flex;
+      flex-wrap: wrap;
+      flex-direction: column;
+      align-items: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center;
+      padding: 70px 15px 74px;
+      width: 100%;
+      position: relative;
+      z-index: 1;
+      .content {
+        font-size: 30px;
+        color: #fff;
+        text-transform: uppercase;
+        line-height: 1.2;
+        text-align: center;
+      }
+    }
+  }
+  .wrapper_input {
+    padding: 50px;
+    .input {
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      span {
+        padding-right: 10px;
+        font-size: 15px;
+        color: gray;
+        line-height: 1.2;
+        text-align: right;
+      }
+      .input-field {
+        font-size: 14px;
+        width: 300px;
+        height: 20px;
+        border: none;
+        background-color: transparent;
+        border-bottom: 1px solid #ccc;
+        outline: none;
+        color: #fff;
+      }
+      .input-field:focus {
+        border-bottom: 1px solid #37da85;
+      }
+    }
+    .note {
+      padding: 10px;
+      span {
+        font-size: 14px;
+        color: brown;
+      }
+    }
+    .wrapper_btn {
+      padding: 10px;
+      .btn {
+        width: 100%;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0 20px;
+        min-width: 160px;
+        height: 50px;
+        background-color: #57b846;
+        border-radius: 25px;
+        font-family: Quicksand;
+        font-size: 16px;
+        color: #fff;
+        line-height: 1.2;
+        transition: all 0.4s;
+      }
+      .btn:hover {
+        background-color: #111714;
+      }
+    }
+    .wrapper_home {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      span {
+        text-decoration: dashed;
+        margin-top: 10px;
+        color: #007bff;
+        padding-left: 10px;
+        cursor: pointer;
+      }
+      span:hover {
+        color: #053d75;
+      }
+    }
+  }
+}

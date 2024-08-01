@@ -39,7 +39,7 @@
   max-width: 100%;
   width: 100%;
   min-height: 120vh;
-  background-image: url('../../assets/img_Global/bg1.jpg');
+  background-image: url('https://res.cloudinary.com/ds3jorj8m/image/upload/v1722427425/pp0upvw8ryymaehtv4vt.webp');
   background-position: center;
   background-size: cover;
   filter: blur(5px);
@@ -57,7 +57,7 @@
   max-width: 100%;
   width: 75%;
   transform: translate(-50%, -50%);
-  background-image: url('../../assets/img_Global/bg1.jpg');
+  background-image: url('https://res.cloudinary.com/ds3jorj8m/image/upload/v1722427425/pp0upvw8ryymaehtv4vt.webp');
   background-position: center;
   background-size: cover;
   display: flex;
@@ -93,6 +93,9 @@
 
   .wrapper_icon {
     height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     div {
       padding: 0 10px;
       border-radius: 4px;
@@ -330,4 +333,13 @@
 .card2:hover {
   transform: scale(0.98);
   border-radius: 20px;
+}
+
+.container_dropdown {
+  height: auto;
+  max-width: 100%;
+  .wrapper_dropdown {
+    width: 70px;
+    height: auto;
+  }
 }

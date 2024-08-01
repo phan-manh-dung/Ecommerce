@@ -1,61 +1,69 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState, useRef } from 'react';
+import { Helmet } from 'react-helmet';
+import { useDispatch, useSelector } from 'react-redux';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import styles from './ProductDetail.module.scss';
 import classNames from 'classnames/bind';
-import io from 'socket.io-client';
-import moment from 'moment';
 
-import img_right_arrow from '~/assets/img_Global/right_arrow.png';
-import img_left_arrow from '~/assets/img_Global/img_left_arrow.png';
-import img_pay from '~/assets/img_Global/pay.png';
-import like from '~/assets/img_Global/like.png';
-import cmt from '~/assets/img_Global/comment.png';
-import binhluan from '~/assets/img_Global/binhluan.png';
-import chiase from '~/assets/img_Global/chiase.png';
-
-import img1 from '~/assets/img_Global/slide10.jpg';
-import userProfile from '~/assets/img_Global/user_profile.png';
-import User1 from '~/assets/img_products/dongu1.jpg';
-import the from '~/assets/img_category/uudaithevi.jpg';
-import offical from '~/assets/img_Global/offical.jpg';
-import img111 from '~/assets/img_Global/111.png';
-import img222 from '~/assets/img_Global/222.png';
-import img333 from '~/assets/img_Global/333.png';
-import black_friday from '~/assets/img_Global/black_fraiday.jpg';
-import robot from '~/assets/img_Global/robot.png';
-import tay from '~/assets/img_Global/chaptay.png';
-import chamthan from '~/assets/img_Global/chamthan.png';
-import logoshop from '~/assets/img_Global/logoshop.png';
-import { Col, InputNumber, Rate, Row, Upload } from 'antd';
-import { MinusOutlined, PlusOutlined, StarFilled } from '@ant-design/icons';
 import ButtonComponent from '~/component/ButtonComponent/Buttoncomponent';
+import ModalComponent from '../ModalComponent/ModalComponent';
+import AddressComponent from '../AddressComponent/AddressComponent';
+import Loading from '../LoadingComponent/Loading';
+
 import * as ProductService from '~/service/ProductService';
 import * as UserService from '~/service/UserService';
 import * as OrderService from '~/service/OrderService';
 import { createCart } from '~/service/OrderService';
-import { useQuery } from '@tanstack/react-query';
-import Loading from '../LoadingComponent/Loading';
-import { useDispatch, useSelector } from 'react-redux';
-import { useLocation, useNavigate } from 'react-router-dom';
+
+import { Col, InputNumber, Rate, Row, Upload } from 'antd';
+import { message } from 'antd';
+import TextArea from 'antd/es/input/TextArea';
+import { Button } from 'antd';
+import { MinusOutlined, PlusOutlined, StarFilled } from '@ant-design/icons';
+
 import { addProductInCart } from '~/redux/slide/cartSlide';
 import { convertPrice, getBase64 } from '~/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronRight, faComment, faPlus, faStar } from '@fortawesome/free-solid-svg-icons';
-import ModalComponent from '../ModalComponent/ModalComponent';
-import AddressComponent from '../AddressComponent/AddressComponent';
-import { Helmet } from 'react-helmet';
-import { message } from 'antd';
-import TextArea from 'antd/es/input/TextArea';
-import { Button } from 'antd';
+import io from 'socket.io-client';
+import moment from 'moment';
+
 const cx = classNames.bind(styles);
 const socket = io('http://localhost:4000');
+
+const arrImageWeb = {
+  img_right_arrow: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722415609/bnhfdz5rrple0tfmdcyt.png',
+  img_left_arrow: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722417841/uu9duh770yoc4ig0byww.png',
+  img_pay: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722417842/xb2wzpqscbqm51afyyos.png',
+  like: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722417841/rzpugtjvwx5drqrnmnmv.png',
+  cmt: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722417841/k7o7nwfirw7yrbygykqx.png',
+  binhluan: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722417841/lofgnpj6vvt1d9huk64s.png',
+  chiase: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722417841/jepgvdjstv41d1we8g67.png',
+  img1: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722417844/zhpxvgbqs8xiywbhvp96.webp',
+  userProfile: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722417841/zjkrkm4wfjluknxugy8d.png',
+  user1: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722417843/hzdn3hzolsotqo0fdd3j.webp',
+  the: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722417843/p5njonknlfpnbhvgmh3h.webp',
+  offical: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722417841/flrco2a3n8aa7zhvuumq.webp',
+  img111: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722417841/aorzagqcwrdag6ygs4og.png',
+  img222: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722417841/rop5trjorkqstk89eb94.png',
+  img333: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722417841/jnne0vz5iuvfgnuarofg.png',
+  black_friday: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722417842/dxirmqb3rsx1z4d5ewdy.jpg',
+  robot: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722417843/dkdrxdctprlsrwzvl3e2.png',
+  tay: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722417843/fefocxoectlhocjcpwee.png',
+  chamthan: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722417844/ls7bknzubwvzcjbr9jmv.png',
+  logoshop: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722416901/rheqtm4vgtw11rwrfij0.jpg',
+};
 
 const ProductDetailComponent = ({ idProduct }) => {
   const [numProduct, setNumProduct] = useState(1);
   const user = useSelector((state) => state.user);
   const cart = useSelector((state) => state.cart);
   const navigate = useNavigate();
-  const location = useLocation(); // lấy thông tin về đường dẫn hiện tại
+  const location = useLocation();
   const dispatch = useDispatch();
+  // tham số cho dom
+  const reviewSectionRef = useRef(null);
   const [startIndex, setStartIndex] = useState(0);
   const imagesToShow = 6;
   const [openSystem, setOpenSystem] = useState(false);
@@ -83,6 +91,13 @@ const ProductDetailComponent = ({ idProduct }) => {
 
   const onChange = (value) => {
     setNumProduct(Number(value));
+  };
+
+  // cuộn xuống phần đánh giá
+  const handleRateClick = () => {
+    if (reviewSectionRef.current) {
+      reviewSectionRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   useEffect(() => {
@@ -281,28 +296,29 @@ const ProductDetailComponent = ({ idProduct }) => {
   }, [userId]);
 
   // lấy dữ liệu từ local và db khi tải lại
+  const fetchComments = async () => {
+    try {
+      if (productId) {
+        const response = await ProductService.getVoteDetail(productId);
+        if (response.status === 'OK') {
+          setCommentsDatabase(response?.data);
+        }
+      } else {
+        console.log('wating for product id');
+      }
+    } catch (error) {
+      console.error('Error fetching comments:', error);
+    }
+  };
+
   useEffect(() => {
     const savedComments = JSON.parse(localStorage.getItem('commentsSocket')) || [];
     setCommentsSocket(savedComments);
 
     if (savedComments.length === 0) {
-      const fetchComments = async () => {
-        try {
-          const response = await ProductService.getAllVotes();
-          if (response.status === 'OK') {
-            setCommentsDatabase(response?.data);
-          }
-        } catch (error) {
-          console.error('Error fetching comments:', error);
-        }
-      };
-
       fetchComments();
     }
   }, [productId]);
-
-  console.log('commentDatabase', commentsDatabase);
-  console.log('productId', productId);
 
   const handleNavigateType = (type) => {
     navigate(
@@ -387,7 +403,7 @@ const ProductDetailComponent = ({ idProduct }) => {
             <div className={cx('type-home')}>
               <a href="/">Trang chủ</a>
             </div>
-            <img alt="right_arrow" src={img_right_arrow} width={18} height={18} />
+            <img loading="lazy" alt="right_arrow" src={arrImageWeb.img_right_arrow} width={18} height={18} />
             <span className={cx('type-title')}>
               <span
                 onClick={() => {
@@ -397,7 +413,7 @@ const ProductDetailComponent = ({ idProduct }) => {
                 {productsDetail?.type}
               </span>
             </span>
-            <img alt="right_arrow" src={img_right_arrow} width={18} height={18} />
+            <img loading="lazy" alt="right_arrow" src={arrImageWeb.img_right_arrow} width={18} height={18} />
             <span className={cx('type-title')}>{productsDetail?.name}</span>
           </div>
           <div className={cx('wrapper_row')}>
@@ -407,39 +423,51 @@ const ProductDetailComponent = ({ idProduct }) => {
                   <Col xs={0} sm={12}>
                     <div className={cx('user_left')}>
                       <div className={cx('left')}>
-                        <img alt="donu1" src={productsDetail?.image} width={368} height={368} />
+                        <img loading="lazy" alt="donu1" src={productsDetail?.image} width={368} height={368} />
                       </div>
 
                       <div>
                         <div className={cx('img_list')}>
                           {productsDetail?.additionalImages?.map((current, index) => (
                             <div key={index} className={cx('img')}>
-                              <img alt="anh" src={current} width={45} height={45} />
+                              <img loading="lazy" alt="anh" src={current} width={45} height={45} />
                             </div>
                           ))}
                           {startIndex > 0 && (
                             <div onClick={showPreviousImages} className={cx('button_right')}>
                               <div className={cx('button')}>
-                                <img alt="left_arrow" src={img_left_arrow} width={20} height={20} />
+                                <img
+                                  loading="lazy"
+                                  alt="left_arrow"
+                                  src={arrImageWeb.img_left_arrow}
+                                  width={20}
+                                  height={20}
+                                />
                               </div>
                             </div>
                           )}
                           {startIndex + imagesToShow < productsDetail?.additionalImages.length && (
                             <div onClick={showNextImages} className={cx('button_right')}>
                               <div className={cx('button')}>
-                                <img alt="right_arrow" src={img_right_arrow} width={20} height={20} />
+                                <img
+                                  loading="lazy"
+                                  alt="right_arrow"
+                                  src={arrImageWeb.img_right_arrow}
+                                  width={20}
+                                  height={20}
+                                />
                               </div>
                             </div>
                           )}
                         </div>
                       </div>
                       <div className={cx('img_bottom')}>
-                        <img alt="img" src={img1} width={368} height={123} />
+                        <img loading="lazy" alt="img" src={arrImageWeb.img1} width={368} height={123} />
                       </div>
                     </div>
                     <div className={cx('img-robot')}>
                       <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <img alt="img" src={robot} width={24} height={24} />
+                        <img loading="lazy" alt="img" src={arrImageWeb.robot} width={24} height={24} />
                         <span style={{ paddingLeft: '10px', color: '#999' }}>Xem thêm</span>
                         <span style={{ paddingLeft: '10px' }}>Ưu điểm & lưu ý của sản phẩm</span>
                       </div>
@@ -458,8 +486,8 @@ const ProductDetailComponent = ({ idProduct }) => {
                               <div style={{ color: 'rgb(13, 92, 182)' }}>{productsDetail?.brand || 'Không có'}</div>
                             </div>
                             <div className={cx('name')}>{productsDetail?.name}</div>
-                            <div className={cx('star')}>
-                              <div className={cx('vote')}>{productsDetail?.rating}</div>
+                            <div onClick={handleRateClick} className={cx('star')}>
+                              <div className={cx('vote')}>{averageRating}</div>
                               {Array(5)
                                 .fill() // diền giá trị cụ thể cụ thể là 5 star
                                 .map((_, index) => (
@@ -510,7 +538,7 @@ const ProductDetailComponent = ({ idProduct }) => {
                                 onClick={() => handleActiveColor('red')}
                               >
                                 <div className={cx('choose')}>
-                                  <img alt="img" src={User1} width={38} height={38} />
+                                  <img loading="lazy" alt="img" src={arrImageWeb.user1} width={38} height={38} />
                                 </div>
                                 <div className={cx('choose_name')}>{productsDetail?.color}</div>
                               </div>
@@ -521,13 +549,13 @@ const ProductDetailComponent = ({ idProduct }) => {
                                 onClick={() => handleActiveColor('blue')}
                               >
                                 <div className={cx('choose')}>
-                                  <img alt="img" src={User1} width={38} height={38} />
+                                  <img loading="lazy" alt="img" src={arrImageWeb.user1} width={38} height={38} />
                                 </div>
                                 <div className={cx('choose_name')}>{productsDetail?.color}</div>
                               </div>
                               <div className={cx('choose_color')}>
                                 <div className={cx('choose')}>
-                                  <img alt="img" src={User1} width={38} height={38} />
+                                  <img loading="lazy" alt="img" src={arrImageWeb.user1} width={38} height={38} />
                                 </div>
                                 <div className={cx('choose_name')}>{productsDetail?.color}</div>
                               </div>
@@ -568,7 +596,14 @@ const ProductDetailComponent = ({ idProduct }) => {
                           <div className={cx('information')}>Dịch vụ bổ sung</div>
                           <div className={cx('pay')}>
                             <div className={cx('pay1')}>
-                              <img style={{ borderRadius: '10px' }} alt="" src={img_pay} width={40} height={40} />
+                              <img
+                                loading="lazy"
+                                style={{ borderRadius: '10px' }}
+                                alt=""
+                                src={arrImageWeb.img_pay}
+                                width={40}
+                                height={40}
+                              />
                               <span style={{ marginLeft: '10px' }}>Mua trước trả sau</span>
                             </div>
                             <div style={{ cursor: 'pointer' }}>
@@ -580,7 +615,14 @@ const ProductDetailComponent = ({ idProduct }) => {
 
                           <div className={cx('pay')} style={{ paddingTop: '4%' }}>
                             <div className={cx('pay1')}>
-                              <img style={{ borderRadius: '10px' }} alt="" src={the} width={40} height={40} />
+                              <img
+                                loading="lazy"
+                                style={{ borderRadius: '10px' }}
+                                alt=""
+                                src={arrImageWeb.the}
+                                width={40}
+                                height={40}
+                              />
                               <span style={{ marginLeft: '10px' }}>Ưu đãi khi thanh toán thẻ</span>
                             </div>
                             <div style={{ cursor: 'pointer' }}>
@@ -596,7 +638,14 @@ const ProductDetailComponent = ({ idProduct }) => {
                         <div className={cx('wrapper_shop')}>
                           <Row>
                             <Col sm={4}>
-                              <img src={logoshop} alt="the" width={40} height={40} style={{ borderRadius: '50%' }} />
+                              <img
+                                loading="lazy"
+                                src={arrImageWeb.logoshop}
+                                alt="the"
+                                width={40}
+                                height={40}
+                                style={{ borderRadius: '50%' }}
+                              />
                             </Col>
                             <Col sm={20}>
                               <div className={cx('name_brand')}>
@@ -608,7 +657,7 @@ const ProductDetailComponent = ({ idProduct }) => {
                                 >
                                   MD
                                 </span>
-                                <img alt="shop" src={offical} width={72} height={20} />
+                                <img loading="lazy" alt="shop" src={arrImageWeb.offical} width={72} height={20} />
                               </div>
                               <div className={cx('register')}>
                                 <div className={cx('follow')}>
@@ -699,7 +748,7 @@ const ProductDetailComponent = ({ idProduct }) => {
                         </div>
                         <div className={cx('wrapper_assured')}>
                           <div className={cx('assured')}>
-                            <img alt="111" src={img111} width={20} height={20} />
+                            <img loading="lazy" alt="111" src={arrImageWeb.img111} width={20} height={20} />
                             <div className={cx('title')}>
                               <strong>Được mở hộp kiểm tra</strong> khi nhận hàng.
                             </div>
@@ -707,7 +756,7 @@ const ProductDetailComponent = ({ idProduct }) => {
                         </div>
                         <div className={cx('wrapper_assured')}>
                           <div className={cx('assured')}>
-                            <img alt="111" src={img222} width={20} height={20} />
+                            <img loading="lazy" alt="111" src={arrImageWeb.img222} width={20} height={20} />
                             <div className={cx('title')}>
                               {' '}
                               <strong>Được hoàn tiền 111%</strong> nếu là hàng giả.
@@ -716,7 +765,7 @@ const ProductDetailComponent = ({ idProduct }) => {
                         </div>
                         <div className={cx('wrapper_assured')}>
                           <div className={cx('assured')}>
-                            <img alt="111" src={img333} width={20} height={20} />
+                            <img loading="lazy" alt="111" src={arrImageWeb.img333} width={20} height={20} />
                             <div className={cx('title')}>
                               <strong>Đổi trả miễn phí trong 7 ngày</strong> nếu sản phẩm lỗi.
                             </div>
@@ -863,7 +912,7 @@ const ProductDetailComponent = ({ idProduct }) => {
                                     <div className={cx('img-grid')}>
                                       {productsDetail?.additionalImages.map((current, index) => (
                                         <div key={index} className={cx('img-img')}>
-                                          <img alt="" src={current} width={40} height={40} />
+                                          <img loading="lazy" alt="" src={current} width={40} height={40} />
                                         </div>
                                       ))}
                                     </div>
@@ -884,9 +933,10 @@ const ProductDetailComponent = ({ idProduct }) => {
                                     <div className={cx('user_avatar')}>
                                       <div>
                                         <img
+                                          loading="lazy"
                                           style={{ margin: '0 8px 0 0' }}
                                           alt=""
-                                          src={userProfile || item?.data?.avatarUser}
+                                          src={arrImageWeb.userProfile || item?.data?.avatarUser}
                                           width={40}
                                           height={40}
                                         />
@@ -899,7 +949,14 @@ const ProductDetailComponent = ({ idProduct }) => {
                                   </div>
                                   <div className={cx('user_info')}>
                                     <div>
-                                      <img style={{ margin: '0 8px 0 0' }} alt="" src={cmt} width={20} height={20} />
+                                      <img
+                                        loading="lazy"
+                                        style={{ margin: '0 8px 0 0' }}
+                                        alt=""
+                                        src={arrImageWeb.cmt}
+                                        width={20}
+                                        height={20}
+                                      />
                                       Đã viết
                                     </div>
                                     <span>0 đánh giá</span>
@@ -912,7 +969,14 @@ const ProductDetailComponent = ({ idProduct }) => {
                                   ></div>
                                   <div className={cx('user_info')}>
                                     <div>
-                                      <img style={{ margin: '0 8px 0 0' }} alt="" src={like} width={20} height={20} />
+                                      <img
+                                        loading="lazy"
+                                        style={{ margin: '0 8px 0 0' }}
+                                        alt=""
+                                        src={arrImageWeb.like}
+                                        width={20}
+                                        height={20}
+                                      />
                                       Đã nhận
                                     </div>
                                     <span>Cảm ơn</span>
@@ -959,7 +1023,7 @@ const ProductDetailComponent = ({ idProduct }) => {
                                   </div>
 
                                   <div className={cx('review_images')}>
-                                    <img alt="" src={item?.data?.images} width={77} height={77} />
+                                    <img loading="lazy" alt="" src={item?.data?.images} width={77} height={77} />
                                   </div>
                                   <div className={cx('create_date')}>
                                     <div className={cx('comment_attribute')}>
@@ -971,16 +1035,16 @@ const ProductDetailComponent = ({ idProduct }) => {
                                   <div className={cx('comment_share')}>
                                     <div className={cx('wrapper_like')}>
                                       <span className={cx('like_span')}>
-                                        <img alt="" src={like} width={24} height={24} />
+                                        <img loading="lazy" alt="" src={arrImageWeb.like} width={24} height={24} />
                                         <span>1</span>
                                       </span>
                                       <span className={cx('reply_span')}>
-                                        <img alt="" src={binhluan} width={24} height={24} />
+                                        <img loading="lazy" alt="" src={arrImageWeb.binhluan} width={24} height={24} />
                                         Bình luận
                                       </span>
                                     </div>
                                     <div className={cx('wrapper_share')}>
-                                      <img alt="" src={chiase} width={24} height={24} />
+                                      <img loading="lazy" alt="" src={arrImageWeb.chiase} width={24} height={24} />
                                       Chia sẻ
                                     </div>
                                   </div>
@@ -990,7 +1054,7 @@ const ProductDetailComponent = ({ idProduct }) => {
                         </div>
 
                         {/* phần show trong database */}
-                        <div>
+                        <div ref={reviewSectionRef}>
                           {showSocket &&
                             Array.isArray(commentsDatabase) &&
                             commentsDatabase.map((item) => (
@@ -1000,9 +1064,10 @@ const ProductDetailComponent = ({ idProduct }) => {
                                     <div className={cx('user_avatar')}>
                                       <div>
                                         <img
+                                          loading="lazy"
                                           style={{ margin: '0 8px 0 0' }}
                                           alt=""
-                                          src={item?.avatarUser || userProfile}
+                                          src={item?.avatarUser || arrImageWeb.userProfile}
                                           width={40}
                                           height={40}
                                         />
@@ -1015,7 +1080,14 @@ const ProductDetailComponent = ({ idProduct }) => {
                                   </div>
                                   <div className={cx('user_info')}>
                                     <div>
-                                      <img style={{ margin: '0 8px 0 0' }} alt="" src={cmt} width={20} height={20} />
+                                      <img
+                                        loading="lazy"
+                                        style={{ margin: '0 8px 0 0' }}
+                                        alt=""
+                                        src={arrImageWeb.cmt}
+                                        width={20}
+                                        height={20}
+                                      />
                                       Đã viết
                                     </div>
                                     <span>0 đánh giá</span>
@@ -1028,7 +1100,14 @@ const ProductDetailComponent = ({ idProduct }) => {
                                   ></div>
                                   <div className={cx('user_info')}>
                                     <div>
-                                      <img style={{ margin: '0 8px 0 0' }} alt="" src={like} width={20} height={20} />
+                                      <img
+                                        loading="lazy"
+                                        style={{ margin: '0 8px 0 0' }}
+                                        alt=""
+                                        src={arrImageWeb.like}
+                                        width={20}
+                                        height={20}
+                                      />
                                       Đã nhận
                                     </div>
                                     <span>Cảm ơn</span>
@@ -1075,7 +1154,7 @@ const ProductDetailComponent = ({ idProduct }) => {
                                   </div>
 
                                   <div className={cx('review_images')}>
-                                    <img alt="" src={item.images} width={77} height={77} />
+                                    <img loading="lazy" alt="" src={item.images} width={77} height={77} />
                                   </div>
                                   <div className={cx('create_date')}>
                                     <div className={cx('comment_attribute')}>
@@ -1087,16 +1166,16 @@ const ProductDetailComponent = ({ idProduct }) => {
                                   <div className={cx('comment_share')}>
                                     <div className={cx('wrapper_like')}>
                                       <span className={cx('like_span')}>
-                                        <img alt="" src={like} width={24} height={24} />
+                                        <img loading="lazy" alt="" src={arrImageWeb.like} width={24} height={24} />
                                         <span>1</span>
                                       </span>
                                       <span className={cx('reply_span')}>
-                                        <img alt="" src={binhluan} width={24} height={24} />
+                                        <img loading="lazy" alt="" src={arrImageWeb.binhluan} width={24} height={24} />
                                         Bình luận
                                       </span>
                                     </div>
                                     <div className={cx('wrapper_share')}>
-                                      <img alt="" src={chiase} width={24} height={24} />
+                                      <img loading="lazy" alt="" src={arrImageWeb.chiase} width={24} height={24} />
                                       Chia sẻ
                                     </div>
                                   </div>
@@ -1130,6 +1209,7 @@ const ProductDetailComponent = ({ idProduct }) => {
                                       <Button>Select Images</Button>
                                       {images.map((image, index) => (
                                         <img
+                                          loading="lazy"
                                           key={index}
                                           src={image}
                                           style={{
@@ -1227,7 +1307,14 @@ const ProductDetailComponent = ({ idProduct }) => {
                       <div className={cx('wrapper_right')}>
                         <div className={cx('right_user')}>
                           <div>
-                            <img alt="" style={{ borderRadius: '50%' }} src={logoshop} width={40} height={40} />
+                            <img
+                              loading="lazy"
+                              alt=""
+                              style={{ borderRadius: '50%' }}
+                              src={arrImageWeb.logoshop}
+                              width={40}
+                              height={40}
+                            />
                           </div>
                           <div className={cx('shop')}>
                             <div className={cx('title_right')} style={{ lineHeight: '1.5', fontWeight: '600' }}>
@@ -1235,7 +1322,7 @@ const ProductDetailComponent = ({ idProduct }) => {
                             </div>
                             <div className={cx('wrap_shop')}>
                               <div className={cx('item')}>
-                                <img alt="" src={offical} width={72} height={20} />
+                                <img loading="lazy" alt="" src={arrImageWeb.offical} width={72} height={20} />
                               </div>
                               <div className={cx('content')}>
                                 4.7 <FontAwesomeIcon icon={faStar} style={{ color: 'rgb(255,203,33)' }} /> |{' '}
@@ -1301,8 +1388,9 @@ const ProductDetailComponent = ({ idProduct }) => {
                     </div>
                     <div className={cx('img_right_footer')}>
                       <img
+                        loading="lazy"
                         alt="black_friday"
-                        src={black_friday}
+                        src={arrImageWeb.black_friday}
                         width={410}
                         height={120}
                         style={{ borderRadius: '6px' }}
@@ -1322,9 +1410,9 @@ const ProductDetailComponent = ({ idProduct }) => {
           </div>
           <ModalComponent title="" footer={null} open={openSystem} onCancel={cancelOpenSystem}>
             <div style={{ display: 'flex', alignItems: 'center' }}>
-              <img alt="" src={chamthan} width={20} height={20} />
+              <img loading="lazy" alt="" src={arrImageWeb.chamthan} width={20} height={20} />
               <p style={{ paddingRight: '10px' }}>Xin lỗi hệ thống chúng tôi đang cập nhật chức năng</p>
-              <img alt="" src={tay} width={20} height={20} />
+              <img loading="lazy" alt="" src={arrImageWeb.tay} width={20} height={20} />
             </div>
           </ModalComponent>
         </div>

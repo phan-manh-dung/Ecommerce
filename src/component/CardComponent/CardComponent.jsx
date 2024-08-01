@@ -11,7 +11,6 @@ import styles from './Card.module.scss';
 import classNames from 'classnames/bind';
 import { useNavigate } from 'react-router-dom';
 import { convertPrice } from '~/utils';
-import { useQuery } from '@tanstack/react-query';
 const cx = classNames.bind(styles);
 
 const CardComponent = (props) => {
@@ -22,16 +21,40 @@ const CardComponent = (props) => {
   useEffect(() => {
     const fetchComments = async () => {
       try {
-        const response = await ProductService.getAllVotes();
-        if (response.status === 'OK') {
-          setCommentsDatabase(response?.data);
+        if (id) {
+          const response = await ProductService.getVoteDetail(id);
+          if (response.status === 'OK') {
+            setCommentsDatabase(response?.data);
+          }
         }
       } catch (error) {
         console.error('Error fetching comments:', error);
       }
     };
     fetchComments();
-  }, []);
+  }, [id]);
+
+  // tính sao trung bình
+  const caculatorRating = () => {
+    try {
+      if (commentsDatabase.length === 0) {
+        return 0;
+      }
+
+      const totalRating = commentsDatabase.reduce((acc, item) => {
+        return acc + (typeof item.rating === 'number' ? item.rating : 0);
+      }, 0);
+
+      const totalComment = commentsDatabase.length;
+      const resultTotal = totalRating / totalComment;
+
+      return resultTotal;
+    } catch (error) {
+      console.error('Error calculating rating:', error);
+      return 0;
+    }
+  };
+  const averageRating = caculatorRating();
 
   const handleDetailsProduct = (id) => {
     // nhận id của homepage
@@ -65,10 +88,22 @@ const CardComponent = (props) => {
             <div className={cx('user_name')}>{name}</div>
             <div className={cx('user_sold')}>
               <div className={cx('wrapper_star')}>
-                {rating ? <span>{rating}</span> : <span className={cx('no_rating')}>0</span>}
-                <StarFilled style={{ fontSize: '10px', color: '#ffce3d', padding: '0px 2px' }} />
+                {Array(5)
+                  .fill()
+                  .map((_, index) => (
+                    <StarFilled
+                      className={cx('star_icon')}
+                      key={index}
+                      style={{
+                        fontSize: '1rem',
+                        color: index < Math.round(averageRating) ? '#ffce3d' : 'gray',
+                        width: 11,
+                        height: 11,
+                      }}
+                    />
+                  ))}
               </div>
-              <div> | Đã bán: {sold || 0}</div>
+              <div style={{ fontSize: '1.2rem' }}> | Đã bán: {sold || 0}</div>
             </div>
 
             <div className={cx('user_wrapper-price')}>

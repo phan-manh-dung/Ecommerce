@@ -29,9 +29,6 @@ const SignInPage = () => {
   // regex  password
   const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
 
-  const handleNavigate = () => {
-    navigate('/sign-in');
-  };
   const onChangeEmail = (event) => {
     const value = event.target.value;
     setName(value);
@@ -76,10 +73,10 @@ const SignInPage = () => {
   const handleSignUp = () => {
     if (name === '' || name === null || name === undefined || name.length < 6) {
       message.error('Tên người dùng trên 6 kí tự !');
-    } else if (!passwordRegex.test(passwordWithoutTones)) {
-      message.error('Mật khẩu không được có dấu');
     } else if (password === '' || password === null || password === undefined || password.length < 6) {
       message.error('Mật khẩu 6 kí tự chữ và số !');
+    } else if (!passwordRegex.test(passwordWithoutTones)) {
+      message.error('Mật khẩu không được có dấu');
     } else if (confirmPassword !== password) {
       message.error('Mật khẩu không khớp !');
     } else {

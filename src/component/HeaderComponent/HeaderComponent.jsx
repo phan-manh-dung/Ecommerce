@@ -1,26 +1,33 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './HeaderComponent.module.scss';
 import classNames from 'classnames/bind';
+
 import { Badge, Col, Popover, Row } from 'antd';
-import InputSearch from '../InputSearch/InputSearch';
-import logo_shop from '../../assets/img_Global/logoshop.png';
-import logo_home from '../../assets/img_Global/home.png';
-import homeBold from '../../assets/img_Global/homebold.png';
-import logo_user from '../../assets/img_Global/user.png';
-import logo_astra from '../../assets/img_Global/astra.png';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import * as UserService from '~/service/UserService';
-import { resetUser } from '~/redux/slide/userSlide';
-import { searchProduct } from '../../redux/slide/productSlide';
+
+import InputSearch from '../InputSearch/InputSearch';
 import { ShoppingCartOutlined } from '@ant-design/icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
-import { addProductInCart } from '~/redux/slide/cartSlide';
-import { RESET_CART_DATA } from '~/redux/slide/cartSlide';
+
+import * as UserService from '~/service/UserService';
 import { getCartByUserId } from '~/service/OrderService';
 
+import { resetUser } from '~/redux/slide/userSlide';
+import { searchProduct } from '../../redux/slide/productSlide';
+import { addProductInCart } from '~/redux/slide/cartSlide';
+import { RESET_CART_DATA } from '~/redux/slide/cartSlide';
+
 const cx = classNames.bind(styles);
+
+const arrImageWeb = {
+  logo_shop: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722416901/rheqtm4vgtw11rwrfij0.jpg',
+  logo_home: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722416900/ujoqzskujxk4x2nekx16.png',
+  homeBold: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722416900/ihwhjf3pleusyukcpvd8.png',
+  logo_user: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722416900/dirveyzqgqtychfk4zcp.png',
+  logo_astra: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722416900/mi6ztrbfouxfljcra9yi.png',
+};
 
 function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
   const dispatch = useDispatch();
@@ -139,7 +146,7 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
           <Col span={6} className={cx('row_left')}>
             <div>
               <a href="/" className={cx('row_left-home')}>
-                <img style={{ width: '20%', height: '100%' }} src={logo_shop} alt="logo" />
+                <img loading="lazy" style={{ width: '20%', height: '100%' }} src={arrImageWeb.logo_shop} alt="logo" />
               </a>
             </div>
           </Col>
@@ -152,7 +159,8 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
             <div className={cx('row_right')}>
               <div className={cx('row_right-list')}>
                 <img
-                  src={location.pathname === '/' ? homeBold : logo_home}
+                  loading="lazy"
+                  src={location.pathname === '/' ? arrImageWeb.homeBold : arrImageWeb.logo_home}
                   alt="home"
                   style={{ width: '24px', height: '24px' }}
                 />
@@ -178,7 +186,12 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
                 className={cx('row_right-list')}
                 style={{ width: '21%', justifyContent: 'space-between', display: 'flex' }}
               >
-                <img src={logo_astra} alt="astra" style={{ width: '24px', height: '24px' }} />
+                <img
+                  loading="lazy"
+                  src={arrImageWeb.logo_astra}
+                  alt="astra"
+                  style={{ width: '24px', height: '24px' }}
+                />
                 <span
                   style={{
                     fontSize: '14px',
@@ -199,7 +212,12 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
                 </>
               ) : (
                 <div className={cx('row_right-list')} onClick={handleNavigate}>
-                  <img src={logo_user} alt="user" style={{ width: '24px', height: '24px' }} />
+                  <img
+                    loading="lazy"
+                    src={arrImageWeb.logo_user}
+                    alt="user"
+                    style={{ width: '24px', height: '24px' }}
+                  />
                   <span style={{ fontSize: '14px', color: 'rgb(128, 128, 137)', paddingLeft: '5px' }}>Đăng nhập</span>
                 </div>
               )}

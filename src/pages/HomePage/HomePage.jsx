@@ -2,114 +2,113 @@ import React, { useEffect, useState } from 'react';
 import styles from './HomePage.module.scss';
 import classNames from 'classnames/bind';
 
-import SliderComponent from '~/component/SliderComponent/SliderComponent';
-import slider1 from '~/assets/img_Global/slide1.png';
-import slider2 from '~/assets/img_Global/slide2.png';
-import slider3 from '~/assets/img_Global/slide3.png';
-import topdeal from '~/assets/img_Global/titletopdeal.png';
-import check from '~/assets/img_Global/check.png';
-import hoantra from '~/assets/img_Global/hoantra.png';
-import box from '~/assets/img_Global/box.png';
-import xetai from '~/assets/img_Global/xetai.png';
-import ghim from '~/assets/img_Global/ghim.png';
-import foryou from '~/assets/img_Global/foryou.png';
-import storebook from '~/assets/img_Global/storebook.png';
-import thethao from '~/assets/img_Global/thethao.png';
-import giadung from '~/assets/img_Global/giadung.png';
-import { Col, Row } from 'antd';
-
-import TypeProductComponent from '~/component/TypeProductComponent/TypeProductComponent';
-import img1 from '../../assets/img_category/img1.png';
-import img2 from '../../assets/img_category/img2.png';
-import img3 from '../../assets/img_category/img3.png';
-import img4 from '../../assets/img_category/img4.png';
-import img5 from '../../assets/img_category/img5.png';
-import img6 from '../../assets/img_category/tuithoitrangnam.jpg';
-import img7 from '../../assets/img_category/donghovatrangsuc.jpg';
-import img8 from '../../assets/img_category/giaydepnam.jpg';
-import img9 from '../../assets/img_category/giaydepnu.jpg';
-import img10 from '../../assets/img_category/hangquocte.jpg';
-import img11 from '../../assets/img_category/thoitrangnu.jpg';
-import img12 from '../../assets/img_category/ngon.jpg';
-import img13 from '../../assets/img_category/nhaccuadoisong.jpg';
-import img14 from '../../assets/img_category/phukienthoitrang.jpg';
-import img15 from '../../assets/img_category/nhacsach.jpg';
-import img16 from '../../assets/img_category/bachhoaonline.jpg';
-import img17 from '../../assets/img_category/dientudienlanh.jpg';
-import img18 from '../../assets/img_category/mayanhquayphim.jpg';
-import img19 from '../../assets/img_category/otoxemay.jpg';
-import img20 from '../../assets/img_category/thethaodangoai.jpg';
-import img21 from '../../assets/img_category/thietbidientu.jpg';
-
-import img22 from '../../assets/img_category/exchange.jpg';
-import img23 from '../../assets/img_category/nowtotvanhanh.jpg';
-import img24 from '../../assets/img_category/giaremoingay.jpg';
-import img25 from '../../assets/img_category/xakho.jpg';
-import img26 from '../../assets/img_category/magiamgia.jpg';
-import img27 from '../../assets/img_category/uudaithevi.jpg';
-import img28 from '../../assets/img_category/dongtien.jpg';
-import img29 from '../../assets/img_category/muatrc.jpg';
-
-import img30 from '../../assets/img_products/product1.jpg';
-import img31 from '../../assets/img_products/product2.jpg';
-import img32 from '../../assets/img_products/product3.jpg';
-import img33 from '../../assets/img_products/product4.jpg';
-import img34 from '../../assets/img_products/product5.jpg';
-import img35 from '../../assets/img_products/product6.jpg';
-import img36 from '../../assets/img_products/product7.jpg';
-import img37 from '../../assets/img_products/product8.jpg';
-import img38 from '../../assets/img_products/product9.jpg';
-
-import img_store from '../../assets/img_Global/store.png';
-import CardComponent from '~/component/CardComponent/CardComponent';
-import AssistantComponent from '~/component/AssistantComponent/AssistantComponent';
-import ButtonComponent from '~/component/ButtonComponent/Buttoncomponent';
 import { useQuery } from '@tanstack/react-query';
-import * as ProductService from '~/service/ProductService';
 import { useSelector } from 'react-redux';
-import Loading from '~/component/LoadingComponent/Loading';
 import { useDebounce } from '~/hooks/useDebounce';
 import { Helmet } from 'react-helmet';
 import { useNavigate } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
-import { message } from 'antd';
+import { Col, message, Row } from 'antd';
+
+import SliderComponent from '~/component/SliderComponent/SliderComponent';
+import TypeProductComponent from '~/component/TypeProductComponent/TypeProductComponent';
+import CardComponent from '~/component/CardComponent/CardComponent';
+import AssistantComponent from '~/component/AssistantComponent/AssistantComponent';
+import ButtonComponent from '~/component/ButtonComponent/Buttoncomponent';
+import Loading from '~/component/LoadingComponent/Loading';
+
+import * as ProductService from '~/service/ProductService';
 
 const cx = classNames.bind(styles);
 
+const arrImageWeb = {
+  slider1: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722411322/sewan65svafcomdxfjzi.webp',
+  slider2: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722411322/a3zv5u7izdkn8gqjxpmu.webp',
+  slider3: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722411184/dhob90iumzvrldnrrrrk.webp',
+  topdeal: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722412424/fcirbx1fdseipbgvl5dd.png',
+  check: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722412423/hsleh83irajvnzoschjx.png',
+  box: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722412423/bwm2ckqwhnmapogyx8nv.png',
+  hoantra: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722412423/owr8bcfrtrwiaey6s1xg.png',
+  xetai: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722412423/cnjnrccyo6zef1lbb3qs.png',
+  ghim: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722412423/nwtkaxsmpracd5zh6laj.png',
+  foryou: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722412423/p56e5ivcymlu6icdyeml.webp',
+  storebook: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722412423/lq96gpd8dkwodwknxwzr.webp',
+  thethao: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722412424/hmqnqqhvyu2vuttsvdyi.webp',
+  giadung: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722412423/hlqcpc2nipnjgzjtaeie.webp',
+  img1: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722413019/m3wujhjuckxt6wq6d4pc.webp',
+  img2: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722413019/ipevdaau4d5ycxxapxoz.webp',
+  img3: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722413019/gjyufisfkw7wi00rk8ww.webp',
+  img4: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722413019/vrtw20pipghl4ghtrakg.webp',
+  img5: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722413019/wtrris6qdt1zepbqkadr.webp',
+  img6: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722413019/jbxyjdjqpn50wemkemlo.webp',
+  img7: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722413019/jqvau6gn5siao6xdzyyn.webp',
+  img8: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722413019/tgvm8aic23i8gjn6tpvj.webp',
+  img9: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722413019/rdit5u1qgtidrqvexa8q.webp',
+  img10: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722413019/mlzrohdp5tjcuxmxnohf.webp',
+  img11: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722413192/m8aowzdcgxfxyywnkirw.webp',
+  img12: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722413192/gdzshwgv0skmhlft52ti.webp',
+  img13: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722413192/m6cslh4fr8gh9x7eq9kj.webp',
+  img14: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722413192/jj2nfgdqoguo5cks235b.webp',
+  img15: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722413192/w8pwa3vtbokf75gkdqin.webp',
+  img16: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722413192/ft95qihvqbzrlciqqupf.webp',
+  img17: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722413192/nwyzxrtm41utexhc7jmv.webp',
+  img18: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722413192/yhjuql9jqsgmudho75ie.webp',
+  img19: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722413192/hmlmsc8iclaizv4ewryg.webp',
+  img20: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722413192/eqv7nowxppwltjo6zynk.webp',
+  img21: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722413223/ozhuc8hkxo114ytwvtbq.webp',
+  img22: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722413533/yomm6entzstrhuddihls.webp',
+  img23: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722413533/ppwbgxyillvzsh9rcs9h.webp',
+  img24: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722413533/cmubewzvkuyencara4h0.webp',
+  img25: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722413533/cmubewzvkuyencara4h0.webp',
+  img26: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722413533/x43udbfakbymrhgb7sw0.webp',
+  img27: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722413534/x5jlmn58ku6zhvgs1fkg.webp',
+  img28: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722413533/nlhl0lrchnwftxdzeq8d.webp',
+  img29: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722413533/luyph3jtyqpue4wlrpnh.webp',
+  img30: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722413534/ipeceuurhnaehseefi1u.webp',
+  img31: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722413534/ipeceuurhnaehseefi1u.webp',
+  img32: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722413533/sp29xtciibx7vov41fep.webp',
+  img33: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722413534/xeqcbbvvxs23fbejwheb.webp',
+  img34: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722413533/dj4fcfyjgw8jnuqqrinh.webp',
+  img35: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722413534/omg9jv74xmmp0behqipl.webp',
+  img36: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722413533/gdlcusvlurouikaigmg5.webp',
+  img37: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722413533/ffzpdjjyrtnohixpogee.webp',
+  img38: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722413533/sp29xtciibx7vov41fep.webp',
+  img_store: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722413533/tiahmyxlwff1zdwmsyhe.webp',
+};
+
 const HomePage = () => {
-  const location = useLocation();
   const navigate = useNavigate();
   const searchProduct = useSelector((state) => state?.product?.search);
   const searchDebounce = useDebounce(searchProduct, 500);
   const [limit, setLimit] = useState(20);
   const [typeProduct, setTypeProduct] = useState([]);
-  const [activeTab, setActiveTab] = useState('tui_thoi_trang');
-  const [activeTabImport, setActiveTabImport] = useState('banh_keo');
+  const [activeTab, setActiveTab] = useState('Túi thời trang');
+  const [activeTabImport, setActiveTabImport] = useState('Bánh kẹo');
   const [activeTabSuggestDay, setActiveTabSuggestDay] = useState('for_you');
 
   const arrImg = [
-    img1,
-    img2,
-    img3,
-    img4,
-    img5,
-    img6,
-    img7,
-    img8,
-    img9,
-    img10,
-    img11,
-    img12,
-    img13,
-    img14,
-    img15,
-    img16,
-    img17,
-    img18,
-    img19,
-    img20,
-    img21,
+    arrImageWeb.img1,
+    arrImageWeb.img2,
+    arrImageWeb.img3,
+    arrImageWeb.img4,
+    arrImageWeb.img5,
+    arrImageWeb.img6,
+    arrImageWeb.img7,
+    arrImageWeb.img8,
+    arrImageWeb.img9,
+    arrImageWeb.img10,
+    arrImageWeb.img11,
+    arrImageWeb.img12,
+    arrImageWeb.img13,
+    arrImageWeb.img14,
+    arrImageWeb.img15,
+    arrImageWeb.img16,
+    arrImageWeb.img17,
+    arrImageWeb.img18,
+    arrImageWeb.img19,
+    arrImageWeb.img20,
+    arrImageWeb.img21,
   ];
+
   const arr2 = [
     'Đồ chơi - Mẹ và bé ',
     'Máy tính bảng',
@@ -134,6 +133,21 @@ const HomePage = () => {
     'Tai nghe',
   ];
 
+  const arrDanhMuc = [
+    arrImageWeb.img22,
+    arrImageWeb.img23,
+    arrImageWeb.img24,
+    arrImageWeb.img25,
+    arrImageWeb.img26,
+    arrImageWeb.img27,
+    arrImageWeb.img28,
+    arrImageWeb.img29,
+  ];
+
+  const arrCamKet = ['100 % hàng thật', 'Hoàn 200% nếu hàng giả', '30 ngày đổi trả ', 'Giao nhanh 2h', 'Giá siêu rẻ'];
+
+  const arrImgCamKet = [arrImageWeb.check, arrImageWeb.hoantra, arrImageWeb.box, arrImageWeb.xetai, arrImageWeb.ghim];
+
   const arrTitleDanhMuc = [
     'Exchange',
     'Tốt & nhanh',
@@ -144,9 +158,6 @@ const HomePage = () => {
     'Đóng tiền , nạp thẻ',
     'Mua trước trả sau',
   ];
-
-  const arrCamKet = ['100 % hàng thật', 'Hoàn 200% nếu hàng giả', '30 ngày đổi trả ', 'Giao nhanh 2h', 'Giá siêu rẻ'];
-  const arrImgCamKet = [check, hoantra, box, xetai, ghim];
 
   const handleTabClick = (tab) => {
     setActiveTab(tab); // Cập nhật trạng thái của tab khi người dùng click vào
@@ -160,13 +171,18 @@ const HomePage = () => {
     setActiveTabSuggestDay(tabSuggest);
   };
 
-  const arrDanhMuc = [img22, img23, img24, img25, img26, img27, img28, img29];
+  // button lood hết sản phẩm
+  const handleLoadMore = () => {
+    setLimit(product?.length);
+  };
 
-  const fetchProductAll = async (context) => {
-    const limit = context?.queryKey && context?.queryKey[1];
-    const search = context?.queryKey && context?.queryKey[2];
-    const res = await ProductService.getAllProduct(search, limit);
-    return res;
+  // type
+  const handleClick = (name) => {
+    const productName = name
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/ /g, '_');
+    navigate(`/product/${productName}?name=${encodeURIComponent(name)}`);
   };
 
   const fetchAllTypeProduct = async () => {
@@ -174,6 +190,13 @@ const HomePage = () => {
     if (res?.status === 'OK') {
       setTypeProduct(res?.data);
     }
+  };
+
+  const fetchProductAll = async (context) => {
+    const limit = context?.queryKey && context?.queryKey[1];
+    const search = context?.queryKey && context?.queryKey[2];
+    const res = await ProductService.getAllProduct(search, limit);
+    return res;
   };
 
   const {
@@ -185,28 +208,6 @@ const HomePage = () => {
     retryDelay: 1000,
     keepPreviousData: true,
   });
-
-  useEffect(() => {
-    fetchAllTypeProduct();
-  }, []);
-
-  const checkLogin1 = localStorage.getItem('isLoggedIn');
-  console.log('checkLogin1', checkLogin1);
-
-  // check login
-  useEffect(() => {
-    if (checkLogin1 === 'true' && !isLoading) {
-      message.success('Đăng nhập thành công');
-      localStorage.removeItem('isLoggedIn');
-    }
-  }, [checkLogin1, isLoading]);
-
-  console.log('isLoading', isLoading);
-
-  // button lood hết sản phẩm
-  const handleLoadMore = () => {
-    setLimit(product?.length);
-  };
 
   // lọc sản phẩm theo loại cho đề xuất
   const filterProducts = () => {
@@ -229,14 +230,21 @@ const HomePage = () => {
     );
   };
   const filteredProductImport = filterProductImport();
-  // type
-  const handleClick = (name) => {
-    const productName = name
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/ /g, '_');
-    navigate(`/product/${productName}?name=${encodeURIComponent(name)}`);
-  };
+
+  useEffect(() => {
+    fetchAllTypeProduct();
+  }, []);
+
+  // check login
+  const checkLogin1 = localStorage.getItem('isLoggedIn');
+  useEffect(() => {
+    if (checkLogin1 === 'true' && !isLoading) {
+      message.success('Đăng nhập thành công');
+      setTimeout(() => {
+        localStorage.removeItem('isLoggedIn');
+      }, 2000);
+    }
+  }, [checkLogin1, isLoading]);
 
   return (
     <Loading isLoading={isLoading}>
@@ -256,7 +264,7 @@ const HomePage = () => {
               <div className={cx('child_list')}>
                 {arrCamKet.map((item, index) => (
                   <div key={index} className={cx('item')}>
-                    <img src={arrImgCamKet[index]} alt={item} width={20} height={20} />
+                    <img loading="lazy" src={arrImgCamKet[index]} alt={item} width={20} height={20} />
                     <span>{item}</span>
                   </div>
                 ))}
@@ -279,7 +287,7 @@ const HomePage = () => {
                       <div key={index} className="wrapper-left_title" onClick={() => handleClick(arr2[index])}>
                         <div className={cx('container-img_title')}>
                           <div className="img_left">
-                            <img src={imgSrc} alt="img" width={32} height={32} />
+                            <img loading="lazy" src={imgSrc} alt="img" width={32} height={32} />
                           </div>
                           <div className="title_left" style={{ paddingLeft: '10px' }}>
                             {arr2[index]}
@@ -299,7 +307,7 @@ const HomePage = () => {
                     <div key={index} className="wrapper-left_title">
                       <div className={cx('container-img_title')}>
                         <div className="img_left">
-                          <img src={imgSrc} alt="img" width={32} height={32} />
+                          <img loading="lazy" src={imgSrc} alt="img" width={32} height={32} />
                         </div>
                         <div className="title_left" style={{ paddingLeft: '10px' }}>
                           {arrTitleDanhMuc[index]}
@@ -311,7 +319,7 @@ const HomePage = () => {
               </div>
               <div className={cx('home-left2')}>
                 <div className={cx('wrapper-title2')}>
-                  <img alt="store" src={img_store} width={32} height={32} />
+                  <img loading="lazy" alt="store" src={arrImageWeb.img_store} width={32} height={32} />
                   <span className={cx('left-title2')}>Bán hàng cùng Dũng</span>
                 </div>
               </div>
@@ -320,7 +328,7 @@ const HomePage = () => {
           <Col xs={0} sm={19} className={cx('scrollable-content')}>
             {/* slide component */}
             <div>
-              <SliderComponent arrImages={[slider1, slider2, slider3]} />
+              <SliderComponent arrImages={[arrImageWeb.slider1, arrImageWeb.slider2, arrImageWeb.slider3]} />
             </div>
             {/* assistant */}
             <div>
@@ -330,47 +338,47 @@ const HomePage = () => {
             <div className={cx('container_imgs')}>
               <div className={cx('item1')}>
                 <a href="/">
-                  <img loading="lazy" alt="" src={img30} width={306} height={306} />
+                  <img loading="lazy" alt="" src={arrImageWeb.img30} width={306} height={306} />
                 </a>
               </div>
               <div className={cx('item2')}>
                 <a href="/">
-                  <img loading="lazy" alt="" src={img31} width={146} height={146} />
+                  <img loading="lazy" alt="" src={arrImageWeb.img31} width={146} height={146} />
                 </a>
               </div>
               <div className={cx('item3')}>
                 <a href="/">
-                  <img loading="lazy" alt="" src={img32} width={146} height={146} />
+                  <img loading="lazy" alt="" src={arrImageWeb.img32} width={146} height={146} />
                 </a>
               </div>
               <div className={cx('item4')}>
                 <a href="/">
-                  <img loading="lazy" alt="" src={img33} width={146} height={146} />
+                  <img loading="lazy" alt="" src={arrImageWeb.img33} width={146} height={146} />
                 </a>
               </div>
               <div className={cx('item5')}>
                 <a href="/">
-                  <img loading="lazy" alt="" src={img34} width={146} height={146} />
+                  <img loading="lazy" alt="" src={arrImageWeb.img34} width={146} height={146} />
                 </a>
               </div>
               <div className={cx('item6')}>
                 <a href="/">
-                  <img loading="lazy" alt="" src={img35} width={146} height={146} />
+                  <img loading="lazy" alt="" src={arrImageWeb.img35} width={146} height={146} />
                 </a>
               </div>
               <div className={cx('item7')}>
                 <a href="/">
-                  <img loading="lazy" alt="" src={img36} width={146} height={146} />
+                  <img loading="lazy" alt="" src={arrImageWeb.img36} width={146} height={146} />
                 </a>
               </div>
               <div className={cx('item8')}>
                 <a href="/">
-                  <img loading="lazy" alt="" src={img37} width={146} height={146} />
+                  <img loading="lazy" alt="" src={arrImageWeb.img37} width={146} height={146} />
                 </a>
               </div>
               <div className={cx('item9')}>
                 <a href="/">
-                  <img loading="lazy" alt="" src={img38} width={146} height={146} />
+                  <img loading="lazy" alt="" src={arrImageWeb.img38} width={146} height={146} />
                 </a>
               </div>
             </div>
@@ -378,7 +386,7 @@ const HomePage = () => {
             {/* wrapper card top deal */}
             <div className={cx('container_card')}>
               <div className={cx('title_card')}>
-                <img alt="top deal" src={topdeal} width={204} height={32} />
+                <img loading="lazy" alt="top deal" src={arrImageWeb.topdeal} width={204} height={32} />
               </div>
               <div className={cx('slider')}>
                 <div
@@ -497,7 +505,7 @@ const HomePage = () => {
                   })}
                   onClick={() => handleTabSuggestDay('for_you')}
                 >
-                  <img src={foryou} alt="img" width={40} height={40} />
+                  <img loading="lazy" src={arrImageWeb.foryou} alt="img" width={40} height={40} />
                   <div>Dành cho bạn</div>
                 </div>
                 <div
@@ -506,7 +514,14 @@ const HomePage = () => {
                   })}
                   onClick={() => handleTabSuggestDay('Sách vở')}
                 >
-                  <img src={storebook} alt="img" width={40} height={40} style={{ borderRadius: '4px' }} />
+                  <img
+                    loading="lazy"
+                    src={arrImageWeb.storebook}
+                    alt="img"
+                    width={40}
+                    height={40}
+                    style={{ borderRadius: '4px' }}
+                  />
                   <div>Sách xả kho -60%</div>
                 </div>
                 <div
@@ -515,7 +530,7 @@ const HomePage = () => {
                   })}
                   onClick={() => handleTabSuggestDay('Thể thao')}
                 >
-                  <img src={thethao} alt="img" width={40} height={40} />
+                  <img loading="lazy" src={arrImageWeb.thethao} alt="img" width={40} height={40} />
                   <div>Thể thao -50%</div>
                 </div>
                 <div
@@ -524,7 +539,7 @@ const HomePage = () => {
                   })}
                   onClick={() => handleTabSuggestDay('Đồ gia dụng')}
                 >
-                  <img src={giadung} alt="img" width={40} height={40} />
+                  <img loading="lazy" src={arrImageWeb.giadung} alt="img" width={40} height={40} />
                   <div>Gia dụng -50%</div>
                 </div>
               </div>

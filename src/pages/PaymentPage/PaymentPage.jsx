@@ -3,22 +3,6 @@ import QRCode from 'qrcode';
 import styles from './Payment.module.scss';
 import classNames from 'classnames/bind';
 
-import call from '~/assets/img_Global/call.png';
-import down from '~/assets/img_Global/muiten_dow.png';
-import truck from '~/assets/img_Global/truck.png';
-import chamthan from '~/assets/img_Global/chamthan.png';
-import cash from '~/assets/img_Global/cash.png';
-import viettel from '~/assets/img_Global/viettel.png';
-import momo from '~/assets/img_Global/momo.jpg';
-import zalo from '~/assets/img_Global/zalopay.png';
-import vnpay from '~/assets/img_Global/vnpay.png';
-import doublevisa from '~/assets/img_Global/doublevisa.png';
-import manyvisa from '~/assets/img_Global/manyvisa.png';
-import atm from '~/assets/img_Global/atm_noi_dia.png';
-import asa from '~/assets/img_Global/asa.png';
-import chu_t from '~/assets/img_Global/chut.png';
-import free_ship from '~/assets/img_Global/free_ship.png';
-import quet_qr from '~/assets/img_Global/quet_qr.png';
 import { Checkbox, Col, Radio, Row, message } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronRight, faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -29,21 +13,32 @@ import * as ProductService from '~/service/ProductService';
 import * as OrderService from '~/service/OrderService';
 import { convertPrice } from '~/utils';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { removeAllProductInCart, removeProductInCart } from '~/redux/slide/cartSlide';
+import { removeProductInCart } from '~/redux/slide/cartSlide';
 import ModalComponent from '~/component/ModalComponent/ModalComponent';
-import {
-  apiMomoCallback,
-  apiMomoService,
-  callBackDataMomo,
-  checkPaymentMethod,
-  checkTransactionStatus,
-} from '../../service/ApisPublic';
+import { apiMomoService, checkTransactionStatus } from '../../service/ApisPublic';
 
-import { updateOrder } from '../../redux/slide/orderSlide';
 import { Helmet } from 'react-helmet';
-import axios from 'axios';
 
 const cx = classNames.bind(styles);
+
+const arrImageWeb = {
+  call: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722434132/rmeqpgaip4tioglczqaq.png',
+  down: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722434133/vpa3bfztokfjd0ynnaep.png',
+  truck: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722434132/dhau0htls9vkxil9tun8.png',
+  chamthan: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722417844/ls7bknzubwvzcjbr9jmv.png',
+  cash: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722434132/zprssa9z5k1wgcyzqwfs.png',
+  viettel: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722434132/pdvsoqvzbiye0crwsdlo.png',
+  momo: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722434132/tvtnmdq3p2oo3lrxonsg.jpg',
+  zalo: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722434132/qnbyipslanyekagoavyg.png',
+  vnpay: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722434132/ulsqfwlrhsbdugc1dcox.png',
+  doublevisa: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722434133/azp1drg6duxefybvfgwk.png',
+  manyvisa: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722434133/zh7ndpigqqeezmctjjhm.png',
+  atm: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722434132/dfejdt5ynqwhzamclqdu.png',
+  asa: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722434132/hreaps5ctookdxm1spyc.png',
+  chu_t: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722434133/zzb0pes4pt5fxyecloyb.png',
+  free_ship: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722434132/euh07uzig2ineh8x34kw.png',
+  quet_qr: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722434132/euh07uzig2ineh8x34kw.png',
+};
 
 const PaymentPage = () => {
   const user = useSelector((state) => state.user);
@@ -339,7 +334,7 @@ const PaymentPage = () => {
         <div className={cx('title')}>
           <span>Thanh toán</span>
           <div>
-            <img alt="call" src={call} width={185} height={56} />
+            <img loading="lazy" alt="call" src={arrImageWeb.call} width={185} height={56} />
           </div>
         </div>
         {/* content */}
@@ -361,7 +356,7 @@ const PaymentPage = () => {
                       <div className={cx('down')}>-25K</div>
                     </div>
                     <div className={cx('down_img')}>
-                      <img alt="" src={down} width={32} />
+                      <img loading="lazy" alt="" src={arrImageWeb.down} width={32} />
                     </div>
                   </div>
                   {/* product */}
@@ -375,7 +370,7 @@ const PaymentPage = () => {
                       </div>
                       <div className={cx('content_left')}>
                         <div>
-                          <img alt="" src={selectedItem?.image} width={48} height={48} />
+                          <img loading="lazy" alt="" src={selectedItem?.image} width={48} height={48} />
                         </div>
                         <div className={cx('noidung')}>{selectedItem?.name}</div>
                       </div>
@@ -384,7 +379,7 @@ const PaymentPage = () => {
                     <div className={cx('right-content')}>
                       <div className={cx('wrapper_icon')}>
                         <div className={cx('icon')}>
-                          <img alt="xe" src={truck} width={24} height={24} />
+                          <img loading="lazy" alt="xe" src={arrImageWeb.truck} width={24} height={24} />
                         </div>
                         <div className={cx('title_icon')}>Được giao bởi BEE GEE SHOP </div>
                       </div>
@@ -420,7 +415,7 @@ const PaymentPage = () => {
                         />
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <img alt="the" src={cash} width={32} height={32} />
+                        <img loading="lazy" alt="the" src={arrImageWeb.cash} width={32} height={32} />
                         <span style={{ paddingLeft: '12px' }}>Thanh toán bằng tiền mặt</span>
                       </div>
                     </div>
@@ -432,7 +427,7 @@ const PaymentPage = () => {
                         <Radio checked={payment === 'momo'} onChange={() => handlePaymentChange('momo')} />
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <img alt="the" src={momo} width={32} height={32} />
+                        <img loading="lazy" alt="the" src={arrImageWeb.momo} width={32} height={32} />
                         <span style={{ paddingLeft: '12px' }}>Thanh toán bằng ví MoMo</span>
                       </div>
                     </div>
@@ -447,7 +442,7 @@ const PaymentPage = () => {
                         />
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <img alt="the" src={viettel} width={32} height={32} />
+                        <img loading="lazy" alt="the" src={arrImageWeb.viettel} width={32} height={32} />
                         <span style={{ paddingLeft: '12px' }}>Thanh toán bằng ví Viettel Money</span>
                       </div>
                     </div>
@@ -459,7 +454,7 @@ const PaymentPage = () => {
                         <Radio checked={payment === 'zalo_pay'} onChange={() => handlePaymentChange('zalo_pay')} />
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <img alt="the" src={zalo} width={32} height={32} />
+                        <img loading="lazy" alt="the" src={arrImageWeb.zalo} width={32} height={32} />
                         <span style={{ paddingLeft: '12px' }}>Thanh toán bằng ví Zalo Pay</span>
                       </div>
                     </div>
@@ -471,7 +466,7 @@ const PaymentPage = () => {
                         <Radio checked={payment === 'vn_pay'} onChange={() => handlePaymentChange('vn_pay')} />
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <img alt="the" src={vnpay} width={32} height={32} />
+                        <img loading="lazy" alt="the" src={arrImageWeb.vnpay} width={32} height={32} />
                         <span style={{ paddingLeft: '12px' }}>
                           Thanh toán bằng VNPay
                           <p style={{ color: '#999', fontSize: '12px' }}>Quét mã QR từ ứng dụng ngân hàng</p>
@@ -486,12 +481,12 @@ const PaymentPage = () => {
                         <Radio checked={payment === 'atm_visa'} onChange={() => handlePaymentChange('atm_visa')} />
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <img alt="the" src={doublevisa} width={32} height={32} />
+                        <img loading="lazy" alt="the" src={arrImageWeb.doublevisa} width={32} height={32} />
                         <span style={{ paddingLeft: '12px' }}>
                           Thanh toán bằng thẻ quốc tế
                           <p>
                             {' '}
-                            <img alt="tt" src={manyvisa} width={124} height={24} />{' '}
+                            <img loading="lazy" alt="tt" src={arrImageWeb.manyvisa} width={124} height={24} />{' '}
                           </p>
                         </span>
                       </div>
@@ -504,7 +499,7 @@ const PaymentPage = () => {
                         <Radio checked={payment === 'atm_napas'} onChange={() => handlePaymentChange('atm_napas')} />
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <img alt="the" src={atm} width={32} height={32} />
+                        <img loading="lazy" alt="the" src={arrImageWeb.atm} width={32} height={32} />
                         <span style={{ paddingLeft: '12px' }}>Thẻ ATM nội địa / Internet banking</span>
                       </div>
                     </div>
@@ -529,12 +524,18 @@ const PaymentPage = () => {
                       <span>Thay đổi</span>
                     </div>
                     <div className={cx('name')}>
-                      {user?.moreAddress},{user?.address},{user?.city}
+                      {user?.moreAddress && user?.address && user?.city ? (
+                        <span>
+                          {user?.moreAddress},{user?.address},{user?.city}
+                        </span>
+                      ) : (
+                        <span></span>
+                      )}
                     </div>
                     {/* address */}
                     <div className={cx('address-detail')}>
                       <span className={cx('house')}>Nhà</span>
-                      <span style={{ color: 'rgb(128, 128, 137)' }}>{user?.nickname}</span>
+                      <span style={{ color: 'rgb(128, 128, 137)' }}>{user?.nickname || user?.name}</span>
                     </div>
                   </div>
                   {/* sale */}
@@ -556,7 +557,7 @@ const PaymentPage = () => {
                   {/* asa */}
                   <div className={cx('asa')}>
                     <div className={cx('asa1')}>
-                      <img alt="asa" src={asa} width={24} height={24} />
+                      <img loading="lazy" alt="asa" src={arrImageWeb.asa} width={24} height={24} />
                       <span style={{ marginRight: '40%' }}>
                         Giảm 81
                         <sup>
@@ -567,7 +568,7 @@ const PaymentPage = () => {
                       .
                     </div>
                     <div className={cx('asa2')}>
-                      <img alt="asa" src={chu_t} width={24} height={24} />
+                      <img loading="lazy" alt="asa" src={arrImageWeb.chu_t} width={24} height={24} />
                       <span style={{ marginRight: '28%' }}>
                         Chưa áp dụng giảm giá
                         <sup>
@@ -620,7 +621,7 @@ const PaymentPage = () => {
                         </div>
                       </div>
                       <div className={cx('free_ship')}>
-                        <img alt="free_ship" src={free_ship} width={81} />
+                        <img loading="lazy" alt="free_ship" src={arrImageWeb.free_ship} width={81} />
                         <span className={cx('title-free_ship')}> đã được áp dụng</span>
                       </div>
                       <div className={cx('button_success')} onClick={() => handleAddOrder()}>
@@ -660,7 +661,7 @@ const PaymentPage = () => {
         {/* modal */}
         <ModalComponent title="" footer={null} open={openSystem} onCancel={cancelOpenSystem}>
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <img alt="" src={chamthan} width={20} height={20} />
+            <img loading="lazy" alt="" src={arrImageWeb.chamthan} width={20} height={20} />
             <p style={{ paddingRight: '10px' }}>Bạn chưa có thông tin cá nhân , Vui lòng cập nhật</p>
           </div>
 
@@ -674,7 +675,7 @@ const PaymentPage = () => {
             <div className={cx('wrapper_momo')}>
               <div className={cx('title')}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <img alt="momo" src={momo} width={32} height={32} />
+                  <img loading="lazy" alt="momo" src={arrImageWeb.momo} width={32} height={32} />
                   <span style={{ fontSize: '17px', fontWeight: '500' }}>Thanh toán bằng momo</span>
                 </div>
                 <div style={{ color: 'rgb(13, 92, 182)' }}>Đổi phương thức khác</div>
@@ -702,7 +703,7 @@ const PaymentPage = () => {
                       <span className={cx('step_number')}>2</span>
                       <p>
                         Trên momo chọn biểu tượng
-                        <img alt="img_qr" width={24} height={24} src={quet_qr} />
+                        <img loading="lazy" alt="img_qr" width={24} height={24} src={arrImageWeb.quet_qr} />
                         <b>quét mã QR</b>
                       </p>
                     </div>

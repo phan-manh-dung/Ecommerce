@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react';
 import styles from './SignIn.module.scss';
 import classNames from 'classnames/bind';
 
-import { Checkbox, message } from 'antd';
+import { Checkbox, message, Space } from 'antd';
 import * as UserService from '~/service/UserService';
 import jwt_decoded from 'jwt-decode';
 import { useDispatch } from 'react-redux';
+import { Dropdown } from 'antd';
 import {
   EyeInvisibleOutlined,
   EyeOutlined,
@@ -14,22 +15,28 @@ import {
   LinkedinOutlined,
   YoutubeOutlined,
 } from '@ant-design/icons';
+
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useMutationHook } from '~/hook/useMutationHook';
 import Loading from '~/component/LoadingComponent/Loading';
 import { updateUser } from '~/redux/slide/userSlide';
-import google from '~/assets/img_Global/google.png';
-import facebook from '~/assets/img_Global/facebook.png';
 
 const cx = classNames.bind(styles);
 
+const arrImageWeb = {
+  google: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722427288/bqrhnc0y3elomr3jckj9.png',
+  facebook: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722427288/ooqqg4lisipteeolhkie.png',
+};
+
 const SignInPage = () => {
-  const [name, setName] = useState('');
-  const [password, setPassword] = useState('');
-  const [isShowPassword, setIsShowPassword] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const location = useLocation();
+  const [name, setName] = useState('');
+  const [password, setPassword] = useState('');
+  const [isShowPassword, setIsShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
 
   const handleNavigate = () => {
     navigate('/sign-up');
@@ -73,6 +80,58 @@ const SignInPage = () => {
       }
     }
   }, [isSuccess, data, location, navigate, isError]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (rememberMe) {
+      if (name && password) {
+        localStorage.setItem('name', name);
+        localStorage.setItem('password', password);
+      } else {
+        alert('Name and Password cannot be empty');
+      }
+    } else {
+      localStorage.removeItem('name');
+      localStorage.removeItem('password');
+    }
+  };
+
+  const handleSetValue = () => {
+    const rememberedName = localStorage.getItem('name');
+    const rememberedPassword = localStorage.getItem('password');
+    setName(rememberedName || '');
+    setPassword(rememberedPassword || '');
+  };
+
+  useEffect(() => {
+    handleSetValue();
+  }, []);
+
+  const items = [
+    {
+      key: '1',
+      label: (
+        <div className={cx('container_dropdown')} onClick={handleSetValue}>
+          <div className={cx('wrapper_dropdown')}>
+            <div className={cx('label')}>{localStorage.getItem('name')}</div>
+            <div className={cx('label')}>------</div>
+          </div>
+        </div>
+      ),
+    },
+  ];
+
+  const handleInputFocus = () => {
+    setShowDropdown(true);
+  };
+
+  const handleInputBlur = () => {
+    setTimeout(() => setShowDropdown(false), 200);
+  };
+
+  const handleRememberMeChange = (e) => {
+    setRememberMe(e.target.checked);
+  };
 
   const handleGetDetailUser = async (id, token) => {
     const res = await UserService.getDetailUser(id, token);
@@ -141,9 +200,10 @@ const SignInPage = () => {
           </div>
           <div className={cx('card')}>
             <div className={cx('card2')}>
-              <form className={cx('form')}>
+              <form className={cx('form')} onSubmit={handleSubmit}>
                 <p className={cx('heading')}>Login</p>
-                <div className={cx('field')}>
+
+                <div className={cx('field')} onFocus={handleInputFocus} onBlur={handleInputBlur}>
                   <svg
                     viewBox="0 0 16 16"
                     fill="currentColor"
@@ -161,8 +221,23 @@ const SignInPage = () => {
                     type="text"
                     placeholder="Username"
                     onKeyPress={handleKeyPress}
+                    onFocus={handleInputFocus}
+                    onBlur={handleInputBlur}
                   />
+                  {showDropdown && (
+                    <Dropdown
+                      menu={{
+                        items,
+                      }}
+                      trigger={['hover']}
+                    >
+                      <div onClick={(e) => e.preventDefault()}>
+                        <Space>-</Space>
+                      </div>
+                    </Dropdown>
+                  )}
                 </div>
+
                 <div className={cx('field', 'edit_field')}>
                   <svg
                     viewBox="0 0 16 16"
@@ -183,6 +258,8 @@ const SignInPage = () => {
                     value={password}
                     onKeyPress={handleKeyPress}
                     autoComplete="current-password"
+                    onFocus={handleInputFocus}
+                    onBlur={handleInputBlur}
                   />
                   <span
                     style={{ position: 'absolute', left: '85%' }}
@@ -194,31 +271,33 @@ const SignInPage = () => {
 
                 <div className={cx('wrapper_check')}>
                   <label>
-                    <Checkbox />
+                    <Checkbox checked={rememberMe} onChange={handleRememberMeChange} />
                     <span style={{ paddingLeft: '6px', color: '#eee', fontSize: '1.3rem' }}> Remember me</span>
                   </label>
                 </div>
                 <div className={cx('btn')}>
-                  <button type="button" className={cx('button1')} onClick={handleLogin}>
+                  <button type="submit" className={cx('button1')} onClick={handleLogin}>
                     Login
                   </button>
                   <button type="button" className={cx('button2')} onClick={handleNavigate}>
                     Sign Up
                   </button>
                 </div>
-                <button className={cx('button3')}>Forgot Password</button>
+                <button className={cx('button3')} onClick={() => navigate('/user/reset')}>
+                  Forgot Password
+                </button>
                 <div style={{ textAlign: 'center' }}>
                   <span style={{ color: '#fff' }}>Hoặc</span>
                 </div>
                 <div className={cx('wrapper_button-social')}>
                   <button type="button" className={cx('button_social')} onClick={() => handleSignInSocial('google')}>
-                    <img alt="google" src={google} width={22} height={22} />
+                    <img loading="lazy" alt="google" src={arrImageWeb.google} width={22} height={22} />
                     <span className={cx('title_button')}>Google</span>
                   </button>
                 </div>
                 <div className={cx('wrapper_button-social')}>
                   <button type="button" className={cx('button_social')} onClick={() => handleSignInSocial('facebook')}>
-                    <img alt="facebook" src={facebook} width={24} height={24} />
+                    <img loading="lazy" alt="facebook" src={arrImageWeb.facebook} width={24} height={24} />
                     <span className={cx('title_button')}> Facebook</span>
                   </button>
                 </div>

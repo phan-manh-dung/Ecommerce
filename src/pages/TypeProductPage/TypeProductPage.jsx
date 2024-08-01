@@ -3,33 +3,29 @@ import React, { useCallback, useEffect, useState } from 'react';
 import styles from './TypeProduct.module.scss';
 import classNames from 'classnames/bind';
 
-import img_right_arrow from '~/assets/img_Global/right_arrow.png';
 import { Checkbox, Col, InputNumber, Radio, Row } from 'antd';
-import { useDispatch, useSelector } from 'react-redux';
-
-import img_location from '~/assets/img_Global/location.png';
-import img_now from '~/assets/img_Global/now.png';
-import img_astra from '~/assets/img_Global/title_astra.png';
-import img_durex from '~/assets/img_Global/durex.jpg';
-import slide6 from '~/assets/img_Global/slide6.png';
-import slide7 from '~/assets/img_Global/slide7.png';
-import slide8 from '~/assets/img_Global/slide8.png';
-import slide9 from '~/assets/img_Global/slide9.png';
-import slide10 from '~/assets/img_Global/slide10.jpg';
-import slide11 from '~/assets/img_Global/slide11.png';
-import img_tulanh from '~/assets/img_Global/tulanh.png';
-import img_tulanh2 from '~/assets/img_Global/tulanh2.jpg';
-import img_now_red from '~/assets/img_Global/now_red.png';
-
+import { useSelector } from 'react-redux';
 import { CaretDownOutlined, CaretUpOutlined, StarFilled } from '@ant-design/icons';
-import ButtonComponent from '~/component/ButtonComponent/Buttoncomponent';
-import CardComponent from '~/component/CardComponent/CardComponent';
-import * as ProductService from '~/service/ProductService';
 import { useLocation } from 'react-router-dom';
+
+import ButtonComponent from '~/component/ButtonComponent/Buttoncomponent';
 import AddressComponent from '~/component/AddressComponent/AddressComponent';
+import CardComponent from '~/component/CardComponent/CardComponent';
 import Loading from '~/component/LoadingComponent/Loading';
 
+import * as ProductService from '~/service/ProductService';
+
 const cx = classNames.bind(styles);
+
+const arrImageWeb = {
+  img_right_arrow: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722415609/bnhfdz5rrple0tfmdcyt.png',
+  img_location: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722415609/y9so6zqdtnnoreao0ddc.png',
+  img_now: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722415609/mtzjylx97mdtofmuujwr.png',
+  img_astra: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722415609/yagw0velomfuqqhm8zhp.png',
+  img_durex: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722415609/nphw5loetv441xo69odg.jpg',
+  img_tulanh: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722415616/wzw5x3esg0eioj1vlxny.png',
+  img_tulanh2: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722415613/nnecwsnsxgmpqs6bhrti.jpg',
+};
 
 const TypeProductPage = () => {
   const user = useSelector((state) => state.user);
@@ -41,6 +37,31 @@ const TypeProductPage = () => {
   const [loading, setLoading] = useState(false);
   const [showAddressModal, setShowAddressModal] = useState(false);
   const [activeTab, setActiveTab] = useState('popular');
+  const [visibleCheckboxes, setVisibleCheckboxes] = useState(4);
+  const [showMore, setShowMore] = useState(false);
+  const dataShip = ['Hàng nội địa', 'Hàng quốc tế'];
+
+  const supplierDataSupplier = [
+    'Shop Mạnh Dũng',
+    'Ingnot',
+    'MinkStore',
+    'Tiki Trading',
+    'Lotte',
+    'CircleK',
+    'Landmask',
+    'HomeMarst',
+  ];
+  const arr = [
+    'Chăm sóc da mặt',
+    'Trang điểm ',
+    'Chăm sóc cá nhân',
+    'Chăm sóc cơ thể',
+    'Dược mỹ phẩm',
+    'Sản phẩm thiên nhiên & Khác',
+  ];
+
+  const supplierBrands = ['DHC', 'Eucerin', 'Charme', 'PRETASA', 'Sagimi', 'Beurer', 'Vacosi'];
+
   // lấy type
   const typeOfProduct = typeProduct[0] && typeProduct[0].type;
   const [panigate, setPanigate] = useState({
@@ -68,56 +89,6 @@ const TypeProductPage = () => {
       setLoading(false);
     }
   }, []);
-
-  useEffect(() => {
-    if (state) {
-      fetchProductType(state, panigate.page, panigate.limit);
-    }
-  }, [state, panigate.page, panigate.limit]);
-
-  const [visibleCheckboxes, setVisibleCheckboxes] = useState(4);
-  const [showMore, setShowMore] = useState(false);
-  const dataShip = ['Hàng nội địa', 'Hàng quốc tế'];
-
-  const supplierDataSupplier = [
-    'Shop Mạnh Dũng',
-    'Ingnot',
-    'MinkStore',
-    'Tiki Trading',
-    'Lotte',
-    'CircleK',
-    'Landmask',
-    'HomeMarst',
-  ];
-
-  const supplierBrands = ['DHC', 'Eucerin', 'Charme', 'PRETASA', 'Sagimi', 'Beurer', 'Vacosi'];
-
-  const toggleMoreCheckboxes = () => {
-    setVisibleCheckboxes(visibleCheckboxes + 4);
-    setShowMore(true);
-  };
-
-  const toggleBackCheckboxes = () => {
-    setVisibleCheckboxes(visibleCheckboxes - 4);
-    setShowMore(false);
-  };
-
-  const arr = [
-    'Chăm sóc da mặt',
-    'Trang điểm ',
-    'Chăm sóc cá nhân',
-    'Chăm sóc cơ thể',
-    'Dược mỹ phẩm',
-    'Sản phẩm thiên nhiên & Khác',
-  ];
-
-  const handleOpenModalAddress = () => {
-    setShowAddressModal(true);
-  };
-
-  const handleCloseAddressModal = () => {
-    setShowAddressModal(false);
-  };
 
   // api sort product low to height
   const filterByPriceLowToHeight = async (type) => {
@@ -150,6 +121,19 @@ const TypeProductPage = () => {
     }
   };
 
+  const toggleBackCheckboxes = () => {
+    setVisibleCheckboxes(visibleCheckboxes - 4);
+    setShowMore(false);
+  };
+
+  const handleOpenModalAddress = () => {
+    setShowAddressModal(true);
+  };
+
+  const handleCloseAddressModal = () => {
+    setShowAddressModal(false);
+  };
+
   const clickValue = (value) => {
     setActiveTab(value);
     if (value === 'lowToHeight') {
@@ -165,11 +149,24 @@ const TypeProductPage = () => {
     }
   };
 
+  useEffect(() => {
+    if (state) {
+      fetchProductType(state, panigate.page, panigate.limit);
+    }
+  }, [state, panigate.page, panigate.limit]);
+
+  const toggleMoreCheckboxes = () => {
+    setVisibleCheckboxes(visibleCheckboxes + 4);
+    setShowMore(true);
+  };
+
   return (
     <div className={cx('container_type-user')}>
       <div className={cx('wrapper-type')}>
-        <div className={cx('type-home')}>Trang chủ</div>
-        <img alt="right_arrow" src={img_right_arrow} width={18} height={18} />
+        <div className={cx('type-home')}>
+          <a href="/">Trang chủ</a>
+        </div>
+        <img loading="lazy" alt="right_arrow" src={arrImageWeb.img_right_arrow} width={18} height={18} />
         <span className={cx('type-title')}> {(typeProduct[0] && typeProduct[0].type) || selectedProduct} </span>
       </div>
 
@@ -188,10 +185,16 @@ const TypeProductPage = () => {
                 })}
               </div>
               <div className={cx('wrapper_address')} onClick={handleOpenModalAddress}>
-                <img alt="location" src={img_location} height={20} width={20} />
+                <img loading="lazy" alt="location" src={arrImageWeb.img_location} height={20} width={20} />
                 <div className={cx('ship')}>Giao đến: </div>
                 <span className={cx('address')}>
-                  {user?.moreAddress},{user?.district},{user?.city},{user?.country}
+                  {user?.moreAddress && user?.district && user?.city && user?.country ? (
+                    <span>
+                      {user?.moreAddress},{user?.district},{user?.city},{user?.country}
+                    </span>
+                  ) : (
+                    <span>Chọn địa chỉ giao hàng</span>
+                  )}
                 </span>
                 <span></span>
               </div>
@@ -206,11 +209,11 @@ const TypeProductPage = () => {
                 <span className={cx('title')}>Dịch vụ</span>
                 <div className={cx('wrapper_ship')}>
                   <Checkbox defaultChecked={false}>Giao siêu tốc</Checkbox>
-                  <img alt="now" src={img_now} width={26} height={12} />
+                  <img loading="lazy" alt="now" src={arrImageWeb.img_now} width={26} height={12} />
                 </div>
                 <div className={cx('wrapper_ship')}>
                   <Checkbox defaultChecked={false}>Thưởng thêm Astra</Checkbox>
-                  <img alt="now" src={img_astra} width={26} height={12} />
+                  <img loading="lazy" alt="now" src={arrImageWeb.img_astra} width={26} height={12} />
                 </div>
                 <div className={cx('wrapper_ship')}>
                   <Checkbox defaultChecked={false}>Trả góp 0%</Checkbox>
@@ -354,7 +357,14 @@ const TypeProductPage = () => {
             <div className={cx('wrapper_img-durex')}>
               <div className={cx('background-filter')}>
                 <div className={cx('durex')}>
-                  <img style={{ borderRadius: '4px' }} alt="durex" src={img_durex} width={120} height={120} />
+                  <img
+                    loading="lazy"
+                    style={{ borderRadius: '4px' }}
+                    alt="durex"
+                    src={arrImageWeb.img_durex}
+                    width={120}
+                    height={120}
+                  />
                 </div>
               </div>
             </div>
@@ -382,8 +392,22 @@ const TypeProductPage = () => {
               <div className={cx('slider_container')}>
                 <div className={cx('slide')}>
                   <div className={cx('wrapper_slide')}>
-                    <img alt="bright" style={{ borderRadius: '8px' }} src={img_tulanh} width={470} height={165} />
-                    <img alt="bright" style={{ borderRadius: '8px' }} src={img_tulanh2} width={470} height={165} />
+                    <img
+                      loading="lazy"
+                      alt="bright"
+                      style={{ borderRadius: '8px' }}
+                      src={arrImageWeb.img_tulanh}
+                      width={470}
+                      height={165}
+                    />
+                    <img
+                      loading="lazy"
+                      alt="bright"
+                      style={{ borderRadius: '8px' }}
+                      src={arrImageWeb.img_tulanh2}
+                      width={470}
+                      height={165}
+                    />
                   </div>
                 </div>
               </div>
