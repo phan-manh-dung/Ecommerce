@@ -9,6 +9,8 @@ import { Helmet } from 'react-helmet';
 import { useNavigate } from 'react-router-dom';
 import { Col, message, Row } from 'antd';
 
+import find_pay from '~/assets/img_Global/find_pay.png';
+
 import SliderComponent from '~/component/SliderComponent/SliderComponent';
 import TypeProductComponent from '~/component/TypeProductComponent/TypeProductComponent';
 import CardComponent from '~/component/CardComponent/CardComponent';
@@ -17,6 +19,7 @@ import ButtonComponent from '~/component/ButtonComponent/Buttoncomponent';
 import Loading from '~/component/LoadingComponent/Loading';
 
 import * as ProductService from '~/service/ProductService';
+import SliderCardComponent from '~/component/SliderCardComponent/SliderCardComponent';
 
 const cx = classNames.bind(styles);
 
@@ -414,24 +417,35 @@ const HomePage = () => {
                   <span>Làm đẹp - sức khỏe</span>
                 </div>
               </div>
-              <div className={cx('wrapper_card')}>
-                {filteredProductTopDeal?.map((products) => (
-                  <CardComponent
-                    key={products._id}
-                    countInStock={products.countInStock}
-                    description={products.description}
-                    image={products.image}
-                    name={products.name}
-                    price={products.price}
-                    rating={products.rating}
-                    type={products.type}
-                    discount={products.discount}
-                    sold={products.sold}
-                    originOfCountry={products.originOfCountry}
-                    id={products._id}
-                  />
-                ))}
-              </div>
+              {filteredProductTopDeal?.length === 0 ? (
+                <div className={cx('wrapper')}>
+                  <div>
+                    <img alt="find_pay" src={find_pay} width={200} height={200} />
+                  </div>
+                  <div style={{ fontSize: '16px' }}>Chưa có sản phẩm</div>
+                </div>
+              ) : (
+                <div className={cx('wrapper_card')}>
+                  <SliderCardComponent>
+                    {filteredProductTopDeal?.map((products) => (
+                      <CardComponent
+                        key={products._id}
+                        countInStock={products.countInStock}
+                        description={products.description}
+                        image={products.image}
+                        name={products.name}
+                        price={products.price}
+                        rating={products.rating}
+                        type={products.type}
+                        discount={products.discount}
+                        sold={products.sold}
+                        originOfCountry={products.originOfCountry}
+                        id={products._id}
+                      />
+                    ))}
+                  </SliderCardComponent>
+                </div>
+              )}
             </div>
 
             {/* wrapper card nhap khau chinh hang */}
@@ -473,24 +487,35 @@ const HomePage = () => {
                   <span>Mỹ phẩm</span>
                 </div>
               </div>
-              <div className={cx('wrapper_card')}>
-                {filteredProductImport?.map((products) => (
-                  <CardComponent
-                    key={products._id}
-                    countInStock={products.countInStock}
-                    description={products.description}
-                    image={products.image}
-                    name={products.name}
-                    price={products.price}
-                    rating={products.rating}
-                    type={products.type}
-                    discount={products.discount}
-                    sold={products.sold}
-                    originOfCountry={products.originOfCountry}
-                    id={products._id}
-                  />
-                ))}
-              </div>
+              {filterProductImport?.length === 0 ? (
+                <div className={cx('wrapper')}>
+                  <div>
+                    <img alt="find_pay" src={find_pay} width={200} height={200} />
+                  </div>
+                  <div style={{ fontSize: '16px' }}>Chưa có sản phẩm</div>
+                </div>
+              ) : (
+                <div className={cx('wrapper_card')}>
+                  <SliderCardComponent rtl={true}>
+                    {filteredProductImport?.map((products) => (
+                      <CardComponent
+                        key={products._id}
+                        countInStock={products.countInStock}
+                        description={products.description}
+                        image={products.image}
+                        name={products.name}
+                        price={products.price}
+                        rating={products.rating}
+                        type={products.type}
+                        discount={products.discount}
+                        sold={products.sold}
+                        originOfCountry={products.originOfCountry}
+                        id={products._id}
+                      />
+                    ))}
+                  </SliderCardComponent>
+                </div>
+              )}
             </div>
 
             {/* today's suggestion */}
@@ -543,24 +568,35 @@ const HomePage = () => {
                   <div>Gia dụng -50%</div>
                 </div>
               </div>
-              <div className={cx('wrapper_card')}>
-                {filteredProducts?.map((products) => (
-                  <CardComponent
-                    key={products._id}
-                    countInStock={products.countInStock}
-                    description={products.description}
-                    image={products.image}
-                    name={products.name}
-                    price={products.price}
-                    rating={products.rating}
-                    type={products.type}
-                    discount={products.discount}
-                    sold={products.sold}
-                    originOfCountry={products.originOfCountry}
-                    id={products._id}
-                  />
-                ))}
-              </div>
+              {filteredProducts?.length === 0 ? (
+                <div className={cx('wrapper')}>
+                  <div>
+                    <img alt="find_pay" src={find_pay} width={200} height={200} />
+                  </div>
+                  <div style={{ fontSize: '16px' }}>Chưa có sản phẩm</div>
+                </div>
+              ) : (
+                <div className={cx('wrapper_card')}>
+                  <SliderCardComponent>
+                    {filteredProducts?.map((products) => (
+                      <CardComponent
+                        key={products._id}
+                        countInStock={products.countInStock}
+                        description={products.description}
+                        image={products.image}
+                        name={products.name}
+                        price={products.price}
+                        rating={products.rating}
+                        type={products.type}
+                        discount={products.discount}
+                        sold={products.sold}
+                        originOfCountry={products.originOfCountry}
+                        id={products._id}
+                      />
+                    ))}
+                  </SliderCardComponent>
+                </div>
+              )}
             </div>
 
             {/* button more */}

@@ -15,6 +15,8 @@ import Loading from '~/component/LoadingComponent/Loading';
 
 import * as ProductService from '~/service/ProductService';
 
+import find_pay from '~/assets/img_Global/find_pay.png';
+
 const cx = classNames.bind(styles);
 
 const arrImageWeb = {
@@ -446,109 +448,121 @@ const TypeProductPage = () => {
                 </div>
               </div>
               <Loading isLoading={loading}>
-                <div className={cx('container_user1')}>
-                  <div className={cx('user1')}>
-                    {activeTab === 'lowToHeight'
-                      ? productSort?.map((products, index) => {
-                          return (
-                            <React.Fragment key={index}>
-                              <CardComponent
-                                key={products._id}
-                                countInStock={products.countInStock}
-                                description={products.description}
-                                image={products.image}
-                                name={products.name}
-                                price={products.price}
-                                rating={products.rating}
-                                type={products.type}
-                                discount={products.discount}
-                                sold={products.sold}
-                                id={products._id}
-                              />
-                            </React.Fragment>
-                          );
-                        })
-                      : activeTab === 'heightToLow'
-                      ? productSort?.map((products, index) => {
-                          return (
-                            <React.Fragment key={index}>
-                              <CardComponent
-                                key={products._id}
-                                countInStock={products.countInStock}
-                                description={products.description}
-                                image={products.image}
-                                name={products.name}
-                                price={products.price}
-                                rating={products.rating}
-                                type={products.type}
-                                discount={products.discount}
-                                sold={products.sold}
-                                id={products._id}
-                              />
-                            </React.Fragment>
-                          );
-                        })
-                      : activeTab === 'newProduct'
-                      ? newProduct?.map((products, index) => {
-                          return (
-                            <React.Fragment key={index}>
-                              <CardComponent
-                                key={products._id}
-                                countInStock={products.countInStock}
-                                description={products.description}
-                                image={products.image}
-                                name={products.name}
-                                price={products.price}
-                                rating={products.rating}
-                                type={products.type}
-                                discount={products.discount}
-                                sold={products.sold}
-                                id={products._id}
-                              />
-                            </React.Fragment>
-                          );
-                        })
-                      : activeTab === 'selling'
-                      ? sellingProduct?.map((products, index) => {
-                          return (
-                            <React.Fragment key={index}>
-                              <CardComponent
-                                key={products._id}
-                                countInStock={products.countInStock}
-                                description={products.description}
-                                image={products.image}
-                                name={products.name}
-                                price={products.price}
-                                rating={products.rating}
-                                type={products.type}
-                                discount={products.discount}
-                                sold={products.sold}
-                                id={products._id}
-                              />
-                            </React.Fragment>
-                          );
-                        })
-                      : typeProduct?.map((products, index) => {
-                          return (
-                            <React.Fragment key={index}>
-                              <CardComponent
-                                key={products._id}
-                                countInStock={products.countInStock}
-                                description={products.description}
-                                image={products.image}
-                                name={products.name}
-                                price={products.price}
-                                rating={products.rating}
-                                type={products.type}
-                                discount={products.discount}
-                                sold={products.sold}
-                                id={products._id}
-                              />
-                            </React.Fragment>
-                          );
-                        })}
+                {productSort.length === 0 &&
+                newProduct.length === 0 &&
+                sellingProduct.length === 0 &&
+                typeProduct.length === 0 ? (
+                  <div className={cx('wrapper')}>
+                    <div>
+                      <img alt="find_pay" src={find_pay} width={200} height={200} />
+                    </div>
+                    <div style={{ fontSize: '16px' }}>Chưa có sản phẩm</div>
                   </div>
-                </div>
+                ) : (
+                  <div className={cx('container_user1')}>
+                    <div className={cx('user1')}>
+                      {activeTab === 'lowToHeight'
+                        ? productSort?.map((products, index) => {
+                            return (
+                              <React.Fragment key={index}>
+                                <CardComponent
+                                  key={products._id}
+                                  countInStock={products.countInStock}
+                                  description={products.description}
+                                  image={products.image}
+                                  name={products.name}
+                                  price={products.price}
+                                  rating={products.rating}
+                                  type={products.type}
+                                  discount={products.discount}
+                                  sold={products.sold}
+                                  id={products._id}
+                                />
+                              </React.Fragment>
+                            );
+                          })
+                        : activeTab === 'heightToLow'
+                        ? productSort?.map((products, index) => {
+                            return (
+                              <React.Fragment key={index}>
+                                <CardComponent
+                                  key={products._id}
+                                  countInStock={products.countInStock}
+                                  description={products.description}
+                                  image={products.image}
+                                  name={products.name}
+                                  price={products.price}
+                                  rating={products.rating}
+                                  type={products.type}
+                                  discount={products.discount}
+                                  sold={products.sold}
+                                  id={products._id}
+                                />
+                              </React.Fragment>
+                            );
+                          })
+                        : activeTab === 'newProduct'
+                        ? newProduct?.map((products, index) => {
+                            return (
+                              <React.Fragment key={index}>
+                                <CardComponent
+                                  key={products._id}
+                                  countInStock={products.countInStock}
+                                  description={products.description}
+                                  image={products.image}
+                                  name={products.name}
+                                  price={products.price}
+                                  rating={products.rating}
+                                  type={products.type}
+                                  discount={products.discount}
+                                  sold={products.sold}
+                                  id={products._id}
+                                />
+                              </React.Fragment>
+                            );
+                          })
+                        : activeTab === 'selling'
+                        ? sellingProduct?.map((products, index) => {
+                            return (
+                              <React.Fragment key={index}>
+                                <CardComponent
+                                  key={products._id}
+                                  countInStock={products.countInStock}
+                                  description={products.description}
+                                  image={products.image}
+                                  name={products.name}
+                                  price={products.price}
+                                  rating={products.rating}
+                                  type={products.type}
+                                  discount={products.discount}
+                                  sold={products.sold}
+                                  id={products._id}
+                                />
+                              </React.Fragment>
+                            );
+                          })
+                        : typeProduct?.map((products, index) => {
+                            return (
+                              <React.Fragment key={index}>
+                                <CardComponent
+                                  key={products._id}
+                                  countInStock={products.countInStock}
+                                  description={products.description}
+                                  image={products.image}
+                                  name={products.name}
+                                  price={products.price}
+                                  rating={products.rating}
+                                  type={products.type}
+                                  discount={products.discount}
+                                  sold={products.sold}
+                                  id={products._id}
+                                />
+                              </React.Fragment>
+                            );
+                          })}
+                    </div>
+                  </div>
+                )}
               </Loading>
             </div>
           </div>

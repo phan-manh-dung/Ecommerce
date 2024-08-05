@@ -384,3 +384,14 @@
   }
   border-bottom: 2px solid rgb(13, 92, 182) !important;
 }
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  -webkit-box-align: center;
+  align-items: center;
+  background-color: rgb(255, 255, 255);
+  width: 100%;
+  padding: 35px;
+  margin-top: 10px;
+}

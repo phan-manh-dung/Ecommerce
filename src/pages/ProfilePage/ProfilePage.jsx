@@ -104,12 +104,8 @@ const ProfilePage = () => {
 
   const handleOnchangePhone = (event) => {
     const value = event.target.value;
-    if (value.length < 0) {
-      setDataPhone(false);
-    } else if (value.length > 0) {
-      setPhone(value);
-      setDataPhone(true);
-    }
+    setPhone(value);
+    setDataPhone(value.length > 0);
   };
 
   const handleOnchangeAvatar = async ({ fileList }) => {
@@ -198,9 +194,11 @@ const ProfilePage = () => {
       if (dataPhone === false) {
         alert('Bạn hãy nhập phone.');
       } else {
+        const countryCode = getPhoneCode(user?.country);
+        const fullPhoneNumber = `${countryCode}${phone}`;
         await mutationUpdate.mutate({
           id: user?.id,
-          phone,
+          phone: fullPhoneNumber,
           access_token: user?.access_token,
         });
       }
@@ -246,7 +244,6 @@ const ProfilePage = () => {
     'Hỗ trợ khách hàng',
   ];
   const arrCounstry = ['VietNamese', 'Japan', 'Franch', 'Italy', 'Egypt', 'India'];
-  const phoneCode = ['+84', '+81', '+33', '+39', '+20', '+91'];
 
   function getPhoneCode(country) {
     let phoneCode = '';
@@ -560,7 +557,7 @@ const ProfilePage = () => {
                                   <div style={{ maxWidth: '100%', width: '300px' }}>
                                     <Input
                                       onInput={handleOnchangeEmail}
-                                      value={user?.email}
+                                      value={email}
                                       placeholder="Nhập email..."
                                       style={{ width: '100%', border: 'none' }}
                                     />

@@ -1,93 +1,147 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import firebase from '../../firebase';
+import React, { useState } from 'react';
 import styles from './ForgotPassPage.module.scss';
 import classNames from 'classnames/bind';
 import { useNavigate } from 'react-router-dom';
+import OtpInput from 'otp-input-react';
+import { CgSpinner } from 'react-icons/cg';
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
+import { auth } from '../../firebase';
+import { RecaptchaVerifier, signInWithPhoneNumber } from 'firebase/auth';
+import { message } from 'antd';
+import * as UserService from '~/service/UserService';
 
 const cx = classNames.bind(styles);
 
 const ForgotPassPage = () => {
   const navigate = useNavigate();
-  const [phoneNumber, setPhoneNumber] = useState('');
   const [otp, setOtp] = useState('');
+  const [ph, setPh] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [showOTP, setShowOTP] = useState(false);
+  const [user, setUser] = useState(null);
 
-  const setupRecaptcha = useCallback(() => {
-    if (typeof window !== 'undefined') {
-      // Khởi tạo RecaptchaVerifier
-      window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-        size: 'normal', // Hoặc 'invisible' nếu bạn không muốn hiển thị reCAPTCHA
-        defaultCountry: 'VN',
+  // JavaScript
+  function onCaptchVerify() {
+    if (!window.recaptchaVerifier) {
+      window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+        size: 'invisible',
+        callback: (response) => {},
+        'expired-callback': () => {},
       });
-      console.log(window.recaptchaVerifier); // Kiểm tra cấu hình
     }
-  }, []);
+  }
 
-  useEffect(() => {
-    setupRecaptcha();
-  }, [setupRecaptcha]);
+  function handleSignUpError(error) {
+    if (error.code) {
+      switch (error.code) {
+        case 'auth/invalid-phone-number':
+          message.error('Invalid phone number format. Please check and try again.');
+          break;
+        case 'auth/missing-phone-number':
+          message.error('Phone number is missing. Please provide a valid phone number.');
+          break;
+        case 'auth/quota-exceeded':
+          message.error('SMS quota exceeded. Please try again later.');
+          break;
+        case 'auth/too-many-requests':
+          message.error('Too many requests. Please try again later.');
+          break;
+        default:
+          message.error('An unknown error occurred. Please try again.');
+          break;
+      }
+    } else {
+      message.error('An unknown error occurred. Please try again.');
+    }
+  }
 
-  const handleSendOTP = async () => {
+  async function onSignUp() {
+    setLoading(true);
+    onCaptchVerify();
+
     const appVerifier = window.recaptchaVerifier;
-    await firebase
-      .auth()
-      .signInWithPhoneNumber(phoneNumber, appVerifier)
-      .then((confirmationResult) => {
-        window.confirmationResult = confirmationResult;
-        alert('Mã xác nhận đã được gửi');
-      })
-      .catch((error) => {
-        alert(error.message);
-      });
-  };
+    const formatPh = '+' + ph;
 
-  const handleVerify = async () => {
+    const response = await UserService.findPhoneForUser(ph);
+    if (response === null) {
+      message.error('Số điện thoại không tồn tại trong hệ thống');
+      setLoading(false);
+    } else {
+      signInWithPhoneNumber(auth, formatPh, appVerifier)
+        .then((confirmationResult) => {
+          window.confirmationResult = confirmationResult;
+          setLoading(false);
+          setShowOTP(true);
+          message.success('OTP sended successfully!');
+        })
+        .catch((error) => {
+          console.log(error);
+          setLoading(false);
+        });
+    }
+  }
+
+  function onOTPVerify() {
+    setLoading(true);
     window.confirmationResult
       .confirm(otp)
-      .then((result) => {
-        alert('Xác thực thành công', result);
-        navigate('/reset-pass');
+      .then(async (res) => {
+        console.log(res);
+        if (res.user) {
+          message.success('OTP verified successfully!');
+        }
+        setUser(res.user);
+        setLoading(false);
       })
-      .catch((error) => {
-        alert(error.message);
+      .catch((err) => {
+        console.log(err);
+        setLoading(false);
+        handleSignUpError(err);
       });
-  };
+  }
 
   return (
     <div className={cx('container_forgot')}>
+      <div id="recaptcha-container"></div>
       <div className={cx('wrapper_forgot')}>
         <div className={cx('form_title')}>
           <span className={cx('content')}>Khôi phục mật khẩu</span>
         </div>
       </div>
       <div className={cx('wrapper_input')}>
-        <div className={cx('input')}>
-          <span>Số điện thoại</span>
-          <input
-            value={phoneNumber}
-            onChange={(e) => setPhoneNumber(e.target.value)}
-            required
-            maxLength={100}
-            placeholder="Số điện thoại của bạn"
-            className={cx('input-field')}
-          />
-        </div>
         <div className={cx('note')}>
           <span>Nhập đúng số điện thoại bạn đăng kí</span>
         </div>
-        <div className={cx('wrapper_btn')}>
-          <button value={otp} onChange={(e) => setOtp(e.target.value)} onClick={handleSendOTP} className={cx('btn')}>
-            Lấy mã xác nhận
-          </button>
-        </div>
-        <div className={cx('wrapper_btn')}>
-          <button onClick={handleVerify} className={cx('btn')}>
-            Xác thực mã
-          </button>
-        </div>
+        {showOTP ? (
+          <div className={cx('wrapper_btn')}>
+            <OtpInput
+              value={otp}
+              onChange={setOtp}
+              className={cx('otp_container')}
+              OTPLength={6}
+              otpType="number"
+              disabled={false}
+              autoFocus
+            ></OtpInput>
+            <button onClick={onOTPVerify} className={cx('btn')}>
+              {loading && <CgSpinner className={cx('icon')} size={20} />}
+              <span>Verify OTP</span>
+            </button>
+          </div>
+        ) : (
+          <div className={cx('wrapper_btn')}>
+            <PhoneInput country={'in'} value={ph} onChange={setPh} />
+            <button className={cx('btn')} onClick={onSignUp}>
+              {loading && <CgSpinner className={cx('icon')} size={20} />}
+              <span>Send OTP</span>
+            </button>
+          </div>
+        )}
+        <div className={cx('wrapper_btn')}></div>
         <div className={cx('wrapper_home')}>
           <span onClick={() => navigate('/sign-in')}>Trở lại đăng nhập</span>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center' }} id="recaptcha-container"></div>
       </div>
     </div>
   );

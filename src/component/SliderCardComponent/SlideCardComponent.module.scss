@@ -1,0 +1,15 @@
+.single_item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.slider_item {
+  padding: 0 10px; /* Điều chỉnh khoảng cách giữa các mục */
+  transition: transform 0.5s ease-in-out;
+  will-change: transform;
+}
+
+.slider_container {
+  width: 100%; /* Điều chỉnh kích thước container */
+}

@@ -119,8 +119,9 @@
     .wrapper_card {
       padding: 20px 16px;
       display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
+      flex-wrap: nowrap; /* Ngăn không cho các phần tử wrap xuống hàng mới */
+      overflow: hidden; /* Ẩn thanh cuộn */
+      white-space: nowrap; /* Đảm bảo nội dung không wrap xuống hàng mới */
     }
   }
   .card_import {
@@ -241,7 +242,7 @@
 }
 
 .wrapper_home-left {
-  padding: 0 20px;
+  padding-right: 10px;
 }
 
 .home-left {
@@ -327,4 +328,14 @@
 .container_imgs .item1 {
   grid-column: 1 / span 1; /* Div lớn chiếm cột 1 đến 3 */
   grid-row: 1 / span 2; /* Chiếm 2 hàng */
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  -webkit-box-align: center;
+  align-items: center;
+  background-color: rgb(255, 255, 255);
+  width: 100%;
+  padding: 35px;
 }

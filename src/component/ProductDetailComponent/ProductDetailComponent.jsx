@@ -28,6 +28,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronRight, faComment, faPlus, faStar } from '@fortawesome/free-solid-svg-icons';
 import io from 'socket.io-client';
 import moment from 'moment';
+import { useInView } from 'react-intersection-observer';
 
 const cx = classNames.bind(styles);
 const socket = io('http://localhost:4000');
@@ -84,6 +85,8 @@ const ProductDetailComponent = ({ idProduct }) => {
   const [checkIsVote, setCheckIsVote] = useState(true);
   const [showSocket, setShowSocket] = useState(true);
   const [commentsDatabase, setCommentsDatabase] = useState([]);
+  // trigger chỉ gọi api 1 lần duy nhất
+  const { ref, inView } = useInView({ triggerOnce: true });
 
   const handleTabClickFilter = (tabFilter) => {
     setActiveTabFilter(tabFilter);
@@ -97,6 +100,8 @@ const ProductDetailComponent = ({ idProduct }) => {
   const handleRateClick = () => {
     if (reviewSectionRef.current) {
       reviewSectionRef.current.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      message.warning('Không tìm thấy phần đánh giá');
     }
   };
 
@@ -110,6 +115,12 @@ const ProductDetailComponent = ({ idProduct }) => {
       // setErrorLimitOrder(true);
     }
   }, [numProduct, cart]);
+
+  useEffect(() => {
+    if (inView) {
+      fetchComments();
+    }
+  }, [inView]);
 
   const handleChangeCount = (type, limited) => {
     if (type === 'increase') {
@@ -277,6 +288,10 @@ const ProductDetailComponent = ({ idProduct }) => {
     setImages(imageList);
   };
 
+  const handleSuccessNotification = (msg) => {
+    message.success(msg);
+  };
+
   //lưu dữ liệu mới socket vào localStore
   useEffect(() => {
     socket.on('newComment', (newComment) => {
@@ -350,11 +365,6 @@ const ProductDetailComponent = ({ idProduct }) => {
     }
   };
   const averageRating = caculatorRating();
-
-  // call back
-  const handleSuccessNotification = (msg) => {
-    message.success(msg);
-  };
 
   const handleAddOrderProductCart = () => {
     if (!user?.id) {
@@ -572,11 +582,7 @@ const ProductDetailComponent = ({ idProduct }) => {
                               <span className={cx('address')}>
                                 {user?.moreAddress || user?.district || user?.city ? (
                                   <>
-                                    {user?.moreAddress}
-                                    {','}
-                                    {user?.district}
-                                    {','}
-                                    {user?.city}
+                                    {user?.moreAddress} {user?.district} {user?.city}
                                   </>
                                 ) : (
                                   <span>Q.1, P.Bến Nghé, Hồ Chí Minh</span>
@@ -1054,134 +1060,142 @@ const ProductDetailComponent = ({ idProduct }) => {
                         </div>
 
                         {/* phần show trong database */}
-                        <div ref={reviewSectionRef}>
-                          {showSocket &&
-                            Array.isArray(commentsDatabase) &&
-                            commentsDatabase.map((item) => (
-                              <div key={item._id} className={cx('review_comment')}>
-                                <div className={cx('review_user')}>
-                                  <div className={cx('user_inner')}>
-                                    <div className={cx('user_avatar')}>
+                        <div ref={ref}>
+                          <div ref={reviewSectionRef}>
+                            {showSocket &&
+                              Array.isArray(commentsDatabase) &&
+                              commentsDatabase.map((item) => (
+                                <div key={item._id} className={cx('review_comment')}>
+                                  <div className={cx('review_user')}>
+                                    <div className={cx('user_inner')}>
+                                      <div className={cx('user_avatar')}>
+                                        <div>
+                                          <img
+                                            loading="lazy"
+                                            style={{ margin: '0 8px 0 0' }}
+                                            alt=""
+                                            src={item?.avatarUser || arrImageWeb.userProfile}
+                                            width={40}
+                                            height={40}
+                                          />
+                                        </div>
+                                      </div>
+                                      <div className={cx('wrapper_avatar')}>
+                                        <div className={cx('user_name')}>{item.nameUser}</div>
+                                        <div className={cx('user_date')}>Đã tham gia</div>
+                                      </div>
+                                    </div>
+                                    <div className={cx('user_info')}>
                                       <div>
                                         <img
                                           loading="lazy"
                                           style={{ margin: '0 8px 0 0' }}
                                           alt=""
-                                          src={item?.avatarUser || arrImageWeb.userProfile}
-                                          width={40}
-                                          height={40}
+                                          src={arrImageWeb.cmt}
+                                          width={20}
+                                          height={20}
                                         />
+                                        Đã viết
+                                      </div>
+                                      <span>0 đánh giá</span>
+                                    </div>
+                                    <div
+                                      style={{
+                                        border: '0.5px solid rgb(235, 235, 240)',
+                                        marginTop: '9px',
+                                      }}
+                                    ></div>
+                                    <div className={cx('user_info')}>
+                                      <div>
+                                        <img
+                                          loading="lazy"
+                                          style={{ margin: '0 8px 0 0' }}
+                                          alt=""
+                                          src={arrImageWeb.like}
+                                          width={20}
+                                          height={20}
+                                        />
+                                        Đã nhận
+                                      </div>
+                                      <span>Cảm ơn</span>
+                                    </div>
+                                    <div></div>
+                                  </div>
+                                  <div className={cx('review_vote')}>
+                                    <div className={cx('rating_title')}>
+                                      <div>
+                                        {Array.from({ length: 5 }, (_, index) => (
+                                          <StarFilled
+                                            key={index}
+                                            style={{
+                                              width: 20,
+                                              height: 20,
+                                              color: index < item.rating ? 'gold' : 'grey',
+                                            }}
+                                          />
+                                        ))}
+                                      </div>
+                                      <div className={cx('rating_content')}>
+                                        {item?.rating === 5
+                                          ? 'Cực kì hài lòng'
+                                          : item?.rating === 4
+                                          ? 'Hài lòng'
+                                          : item?.rating === 3
+                                          ? 'Bình thường'
+                                          : item?.rating === 2
+                                          ? 'Tệ'
+                                          : item?.rating === 1
+                                          ? 'Quá tệ'
+                                          : ''}
                                       </div>
                                     </div>
-                                    <div className={cx('wrapper_avatar')}>
-                                      <div className={cx('user_name')}>{item.nameUser}</div>
-                                      <div className={cx('user_date')}>Đã tham gia</div>
+                                    <div className={cx('seller_name-attribute')}>
+                                      <div className={cx('seller-name')}>
+                                        <span>Đã mua hàng</span>
+                                      </div>
                                     </div>
-                                  </div>
-                                  <div className={cx('user_info')}>
-                                    <div>
-                                      <img
-                                        loading="lazy"
-                                        style={{ margin: '0 8px 0 0' }}
-                                        alt=""
-                                        src={arrImageWeb.cmt}
-                                        width={20}
-                                        height={20}
-                                      />
-                                      Đã viết
+                                    <div className={cx('comment_content')}>
+                                      <div className={cx('')}>
+                                        <span>{item.comment}</span>
+                                      </div>
                                     </div>
-                                    <span>0 đánh giá</span>
-                                  </div>
-                                  <div
-                                    style={{
-                                      border: '0.5px solid rgb(235, 235, 240)',
-                                      marginTop: '9px',
-                                    }}
-                                  ></div>
-                                  <div className={cx('user_info')}>
-                                    <div>
-                                      <img
-                                        loading="lazy"
-                                        style={{ margin: '0 8px 0 0' }}
-                                        alt=""
-                                        src={arrImageWeb.like}
-                                        width={20}
-                                        height={20}
-                                      />
-                                      Đã nhận
-                                    </div>
-                                    <span>Cảm ơn</span>
-                                  </div>
-                                  <div></div>
-                                </div>
-                                <div className={cx('review_vote')}>
-                                  <div className={cx('rating_title')}>
-                                    <div>
-                                      {Array.from({ length: 5 }, (_, index) => (
-                                        <StarFilled
-                                          key={index}
-                                          style={{
-                                            width: 20,
-                                            height: 20,
-                                            color: index < item.rating ? 'gold' : 'grey',
-                                          }}
-                                        />
-                                      ))}
-                                    </div>
-                                    <div className={cx('rating_content')}>
-                                      {item?.rating === 5
-                                        ? 'Cực kì hài lòng'
-                                        : item?.rating === 4
-                                        ? 'Hài lòng'
-                                        : item?.rating === 3
-                                        ? 'Bình thường'
-                                        : item?.rating === 2
-                                        ? 'Tệ'
-                                        : item?.rating === 1
-                                        ? 'Quá tệ'
-                                        : ''}
-                                    </div>
-                                  </div>
-                                  <div className={cx('seller_name-attribute')}>
-                                    <div className={cx('seller-name')}>
-                                      <span>Đã mua hàng</span>
-                                    </div>
-                                  </div>
-                                  <div className={cx('comment_content')}>
-                                    <div className={cx('')}>
-                                      <span>{item.comment}</span>
-                                    </div>
-                                  </div>
 
-                                  <div className={cx('review_images')}>
-                                    <img loading="lazy" alt="" src={item.images} width={77} height={77} />
-                                  </div>
-                                  <div className={cx('create_date')}>
-                                    <div className={cx('comment_attribute')}>
-                                      <div className={cx('item')}>
-                                        <span>Reviewed {moment(item.createdAt).fromNow(true)} ago</span>
+                                    <div className={cx('review_images')}>
+                                      <img loading="lazy" alt="" src={item.images} width={77} height={77} />
+                                    </div>
+                                    <div className={cx('create_date')}>
+                                      <div className={cx('comment_attribute')}>
+                                        <div className={cx('item')}>
+                                          <span>Reviewed {moment(item.createdAt).fromNow(true)} ago</span>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div className={cx('comment_share')}>
+                                      <div className={cx('wrapper_like')}>
+                                        <span className={cx('like_span')}>
+                                          <img loading="lazy" alt="" src={arrImageWeb.like} width={24} height={24} />
+                                          <span>1</span>
+                                        </span>
+                                        <span className={cx('reply_span')}>
+                                          <img
+                                            loading="lazy"
+                                            alt=""
+                                            src={arrImageWeb.binhluan}
+                                            width={24}
+                                            height={24}
+                                          />
+                                          Bình luận
+                                        </span>
+                                      </div>
+                                      <div className={cx('wrapper_share')}>
+                                        <img loading="lazy" alt="" src={arrImageWeb.chiase} width={24} height={24} />
+                                        Chia sẻ
                                       </div>
                                     </div>
                                   </div>
-                                  <div className={cx('comment_share')}>
-                                    <div className={cx('wrapper_like')}>
-                                      <span className={cx('like_span')}>
-                                        <img loading="lazy" alt="" src={arrImageWeb.like} width={24} height={24} />
-                                        <span>1</span>
-                                      </span>
-                                      <span className={cx('reply_span')}>
-                                        <img loading="lazy" alt="" src={arrImageWeb.binhluan} width={24} height={24} />
-                                        Bình luận
-                                      </span>
-                                    </div>
-                                    <div className={cx('wrapper_share')}>
-                                      <img loading="lazy" alt="" src={arrImageWeb.chiase} width={24} height={24} />
-                                      Chia sẻ
-                                    </div>
-                                  </div>
                                 </div>
-                              </div>
-                            ))}
+                              ))}
+                          </div>
                         </div>
 
                         {/* phần đánh giá sản phẩm cho người dùng đã mua*/}

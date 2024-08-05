@@ -3,9 +3,7 @@ import React, { useEffect, useState } from 'react';
 import * as ProductService from '~/service/ProductService';
 
 import { StarFilled } from '@ant-design/icons';
-import img_now from '../../assets/img_Global/now.png';
-import img_genuine from '../../assets/img_Global/genuine.png';
-import topdeal from '../../assets/img_Global/topdealsmall.png';
+import { useInView } from 'react-intersection-observer';
 
 import styles from './Card.module.scss';
 import classNames from 'classnames/bind';
@@ -13,26 +11,34 @@ import { useNavigate } from 'react-router-dom';
 import { convertPrice } from '~/utils';
 const cx = classNames.bind(styles);
 
+const arrImageWeb = {
+  img_now: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722594961/sc3jl7zzyjd49gdomjkh.png',
+  img_genuine: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722594960/s7ewizniyyrvevtybvq3.png',
+  topdeal: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722594960/flxhvjtghd8v5yfcvhpo.png',
+};
+
 const CardComponent = (props) => {
   const { countInStock, description, image, name, price, rating, type, sold, discount, originOfCountry, id } = props;
   const navigate = useNavigate();
   const [commentsDatabase, setCommentsDatabase] = useState([]);
+  const { ref, inView } = useInView({ triggerOnce: true }); // trigger chỉ gọi api 1 lần duy nhất
 
   useEffect(() => {
-    const fetchComments = async () => {
-      try {
-        if (id) {
+    if (inView) {
+      const fetchComments = async () => {
+        try {
           const response = await ProductService.getVoteDetail(id);
           if (response.status === 'OK') {
-            setCommentsDatabase(response?.data);
+            setCommentsDatabase(response.data);
           }
+        } catch (error) {
+          console.error('Error fetching comments:', error);
         }
-      } catch (error) {
-        console.error('Error fetching comments:', error);
-      }
-    };
-    fetchComments();
-  }, [id]);
+      };
+
+      fetchComments();
+    }
+  }, [inView, id]);
 
   // tính sao trung bình
   const caculatorRating = () => {
@@ -66,23 +72,23 @@ const CardComponent = (props) => {
   };
 
   return (
-    <div onClick={() => handleDetailsProduct(id)}>
+    <div onClick={() => handleDetailsProduct(id)} ref={ref}>
       <Card
         hoverable
         bodyStyle={{ padding: '10px', borderTop: 'none' }}
         style={{ width: 167, marginRight: '10px' }}
-        cover={<img alt="img" src={image} style={coverStyle} />}
+        cover={<img loading="lazy" alt="img" src={image} style={coverStyle} />}
       >
         <div className={cx('card-container')}>
           <div className={cx('card-content')}>
             <div className={cx('wrapper_icon')}>
               {originOfCountry !== 'vietnamese' && (
                 <div className={cx('genuine')}>
-                  <img alt="top deal" src={topdeal} width={89} height={20} />
+                  <img loading="lazy" alt="top deal" src={arrImageWeb.topdeal} width={89} height={20} />
                 </div>
               )}
               <div className={cx('genuine')}>
-                <img alt="genuine" src={img_genuine} width={89} height={20} />
+                <img loading="lazy" alt="genuine" src={arrImageWeb.img_genuine} width={89} height={20} />
               </div>
             </div>
             <div className={cx('user_name')}>{name}</div>
@@ -120,7 +126,7 @@ const CardComponent = (props) => {
             </div>
 
             <div className={cx('user_speed')}>
-              <img alt="now" src={img_now} width={32} height={16} />
+              <img loading="lazy" alt="now" src={arrImageWeb.img_now} width={32} height={16} />
               <span className={cx('speed_title')}>Giao hàng nhanh</span>
             </div>
           </div>

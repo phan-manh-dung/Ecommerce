@@ -1,7 +1,6 @@
-// src/firebase.js
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-
+// Import the functions you need from the SDKs you need
+import { initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
 const firebaseConfig = {
   apiKey: 'AIzaSyAR7BkFVY9NwUszKuQP8sKVUaGGekBScEo',
   authDomain: 'verifyotpecommerce.firebaseapp.com',
@@ -12,5 +11,6 @@ const firebaseConfig = {
   measurementId: 'G-5EMFK86HSL',
 };
 
-firebase.initializeApp(firebaseConfig);
-export default firebase;
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+export const auth = getAuth(app);

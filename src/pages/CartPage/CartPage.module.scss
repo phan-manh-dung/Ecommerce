@@ -18,8 +18,12 @@
         padding-bottom: 5px;
       }
       .span-title {
+        cursor: pointer;
         padding-left: 4px;
         font-size: 12px;
+      }
+      .span-title:hover {
+        color: rgb(43, 96, 230);
       }
     }
   }
@@ -28,13 +32,12 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 2%;
+    padding: 0 12px;
     border-radius: 4px;
     font-size: 14px;
     line-height: 20px;
     color: rgb(70, 70, 77);
     height: 36px;
-    margin-top: 1%;
     background-color: #fff;
   }
   .product {
@@ -91,6 +94,7 @@
     font-weight: 500;
     font-size: 14px;
     display: flex;
+    align-items: center;
     .i {
       display: block;
       width: 1px;

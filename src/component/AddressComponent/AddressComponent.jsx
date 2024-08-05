@@ -7,7 +7,7 @@ import * as UserService from '~/service/UserService';
 import { useMutationHook } from '~/hook/useMutationHook';
 import Loading from '../LoadingComponent/Loading';
 import ModalComponent from '../ModalComponent/ModalComponent';
-import { Radio } from 'antd';
+import { message, Radio } from 'antd';
 import { updateUserAddress } from '~/redux/slide/userSlide';
 
 const cx = classNames.bind(styles);
@@ -125,7 +125,6 @@ const AddressComponent = ({ onSuccess, showAddressModal, handleCloseAddressModal
           },
           onError: (error) => {
             console.error('Error updating user:', error);
-            // Xử lý lỗi nếu cần
           },
         },
       );
@@ -134,7 +133,12 @@ const AddressComponent = ({ onSuccess, showAddressModal, handleCloseAddressModal
 
   const handleChangeMoreAddress = (e) => {
     const values = e.target.value;
-    setMoreAddressValue(values);
+    const regex = /^[a-zA-Z0-9]{1,10}$/;
+    if (regex.test(value)) {
+      setMoreAddressValue(values);
+    } else {
+      message.error('Địa chỉ không hợp lệ');
+    }
   };
 
   const handleCancelDelete = () => {

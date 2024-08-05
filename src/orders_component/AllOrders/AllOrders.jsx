@@ -14,8 +14,7 @@ import ModalComponent from '~/component/ModalComponent/ModalComponent';
 import ButtonComponent from '~/component/ButtonComponent/Buttoncomponent';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBan } from '@fortawesome/free-solid-svg-icons';
-import { useMutationHook } from '~/hook/useMutationHook';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { useMutationHooks } from '~/hooks/useMutationHook';
 
 const cx = classNames.bind(styles);
@@ -23,13 +22,10 @@ const cx = classNames.bind(styles);
 const AllOrders = () => {
   const user = useSelector((state) => state.user);
   const [orders, setOrders] = useState([]);
-  console.log('orders', orders);
   const [isModalOpen, setIsModalOpen] = useState(false); // mở modal
   // lấy id để xóa của order
   const [idDelete, setIdDelete] = useState('');
-
   const queryClient = useQueryClient();
-
   // tắt modal
   const handleCancel = () => {
     setIsModalOpen(false);
@@ -42,7 +38,6 @@ const AllOrders = () => {
   };
 
   // api delete order
-
   useEffect(() => {
     const fetchOrders = async () => {
       try {
@@ -103,13 +98,13 @@ const AllOrders = () => {
                 {order?.status !== 'cancelled' && order?.status === 'pending' ? (
                   <div className={cx('wrapper_pending')}>
                     <div className={cx('pending_car')}>
-                      <img alt="xe_xanh" src={xe_xanh} width={20} height={20} />
+                      <img loading="lazy" alt="xe_xanh" src={xe_xanh} width={20} height={20} />
                       <span style={{ fontSize: '1.3rem', color: '#00ab56', paddingLeft: '3px' }}>
                         Giao hàng 3 - 5 ngày
                       </span>
                     </div>
                     <div className={cx('pending_wait')}>
-                      <img alt="indicator" src={indicator} width={20} height={20} />
+                      <img loading="lazy" alt="indicator" src={indicator} width={20} height={20} />
                       <span style={{ paddingLeft: '3px', fontSize: '1.3rem', fontWeight: '600' }}>Chờ xác nhận</span>
                     </div>
                   </div>
@@ -126,7 +121,7 @@ const AllOrders = () => {
                 <div className={cx('content_left')}>
                   <div className={cx('img')}>
                     {order.orderItems && order.orderItems.length > 0 && (
-                      <img alt="" src={order.orderItems[0].image} width={80} height={80} />
+                      <img loading="lazy" alt="" src={order.orderItems[0].image} width={80} height={80} />
                     )}
                   </div>
                   <div className={cx('main_content')}>
@@ -177,7 +172,7 @@ const AllOrders = () => {
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <span>Bạn có muốn hủy đơn hàng không ? </span>
             <div>
-              <img alt="icon_sad" src={icon_sad} width={18} height={18} />
+              <img loading="lazy" alt="icon_sad" src={icon_sad} width={18} height={18} />
             </div>
           </div>
           <div onClick={() => {}}>

@@ -6,17 +6,19 @@
     .user_name {
       font-weight: 400;
       font-size: 12px;
-      line-height: 150%;
+      line-height: 18px;
       color: rgb(76, 76, 81);
-      word-break: break-word;
-      padding-top: 2px;
-      overflow: hidden;
+      word-break: break-word; /* Tự động xuống dòng khi gặp từ dài */
+      white-space: normal; /* Đảm bảo văn bản xuống dòng */
+      overflow: hidden; /* Ẩn phần văn bản vượt quá hộp chứa */
       display: -webkit-box; /* Sử dụng box model */
       -webkit-box-orient: vertical; /* Hướng box dọc */
       -webkit-line-clamp: 2; /* Giới hạn số dòng */
       text-overflow: ellipsis; /* Thêm dấu ba chấm ở cuối */
-      height: 36px;
+      max-height: 36px; /* Giới hạn chiều cao tối đa */
+      display: block;
     }
+
     .user_wrapper-price {
       display: flex;
       align-items: center;

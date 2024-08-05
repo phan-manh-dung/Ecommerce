@@ -14,6 +14,7 @@ import { Helmet } from 'react-helmet';
 
 import ButtonComponent from '~/component/ButtonComponent/Buttoncomponent';
 import ModalComponent from '~/component/ModalComponent/ModalComponent';
+import AddressComponent from '~/component/AddressComponent/AddressComponent';
 
 const cx = classNames.bind(styles);
 
@@ -33,6 +34,7 @@ const CartPage = () => {
   const dispatch = useDispatch(); // gửi action đến reducer
   const navigate = useNavigate(); // chuyển trang
   const [isChecked, setIsChecked] = useState(false);
+  const [showAddressModal, setShowAddressModal] = useState(false);
   // mảng ids cart dùng để xóa
   const [dataDeleteMany, setDataDeleteMany] = useState([]);
 
@@ -74,6 +76,17 @@ const CartPage = () => {
       newValue ? [...prevListChecked, e.target.value] : prevListChecked.filter((item) => item !== e.target.value),
     );
     setIsChecked(newValue);
+  };
+
+  const handleOpenModalAddress = () => {
+    setShowAddressModal(true);
+  };
+  const handleCloseAddressModal = () => {
+    setShowAddressModal(false);
+  };
+
+  const handleSuccessNotification = (msg) => {
+    message.success(msg);
   };
 
   // onchange check all
@@ -219,10 +232,15 @@ const CartPage = () => {
           <span>
             <FontAwesomeIcon icon={faLocationDot} style={{ color: '#999', marginRight: '3px' }} />
             <span style={{ fontSize: '13px', color: '#808089' }}>Giao đến:</span>
-            {user?.address && user?.city ? (
-              <span> {user?.address || user?.city}</span>
+            {user?.moreAddress || user?.district || user?.city ? (
+              <span style={{ fontSize: '1.2rem' }}>
+                {' '}
+                {user?.moreAddress} {user?.district} {user?.city}
+              </span>
             ) : (
-              <span className={cx('span-title')}>Thêm địa chỉ</span>
+              <span className={cx('span-title')} onClick={handleOpenModalAddress}>
+                Thêm địa chỉ
+              </span>
             )}
           </span>
         </div>
@@ -231,7 +249,6 @@ const CartPage = () => {
             <Row>
               <Col xs={0} sm={17} style={{ paddingRight: '1%' }}>
                 <div>
-                  <div style={{ height: '50px', backgroundColor: '#fff' }}>giu</div>
                   <div className={cx('wrapper_all')}>
                     <span style={{ width: '36%' }}>
                       <Checkbox onChange={handleCheckAll} checked={listChecked?.length === cart?.cartItems?.length} />
@@ -314,21 +331,30 @@ const CartPage = () => {
                                   <sup>
                                     <u>đ</u>
                                   </sup>
-                                  <img
-                                    loading="lazy"
-                                    alt=""
-                                    src={arrImageWeb.chart}
-                                    width={20}
-                                    height={20}
-                                    style={{ padding: '0 1%' }}
-                                  />
-                                  <div
-                                    style={{
-                                      fontSize: '11px',
-                                      color: 'rgb(0, 171, 86)',
-                                    }}
-                                  >
-                                    Giảm {carts?.discount || 10} %
+
+                                  <div>
+                                    {carts?.discount > 0 ? (
+                                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                                        <img
+                                          loading="lazy"
+                                          alt=""
+                                          src={arrImageWeb.chart}
+                                          width={20}
+                                          height={20}
+                                          style={{ padding: '0 1%' }}
+                                        />
+                                        <div
+                                          style={{
+                                            fontSize: '11px',
+                                            color: 'rgb(0, 171, 86)',
+                                          }}
+                                        >
+                                          Giảm {carts?.discount} %
+                                        </div>
+                                      </div>
+                                    ) : (
+                                      <div></div>
+                                    )}
                                   </div>
                                 </div>
                               </Col>
@@ -398,7 +424,9 @@ const CartPage = () => {
                     </div>
                     <div className={cx('name')}>
                       {user?.nickname || user?.name} <i className={cx('i')}></i>
-                      <span style={{ fontSize: '12px', paddingRight: '6px' }}>{getPhoneCode(user?.country)}</span>
+                      <span style={{ fontSize: '12px', paddingRight: '6px', color: '#777' }}>
+                        {getPhoneCode(user?.country)}
+                      </span>
                       {user?.phone}
                     </div>
                     {/* address */}
@@ -411,7 +439,7 @@ const CartPage = () => {
                   <div className={cx('promotion')}>
                     <div className={cx('promotion-child')}>
                       <span style={{ fontSize: '14px', fontWeight: 500 }}>Dũng Khuyến Mãi</span>
-                      <span style={{ color: 'rgb(128, 128, 137)', fontSize: '13px' }}>Có thể chọn 2</span>
+                      <span style={{ color: 'rgb(128, 128, 137)', fontSize: '13px' }}>Có thể chọn </span>
                     </div>
                     <div
                       style={{
@@ -503,6 +531,13 @@ const CartPage = () => {
               <p>Bạn tham khảo thêm các sản phẩm được Shop MD gợi ý bên dưới nhé!</p>
             </div>
           )}
+        </div>
+        <div>
+          <AddressComponent
+            onSuccess={handleSuccessNotification}
+            showAddressModal={showAddressModal}
+            handleCloseAddressModal={handleCloseAddressModal}
+          />
         </div>
       </div>
     </div>

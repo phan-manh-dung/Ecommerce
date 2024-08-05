@@ -41,6 +41,9 @@
   }
   .wrapper_input {
     padding: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     .input {
       padding: 10px;
       display: flex;
@@ -70,30 +73,7 @@
       padding: 10px;
       span {
         font-size: 14px;
-        color: brown;
-      }
-    }
-    .wrapper_btn {
-      padding: 10px;
-      .btn {
-        width: 100%;
-        cursor: pointer;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 0 20px;
-        min-width: 160px;
-        height: 50px;
-        background-color: #57b846;
-        border-radius: 25px;
-        font-family: Quicksand;
-        font-size: 16px;
-        color: #fff;
-        line-height: 1.2;
-        transition: all 0.4s;
-      }
-      .btn:hover {
-        background-color: #111714;
+        color: rgb(18, 27, 163);
       }
     }
     .wrapper_home {
@@ -112,5 +92,45 @@
         color: #053d75;
       }
     }
+  }
+}
+.wrapper_btn {
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  .otp_container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .btn {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    width: 100%;
+    height: 50px;
+    border-radius: 10px;
+    background-color: #37da85;
+    justify-content: center;
+  }
+  .btn:hover {
+    background-color: #2f9e6e;
+  }
+}
+
+.icon {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }
