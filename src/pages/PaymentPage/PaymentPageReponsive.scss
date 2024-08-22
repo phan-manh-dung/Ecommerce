@@ -1,0 +1,128 @@
+/* Small devices (phones) */
+@media (max-width: 600px) {
+  .container_payment {
+    .left {
+      margin-right: 0 !important;
+      border-radius: 0;
+    }
+    .product {
+      flex-direction: column;
+      .left-content {
+        max-width: 100% !important;
+        width: 100% !important;
+      }
+      .right-content {
+        max-width: 100% !important;
+        width: 100% !important;
+      }
+      .right-content {
+        order: 2; /* Đảm bảo right-content nằm dưới left-content */
+      }
+
+      .left-content {
+        order: 1; /* Đảm bảo left-content nằm trên right-content */
+      }
+    }
+    .choose_add {
+      max-width: 100% !important;
+      width: 50% !important;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .promotion {
+      border-radius: 0;
+    }
+    .request {
+      border-radius: 0;
+    }
+    .asa {
+      border-radius: 0;
+    }
+    .left2 {
+      border-radius: 0;
+      margin-right: 0;
+    }
+    .address {
+      border-radius: 0;
+    }
+    .wrapper_pay-order {
+      border-radius: 0;
+    }
+    .shop_sale {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .container_content {
+      padding: 0 !important;
+    }
+    .wrapper_content {
+      padding: 0 !important;
+      margin-bottom: 0 !important;
+    }
+    .title {
+      display: none !important;
+    }
+    .confirm_order {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+      color: #fff;
+      background-color: rgba($color: #3160f8, $alpha: 1);
+      position: relative;
+      .icon_span {
+        position: absolute;
+        left: 0; /* Đẩy phần tử này sát bên trái */
+        text-align: left;
+        padding-left: 18px;
+      }
+
+      span {
+        font-size: 1em;
+        line-height: 1.2em;
+      }
+    }
+    .petit {
+      max-width: 100% !important;
+      width: 100% !important;
+    }
+  }
+  .title {
+    justify-content: center !important;
+  }
+  .display_none {
+    display: none !important;
+  }
+  .content-1 {
+    text-align: center;
+  }
+}
+
+/* Medium devices (tablets) */
+@media (min-width: 601px) and (max-width: 900px) {
+  .container_payment {
+    .confirm_order {
+      display: none;
+    }
+  }
+}
+
+/* Large devices (desktops) */
+@media (min-width: 901px) and (max-width: 1200px) {
+  .container_payment {
+    .confirm_order {
+      display: none;
+    }
+  }
+}
+
+/* Extra large devices (large desktops) */
+@media (min-width: 1201px) {
+  .container_payment {
+    .confirm_order {
+      display: none;
+    }
+  }
+}

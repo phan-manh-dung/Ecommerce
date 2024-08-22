@@ -1,0 +1,129 @@
+/* Small devices (phones) */
+@media (max-width: 600px) {
+  .container_user {
+    padding: 2px !important;
+    .wrapper-type {
+      padding: 10px 6px !important;
+    }
+    .type-title {
+      overflow: auto;
+      scrollbar-width: none;
+    }
+    .display_none {
+      display: none !important;
+    }
+    .row_user-left {
+      display: inline !important;
+    }
+    .user_left {
+      border-radius: 0 !important;
+    }
+    .footer_row-wr {
+      padding-right: 0 !important;
+    }
+    .wrapper_left {
+      border: none !important;
+    }
+  }
+  .row_right {
+    flex-grow: 1 !important;
+  }
+  .container_wrapper-center {
+    padding: 0 !important;
+  }
+  .review_user {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .seller-name {
+    display: flex;
+    justify-content: flex-end;
+    span {
+      color: rgba($color: #108d4c, $alpha: 1);
+    }
+  }
+  .item {
+    display: flex;
+    justify-content: flex-end;
+  }
+  .comment_share {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 6px 0px;
+  }
+  .wrapper_like {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 120px;
+  }
+  .like_span {
+    display: flex;
+    align-items: center;
+  }
+  .reply_span {
+    display: flex;
+    align-items: center;
+  }
+  .wrapper_share {
+    display: flex;
+    align-items: center;
+  }
+  .user_info {
+    div {
+      display: flex;
+      align-items: center;
+    }
+    span {
+      display: flex;
+      justify-content: flex-end;
+      font-size: 0.8em;
+    }
+  }
+  .wrapper_avatar {
+    .user_name {
+      font-size: 0.988em;
+      font-weight: 600;
+      line-height: 1.3em;
+    }
+    .user_date {
+      font-size: 0.8em;
+      color: rgba($color: #108d4c, $alpha: 1);
+    }
+  }
+  .review_vote {
+    .rating_title {
+      display: flex;
+      align-items: center;
+      .rating_content {
+        font-size: 0.988em;
+        line-height: 1.5em;
+      }
+    }
+  }
+  .review_comment {
+    margin-top: 6px;
+    border-bottom: 1px solid #e0e0e0;
+    padding: 6px 0;
+    .user_inner {
+      display: flex;
+      align-items: center;
+    }
+  }
+}
+
+/* Medium devices (tablets) */
+@media (min-width: 601px) and (max-width: 900px) {
+}
+
+/* Large devices (desktops) */
+@media (min-width: 901px) and (max-width: 1200px) {
+  .container_user {
+  }
+}
+
+/* Extra large devices (large desktops) */
+@media (min-width: 1201px) {
+}

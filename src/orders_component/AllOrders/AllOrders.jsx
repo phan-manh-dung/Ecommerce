@@ -130,10 +130,11 @@ const AllOrders = () => {
                     </div>
                     <div className={cx('main2')}>
                       <span className={cx('span')}>{order.shopName || 'Shop MD'}</span>
+                      <span className={cx('span_sm')}>{convertPrice(order.totalPrice)} ₫</span>
                     </div>
                   </div>
                 </div>
-                <div className={cx('content_right')}>
+                <div className={cx('content_right', 'display_none')}>
                   <div className={cx('price')}>
                     {order.orderItems && order.orderItems.length > 0 && convertPrice(order.orderItems[0].price)}₫
                   </div>
@@ -142,7 +143,7 @@ const AllOrders = () => {
 
               {/* Phần tử giao diện cho phần footer */}
               <div className={cx('footer')}>
-                <div className={cx('total_money')}>
+                <div className={cx('total_money', 'display_none')}>
                   <div className={cx('title')}>Tổng tiền:</div>
                   <div className={cx('total')}>{convertPrice(order.totalPrice)} ₫</div>
                 </div>

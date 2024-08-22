@@ -1,0 +1,44 @@
+/* Small devices (phones) */
+@media (max-width: 600px) {
+  .container_wrapper {
+    .home {
+      width: 76%;
+      .content {
+        display: none;
+      }
+      .card {
+        border-top-left-radius: 14px;
+        border-bottom-left-radius: 14px;
+        .card2 {
+          .form {
+            width: 100%;
+            padding-left: 1em;
+            padding-right: 1em;
+            border-top-left-radius: 14px;
+            border-bottom-left-radius: 14px;
+          }
+        }
+      }
+    }
+  }
+}
+
+/* Medium devices (tablets) */
+@media (min-width: 601px) and (max-width: 900px) {
+  .container_wrapper {
+    .home {
+      width: 56%;
+      .content {
+        display: none;
+      }
+    }
+  }
+}
+
+/* Large devices (desktops) */
+@media (min-width: 901px) and (max-width: 1200px) {
+}
+
+/* Extra large devices (large desktops) */
+@media (min-width: 1201px) {
+}

@@ -1,19 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { Col, Radio, Row, Upload } from 'antd';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useState } from 'react';
+import { Col, Row } from 'antd';
+import { useSelector } from 'react-redux';
 import {
   faBell,
   faBox,
   faClipboard,
   faComment,
   faCreditCard,
-  faEnvelope,
   faEye,
   faHeartCirclePlus,
-  faKey,
   faLocationDot,
-  faPhone,
-  faShieldVirus,
   faStarHalfStroke,
   faUser,
   faHeadset,
@@ -22,13 +18,13 @@ import {
 
 import styles from './MyOfOrder.module.scss';
 import classNames from 'classnames/bind';
-import Loading from '~/component/LoadingComponent/Loading';
 import ListProfileComponent from '~/component/ListProfileComponent/ListProfileComponent';
 
 import img_right_arrow from '~/assets/img_Global/right_arrow.png';
 import img_user from '~/assets/img_Global/user_profile.png';
 import astra_reward from '~/assets/img_Global/astra_reward.png';
 import astra from '~/assets/img_Global/astra_red.png';
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import AllOrders from '~/orders_component/AllOrders/AllOrders';
 import WaitPay from '~/orders_component/WaitPay/WaitPay';
@@ -37,11 +33,17 @@ import Delivered from '~/orders_component/Delivered/Delivered';
 import Transport from '~/orders_component/Transport/Transport';
 import Cancelled from '~/orders_component/Cancelled/Cancelled';
 import { Helmet } from 'react-helmet';
+import { useNavigate } from 'react-router-dom';
+
+const arrImageWeb = {
+  img_left: '  https://res.cloudinary.com/ds3jorj8m/image/upload/v1722417841/uu9duh770yoc4ig0byww.png',
+};
 
 const cx = classNames.bind(styles);
 
 const MyOfOrder = () => {
   const user = useSelector((state) => state.user);
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('all');
 
   // dữ liệu map
@@ -76,6 +78,10 @@ const MyOfOrder = () => {
     setActiveTab(tab); // Cập nhật trạng thái của tab khi người dùng click vào
   };
 
+  const handleBackClick = () => {
+    navigate(-1); // Quay lại trang trước đó
+  };
+
   // Hàm render component dựa trên tab đang được chọn
   const renderComponent = () => {
     switch (activeTab) {
@@ -102,7 +108,7 @@ const MyOfOrder = () => {
         <title>Đơn hàng của tôi</title>
       </Helmet>
       <div className={cx('wrapper_my-order')}>
-        <div className={cx('wrapper-type')}>
+        <div className={cx('wrapper-type', 'display_none')}>
           <div className={cx('type-home')}>Trang chủ</div>
           <img alt="right_arrow" src={img_right_arrow} width={18} height={18} />
           <span className={cx('type-title')}>Đơn hàng của tôi</span>
@@ -165,11 +171,24 @@ const MyOfOrder = () => {
               </div>
             </div>
           </Col>
-          <Col sx={0} sm={19} style={{ padding: '0 16px' }}>
-            <div className={cx('information')}>Đơn hàng của tôi</div>
+          <Col sx={0} sm={19} className={cx('col-19')}>
+            <div className={cx('information', 'display_none')}>Đơn hàng của tôi</div>
+            <div className={cx('order_my')}>
+              <span className={cx('icon_span')} onClick={handleBackClick}>
+                <img
+                  loading="lazy"
+                  alt="icon"
+                  src={arrImageWeb.img_left}
+                  width={24}
+                  height={24}
+                  style={{ filter: 'invert(100%)' }}
+                />
+              </span>
+              <span>Đơn hàng của tôi</span>
+            </div>
             <div className={cx('container_order')}>
               <div className={cx('list')}>
-                <Row style={{ height: '42px', backgroundColor: '#fff' }}>
+                <Row className={cx('row')} style={{ height: '42px', backgroundColor: '#fff' }}>
                   <Col
                     xs={0}
                     sm={4}
@@ -220,7 +239,7 @@ const MyOfOrder = () => {
                   </Col>
                 </Row>
               </div>
-              <div className={cx('search')}>
+              <div className={cx('search', 'display_none')}>
                 <div>
                   <FontAwesomeIcon icon={faMagnifyingGlass} width={40} color="#808089" />
                 </div>

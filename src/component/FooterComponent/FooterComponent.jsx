@@ -64,11 +64,11 @@ const FooterComponent = () => {
       {isFooterVisible && (
         <div className={cx('container_footer')}>
           <Row>
-            <Col span={5}>
+            <Col lg={5}>
               <div className={cx('help_customer')}>
                 <span className={cx('title')}>Hỗ trợ khách hàng</span>
                 <div className={cx('content')}>
-                  <a href="tel:0373286662" className={cx('text')}>
+                  <a href="tel:0373286662" className={cx('text')} style={{ display: 'flex' }}>
                     Hotline: <span style={{ color: 'black', fontSize: '13px' }}>0373286662</span>
                   </a>
                   {arrHelpCustomer.map((item, index) => (
@@ -79,7 +79,7 @@ const FooterComponent = () => {
                 </div>
               </div>
             </Col>
-            <Col span={5}>
+            <Col lg={5}>
               <div className={cx('help_customer')}>
                 <span className={cx('title')}>Shop MD</span>
                 <div className={cx('content')}>
@@ -91,7 +91,7 @@ const FooterComponent = () => {
                 </div>
               </div>
             </Col>
-            <Col span={5}>
+            <Col lg={5}>
               <div className={cx('help_customer')}>
                 <span className={cx('title')}>Hợp tác và liên kết</span>
                 <div className={cx('content')}>
@@ -103,7 +103,7 @@ const FooterComponent = () => {
                 </div>
                 <div style={{ margin: '16px 0' }}>
                   <span className={cx('title')}>Chứng nhận bởi</span>
-                  <div style={{ padding: '10px 0', display: 'flex' }}>
+                  <div className={cx('wrapper_certification')} style={{ padding: '10px 0', display: 'flex' }}>
                     <img loading="lazy" alt="logo" src={arrImageWeb.khonghanggia} width={32} height={32} />
                     <div style={{ padding: '0 6px' }}>
                       <img
@@ -119,7 +119,7 @@ const FooterComponent = () => {
                 </div>
               </div>
             </Col>
-            <Col span={5}>
+            <Col lg={5}>
               <div className={cx('help_customer')}>
                 <span className={cx('title')}>Phương thức thanh toán</span>
                 <div className={cx('payment')}>
@@ -132,7 +132,7 @@ const FooterComponent = () => {
                 <span className={cx('title')}>Dịch vụ giao hàng</span>
               </div>
             </Col>
-            <Col span={4}>
+            <Col lg={4}>
               <div className={cx('help_customer')}>
                 <span className={cx('title')}>Kết nối với chúng tôi</span>
                 <div className={cx('social')}>

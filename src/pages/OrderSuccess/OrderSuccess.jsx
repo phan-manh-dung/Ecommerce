@@ -15,6 +15,8 @@ const arrImageWeb = {
   call: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722434132/rmeqpgaip4tioglczqaq.png',
   ch_play: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722426743/wbpsvf0gsfheftsp9kn7.png',
   app_store: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722426743/qeg5o9wm7rck9zasdkg5.png',
+  cash: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1723621663/ynjoevllpqfjaxtmmsbj.png',
+  momo: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722426743/nicxhfwbbxxqqiseshyk.jpg',
 };
 
 const OrderSuccess = () => {
@@ -34,7 +36,7 @@ const OrderSuccess = () => {
         <title>Đặt hàng thành công</title>
       </Helmet>
       <div className={cx('container_order')}>
-        <div className={cx('title')}>
+        <div className={cx('title', 'display_none')}>
           <span>Shop MD</span>
           <div>
             <img loading="lazy" alt="call" src={arrImageWeb.call} width={185} height={56} />
@@ -43,7 +45,7 @@ const OrderSuccess = () => {
         {/* main */}
         <div className={cx('main')}>
           <Row>
-            <Col sm={15}>
+            <Col xs={24} sm={15}>
               <div className={cx('title-content')}>
                 <div className={cx('title-content_top')}>
                   <div>
@@ -55,14 +57,30 @@ const OrderSuccess = () => {
                     />
                   </div>
                   <div>
-                    <h1 className={cx('content_1')}>Yay, đặt hàng thành công!</h1>
-                    <h3 className={cx('content_2')}>Chuẩn bị tiền mặt {convertPrice(priceProduct)} VND</h3>
+                    <h1 className={cx('content_1', 'display_none')}>Yay, đặt hàng thành công!</h1>
+                    <h3 className={cx('content_2', 'display_none')}>
+                      Chuẩn bị tiền mặt {convertPrice(priceProduct)} VND
+                    </h3>
+                    <div className={cx('wrapper_title-success')}>
+                      <span className={cx('display_none-sm')}>Đặt hàng thành công</span>
+                      <span className={cx('display_none-sm')}>Cảm ơn bạn đã mua hàng</span>
+                    </div>
                   </div>
                 </div>
                 <div className={cx('wrapper-bottom')}>
                   <div className={cx('content_bottom')}>
                     <div className={cx('bottom-title')}>Phương thức thanh toán</div>
-                    <div className={cx('bottom-title')}>Thanh toán tiền mặt</div>
+                    {state?.paymentMethod === 'cash' ? (
+                      <div className={cx('wrapper_pay-information')} style={{ display: 'flex' }}>
+                        <img loading="lazy" alt="momo" src={arrImageWeb.momo} width={28} height={28} />
+                        <div className={cx('bottom-title')}>Momo</div>
+                      </div>
+                    ) : (
+                      <div className={cx('wrapper_pay-information')}>
+                        <img loading="lazy" alt="cash" src={arrImageWeb.cash} width={28} height={28} />
+                        <div className={cx('bottom-title')}>Tiền mặt</div>
+                      </div>
+                    )}
                   </div>
                   <div className={cx('content_bottom')}>
                     <div className={cx('bottom-title')}>Tổng cộng</div>
@@ -71,7 +89,7 @@ const OrderSuccess = () => {
                     </div>
                   </div>
                 </div>
-                <a href="/">
+                <a href="/" className={cx('button-back_home', 'display_none')}>
                   <div className={cx('back_home')}>
                     <ButtonComponent
                       textButton="Quay trở về trang chủ"
@@ -111,6 +129,20 @@ const OrderSuccess = () => {
                     </div>
                   </div>
                 </div>
+                {/* backhome */}
+
+                <div style={{ backgroundColor: '#fff', display: 'flex', justifyContent: 'center' }}>
+                  <a href="/" className={cx('display_none-sm')}>
+                    <div className={cx('back_home')}>
+                      <ButtonComponent
+                        textButton="Quay trở về trang chủ"
+                        styleTextButton={{ color: 'rgb(23,128,231)' }}
+                        border="none"
+                      />
+                    </div>
+                  </a>
+                </div>
+
                 {/* wrapper 3 */}
                 <div className={cx('wrapper_ch-play')}>
                   <div>

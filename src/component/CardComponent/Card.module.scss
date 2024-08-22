@@ -1,3 +1,4 @@
+@import '../CardComponent/CardReponsive.scss';
 .card-container {
   .card-content {
     .wrapper_icon {
@@ -15,7 +16,7 @@
       -webkit-box-orient: vertical; /* Hướng box dọc */
       -webkit-line-clamp: 2; /* Giới hạn số dòng */
       text-overflow: ellipsis; /* Thêm dấu ba chấm ở cuối */
-      max-height: 36px; /* Giới hạn chiều cao tối đa */
+      height: 36px; /* Giới hạn chiều cao tối đa */
       display: block;
     }
 

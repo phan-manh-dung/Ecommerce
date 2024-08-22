@@ -19,6 +19,10 @@ import { searchProduct } from '../../redux/slide/productSlide';
 import { addProductInCart } from '~/redux/slide/cartSlide';
 import { RESET_CART_DATA } from '~/redux/slide/cartSlide';
 
+import menu from '~/assets/img_Global/menu.png';
+
+import { useStateContext } from '../StateProviderComponent/StateProviderComponent';
+
 const cx = classNames.bind(styles);
 
 const arrImageWeb = {
@@ -39,6 +43,8 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
   // kiểm tra đã useEffect hay chưa
   const [hasFetchedCartData, setHasFetchedCartData] = useState(false);
   const location = useLocation();
+
+  const { toggleState } = useStateContext();
 
   const userId = user?.id;
 
@@ -143,21 +149,24 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
     <div className={cx('container_header')}>
       <div className={cx('wrapper_header')}>
         <Row className={cx('wrapper_row')}>
-          <Col span={6} className={cx('row_left')}>
-            <div>
+          <Col xs={3} lg={6} className={cx('row_left')}>
+            <div className={cx('right_list-none')}>
               <a href="/" className={cx('row_left-home')}>
                 <img loading="lazy" style={{ width: '20%', height: '100%' }} src={arrImageWeb.logo_shop} alt="logo" />
               </a>
             </div>
+            <div className={cx('element_show')} onClick={toggleState}>
+              <img alt="menu" loading="lazy" width={30} height={30} src={menu} />
+            </div>
           </Col>
           {!isHiddenSearch && (
-            <Col span={8}>
+            <Col xs={16} lg={8}>
               <InputSearch onChange={onSearch} />
             </Col>
           )}
-          <Col span={10}>
+          <Col xs={5} lg={10}>
             <div className={cx('row_right')}>
-              <div className={cx('row_right-list')}>
+              <div className={cx('row_right-list', 'right_list-none')}>
                 <img
                   loading="lazy"
                   src={location.pathname === '/' ? arrImageWeb.homeBold : arrImageWeb.logo_home}
@@ -183,7 +192,7 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
                 </span>
               </div>
               <div
-                className={cx('row_right-list')}
+                className={cx('row_right-list', 'right_list-none')}
                 style={{ width: '21%', justifyContent: 'space-between', display: 'flex' }}
               >
                 <img
@@ -205,7 +214,14 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
               {user?.access_token ? (
                 <>
                   <Popover content={content} trigger="hover">
-                    <div style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+                    <div
+                      style={{
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                      }}
+                      className={cx('name_name')}
+                    >
                       {user?.nickname || user?.name}
                     </div>
                   </Popover>
@@ -218,7 +234,12 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
                     alt="user"
                     style={{ width: '24px', height: '24px' }}
                   />
-                  <span style={{ fontSize: '14px', color: 'rgb(128, 128, 137)', paddingLeft: '5px' }}>Đăng nhập</span>
+                  <span
+                    className={cx('right_list-none')}
+                    style={{ fontSize: '14px', color: 'rgb(128, 128, 137)', paddingLeft: '5px' }}
+                  >
+                    Đăng nhập
+                  </span>
                 </div>
               )}
               {!isHiddenCart && (
@@ -232,11 +253,12 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
                           color: '#0a68ff',
                           paddingRight: '5px',
                         }}
+                        className={cx('right_list-none')}
                       >
                         Giỏ hàng
                       </span>
                       <Badge count={cart?.cartItems?.length} size="small">
-                        <ShoppingCartOutlined style={{ width: '24px', height: '24px', color: '#0a68ff' }} />
+                        <ShoppingCartOutlined style={{ width: '18px', height: '18px', color: '#0a68ff' }} />
                       </Badge>
                     </div>
                   ) : (
@@ -245,14 +267,14 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
                         style={{
                           fontSize: '14px',
                           color: 'rgb(128, 128, 137)',
-
                           paddingRight: '5px',
                         }}
+                        className={cx('right_list-none')}
                       >
                         Giỏ hàng
                       </span>
                       <Badge count={cart?.cartItems?.length} size="small">
-                        <ShoppingCartOutlined style={{ width: '24px', height: '24px' }} />
+                        <ShoppingCartOutlined style={{ width: '18px', height: '18px' }} />
                       </Badge>
                     </div>
                   )}

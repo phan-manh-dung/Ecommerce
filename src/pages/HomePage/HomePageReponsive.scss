@@ -1,0 +1,146 @@
+/* Small devices (phones) */
+@media (max-width: 600px) {
+  .display_none {
+    display: none;
+  }
+
+  .display_block {
+    display: block;
+  }
+
+  .swipeable-container {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+  }
+
+  .container_home {
+    padding: 10px 4px !important;
+
+    .display_none {
+      display: none !important;
+    }
+    .display_block {
+      display: block !important;
+    }
+  }
+  .container_main {
+    max-width: 100% !important;
+    width: 100% !important;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    background-color: transparent;
+    scrollbar-width: none;
+  }
+  .container_main2 {
+    max-width: 100% !important;
+    width: 100% !important;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    background-color: transparent;
+    scrollbar-width: none;
+  }
+  .wrapper_card {
+    gap: 2px !important;
+    width: 100% !important;
+    padding: 20px 2px !important;
+  }
+  .container_imgs {
+    grid-template-columns: 1fr !important; /* Một cột cho phần tử đầu tiên */
+    grid-template-rows: auto auto !important; /* Hai hàng tự động */
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important; /* 2 cột */
+  }
+
+  .item1 {
+    grid-column: 1 / -1 !important; /* Chiếm toàn bộ chiều rộng */
+    img {
+      width: 100% !important;
+      height: 100% !important;
+    }
+  }
+
+  .item2,
+  .item3 {
+    grid-column: span 1 !important; /* Chia sẻ cùng một hàng */
+    img {
+      width: 100% !important;
+      height: 100% !important;
+    }
+  }
+
+  .item4,
+  .item5 {
+    grid-column: span 1 !important; /* Chia sẻ cùng một hàng */
+    img {
+      width: 100% !important;
+      height: 100% !important;
+    }
+  }
+
+  .item6,
+  .item7 {
+    grid-column: span 1 !important; /* Chia sẻ cùng một hàng */
+    img {
+      width: 100% !important;
+      height: 100% !important;
+    }
+  }
+
+  .item8,
+  .item9 {
+    grid-column: span 1 !important; /* Chia sẻ cùng một hàng */
+    img {
+      width: 100% !important;
+      height: 100% !important;
+    }
+  }
+  .slider {
+    max-width: 100% !important;
+    width: 100% !important;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .wrapper_list {
+    display: flex !important;
+  }
+}
+
+/* Medium devices (tablets) */
+@media (min-width: 601px) and (max-width: 900px) {
+  .container_main {
+    max-width: 100% !important;
+    width: 100% !important;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    background-color: transparent;
+    scrollbar-width: none;
+  }
+  .container_main2 {
+    max-width: 100% !important;
+    width: 100% !important;
+    flex-wrap: nowrap;
+    scrollbar-width: none;
+    overflow-x: auto;
+    .list {
+      display: flex;
+      flex-wrap: nowrap;
+    }
+  }
+  .container_home {
+    padding-right: 0 !important;
+    .container_imgs {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+    }
+  }
+}
+
+/* Large devices (desktops) */
+@media (min-width: 901px) and (max-width: 1200px) {
+}
+
+/* Extra large devices (large desktops) */
+@media (min-width: 1201px) {
+}

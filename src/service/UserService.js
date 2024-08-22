@@ -127,3 +127,13 @@ export const findPhoneForUser = async (phone) => {
     throw error;
   }
 };
+
+export const resetPassWordForUser = async (data) => {
+  try {
+    const res = await axios.post(`${process.env.REACT_APP_API_URL}/user/reset-password`, data);
+    return res.data;
+  } catch (error) {
+    console.error('Error reset password service fe:', error);
+    throw error;
+  }
+};

@@ -6,7 +6,6 @@ import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import { useDebounce } from '~/hooks/useDebounce';
 import { Helmet } from 'react-helmet';
-import { useNavigate } from 'react-router-dom';
 import { Col, message, Row } from 'antd';
 
 import find_pay from '~/assets/img_Global/find_pay.png';
@@ -17,9 +16,12 @@ import CardComponent from '~/component/CardComponent/CardComponent';
 import AssistantComponent from '~/component/AssistantComponent/AssistantComponent';
 import ButtonComponent from '~/component/ButtonComponent/Buttoncomponent';
 import Loading from '~/component/LoadingComponent/Loading';
+import HomeLeftComponent from '~/component/HomeLeftComponent/HomeLeftComponent';
 
 import * as ProductService from '~/service/ProductService';
 import SliderCardComponent from '~/component/SliderCardComponent/SliderCardComponent';
+import { useStateContext } from '~/component/StateProviderComponent/StateProviderComponent';
+import DrawerComponent from '~/component/DrawerComponent/DrawerComponent';
 
 const cx = classNames.bind(styles);
 
@@ -79,7 +81,6 @@ const arrImageWeb = {
 };
 
 const HomePage = () => {
-  const navigate = useNavigate();
   const searchProduct = useSelector((state) => state?.product?.search);
   const searchDebounce = useDebounce(searchProduct, 500);
   const [limit, setLimit] = useState(20);
@@ -88,82 +89,14 @@ const HomePage = () => {
   const [activeTabImport, setActiveTabImport] = useState('Bánh kẹo');
   const [activeTabSuggestDay, setActiveTabSuggestDay] = useState('for_you');
 
-  const arrImg = [
-    arrImageWeb.img1,
-    arrImageWeb.img2,
-    arrImageWeb.img3,
-    arrImageWeb.img4,
-    arrImageWeb.img5,
-    arrImageWeb.img6,
-    arrImageWeb.img7,
-    arrImageWeb.img8,
-    arrImageWeb.img9,
-    arrImageWeb.img10,
-    arrImageWeb.img11,
-    arrImageWeb.img12,
-    arrImageWeb.img13,
-    arrImageWeb.img14,
-    arrImageWeb.img15,
-    arrImageWeb.img16,
-    arrImageWeb.img17,
-    arrImageWeb.img18,
-    arrImageWeb.img19,
-    arrImageWeb.img20,
-    arrImageWeb.img21,
-  ];
-
-  const arr2 = [
-    'Đồ chơi - Mẹ và bé ',
-    'Máy tính bảng',
-    'Son - Make up',
-    'Nồi chiên',
-    'Túi xách',
-    'Túi thời trang nam',
-    'Đồng hồ',
-    'Giày dép nam',
-    'Giày dép nữ',
-    'Đồ quốc tế',
-    'Thời trang nữ',
-    'NGON',
-    'Đời sống sức khỏe',
-    'Mắt kính',
-    'Nhà sách của Dũng',
-    'Bách hóa online',
-    'Điện tử - điện lạnh',
-    'Máy ảnh - quay phim',
-    'Oto - Xe máy - Xe đạp',
-    'Thể thao dã ngoại',
-    'Tai nghe',
-  ];
-
-  const arrDanhMuc = [
-    arrImageWeb.img22,
-    arrImageWeb.img23,
-    arrImageWeb.img24,
-    arrImageWeb.img25,
-    arrImageWeb.img26,
-    arrImageWeb.img27,
-    arrImageWeb.img28,
-    arrImageWeb.img29,
-  ];
+  const { isTrue, setIsTrue } = useStateContext();
 
   const arrCamKet = ['100 % hàng thật', 'Hoàn 200% nếu hàng giả', '30 ngày đổi trả ', 'Giao nhanh 2h', 'Giá siêu rẻ'];
 
   const arrImgCamKet = [arrImageWeb.check, arrImageWeb.hoantra, arrImageWeb.box, arrImageWeb.xetai, arrImageWeb.ghim];
 
-  const arrTitleDanhMuc = [
-    'Exchange',
-    'Tốt & nhanh',
-    'Giá rẻ mỗi ngày',
-    'Xả kho',
-    'Mã giảm giá',
-    'Ưu đãi thẻ , ví',
-    'Đóng tiền , nạp thẻ',
-    'Mua trước trả sau',
-  ];
-
   const handleTabClick = (tab) => {
-    setActiveTab(tab); // Cập nhật trạng thái của tab khi người dùng click vào
+    setActiveTab(tab);
   };
 
   const handleTabClickImport = (tabImport) => {
@@ -177,15 +110,6 @@ const HomePage = () => {
   // button lood hết sản phẩm
   const handleLoadMore = () => {
     setLimit(product?.length);
-  };
-
-  // type
-  const handleClick = (name) => {
-    const productName = name
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/ /g, '_');
-    navigate(`/product/${productName}?name=${encodeURIComponent(name)}`);
   };
 
   const fetchAllTypeProduct = async () => {
@@ -278,57 +202,27 @@ const HomePage = () => {
       </div>
       <div className={cx('container_home')}>
         <Row>
-          <Col xs={0} sm={5}>
-            <div className={cx('wrapper_home-left', 'scrollable-content')}>
-              <div className={cx('home-left')}>
-                <div className={cx('wrapper-title')}>
-                  <span className={cx('left-title')}>Danh mục</span>
-                </div>
-                <div>
-                  <div className={cx('wrapper-left_title')}>
-                    {arrImg.map((imgSrc, index) => (
-                      <div key={index} className="wrapper-left_title" onClick={() => handleClick(arr2[index])}>
-                        <div className={cx('container-img_title')}>
-                          <div className="img_left">
-                            <img loading="lazy" src={imgSrc} alt="img" width={32} height={32} />
-                          </div>
-                          <div className="title_left" style={{ paddingLeft: '10px' }}>
-                            {arr2[index]}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-              <div className={cx('home-left2')}>
-                <div className={cx('wrapper-title')}>
-                  <span className={cx('left-title')}>Nổi bật</span>
-                </div>
-                <div className={cx('wrapper-left_title')}>
-                  {arrDanhMuc.map((imgSrc, index) => (
-                    <div key={index} className="wrapper-left_title">
-                      <div className={cx('container-img_title')}>
-                        <div className="img_left">
-                          <img loading="lazy" src={imgSrc} alt="img" width={32} height={32} />
-                        </div>
-                        <div className="title_left" style={{ paddingLeft: '10px' }}>
-                          {arrTitleDanhMuc[index]}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div className={cx('home-left2')}>
-                <div className={cx('wrapper-title2')}>
-                  <img loading="lazy" alt="store" src={arrImageWeb.img_store} width={32} height={32} />
-                  <span className={cx('left-title2')}>Bán hàng cùng Dũng</span>
-                </div>
-              </div>
+          <Col sm={5}>
+            <div>
+              <HomeLeftComponent />
+            </div>
+            <div className={cx('display_block')}>
+              {isTrue && (
+                <DrawerComponent
+                  width="70%"
+                  placement="left"
+                  isOpen={isTrue}
+                  title=""
+                  closable={false}
+                  onClose={() => setIsTrue(false)}
+                  maskClosable={true}
+                >
+                  <HomeLeftComponent isTrue={isTrue} />
+                </DrawerComponent>
+              )}
             </div>
           </Col>
-          <Col xs={0} sm={19} className={cx('scrollable-content')}>
+          <Col sm={19} className={cx('scrollable-content')} style={{ paddingRight: '0' }}>
             {/* slide component */}
             <div>
               <SliderComponent arrImages={[arrImageWeb.slider1, arrImageWeb.slider2, arrImageWeb.slider3]} />
@@ -606,6 +500,7 @@ const HomePage = () => {
           </Col>
         </Row>
       </div>
+      <DrawerComponent width="50%"></DrawerComponent>
     </Loading>
   );
 };

@@ -38,12 +38,15 @@ const arrImageWeb = {
   chu_t: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722434133/zzb0pes4pt5fxyecloyb.png',
   free_ship: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722434132/euh07uzig2ineh8x34kw.png',
   quet_qr: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722434132/euh07uzig2ineh8x34kw.png',
+  img_left: '  https://res.cloudinary.com/ds3jorj8m/image/upload/v1722417841/uu9duh770yoc4ig0byww.png',
 };
 
 const PaymentPage = () => {
   const user = useSelector((state) => state.user);
   const location = useLocation();
   const selectedItem = location.state?.selectedItem || location.state?.productsDetail;
+  const selectedAmountProduct = location.state?.selectedAmountProduct;
+  const productId = Object.keys(selectedAmountProduct)[0];
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [openSystem, setOpenSystem] = useState(false);
@@ -185,6 +188,7 @@ const PaymentPage = () => {
   // Show QR code pay with MOMO
   useEffect(() => {
     if (showModalMomo) {
+      const isMobile = window.innerWidth <= 600;
       const orderId = `${Date.now()}`;
       setOrderIdMoMo(orderId);
       const orderInfo = `${selectedItem?.name}`;
@@ -192,11 +196,15 @@ const PaymentPage = () => {
       apiMomoService(totalPriceMemo, orderId, orderInfo)
         .then((data) => {
           if (data.payUrl) {
-            setPayUrl(data.payUrl);
-            const canvas = document.getElementById('id_qr_code');
-            QRCode.toCanvas(canvas, data.qrCodeUrl, (error) => {
-              if (error) console.error(error);
-            });
+            if (isMobile) {
+              window.location.href = payUrl;
+            } else {
+              setPayUrl(data.payUrl);
+              const canvas = document.getElementById('id_qr_code');
+              QRCode.toCanvas(canvas, data.qrCodeUrl, (error) => {
+                if (error) console.error(error);
+              });
+            }
           }
         })
         .catch((error) => console.error('Error payment with momo', error));
@@ -311,11 +319,6 @@ const PaymentPage = () => {
     }
   }, [isSuccess, isError]);
 
-  console.log('selectedItem', selectedItem);
-
-  const productToRemove = selectedItem?.product;
-  console.log('productToRemove', productToRemove);
-
   const convertUpdate = () => {
     navigate('/profile-user');
   };
@@ -323,6 +326,10 @@ const PaymentPage = () => {
   // payment
   const handlePaymentChange = (selectedPayment) => {
     setPayment(selectedPayment);
+  };
+
+  const handleBackClick = () => {
+    navigate(-1); // Quay lại trang trước đó
   };
 
   return (
@@ -337,11 +344,24 @@ const PaymentPage = () => {
             <img loading="lazy" alt="call" src={arrImageWeb.call} width={185} height={56} />
           </div>
         </div>
+        <div className={cx('confirm_order')}>
+          <span className={cx('icon_span')} onClick={handleBackClick}>
+            <img
+              loading="lazy"
+              alt="icon"
+              src={arrImageWeb.img_left}
+              width={24}
+              height={24}
+              style={{ filter: 'invert(100%)' }}
+            />
+          </span>
+          <span>Xác nhận đơn hàng</span>
+        </div>
         {/* content */}
         <div className={cx('container_content')}>
           <div className={cx('wrapper_content')}>
             <Row>
-              <Col xs={0} sm={17}>
+              <Col xs={24} sm={17}>
                 <div className={cx('left')}>
                   <div className={cx('choose')}>
                     <span className={cx('content')}>Chọn hình thức giao hàng</span>
@@ -365,7 +385,8 @@ const PaymentPage = () => {
                       <div className={cx('title-left')}>
                         <span style={{ fontSize: '12px', lineHeight: '16px' }}>GIAO TIẾT KIỆM</span>
                         <span>
-                          {selectedItem.price} <sup>đ</sup>
+                          {convertPrice(selectedItem.price)}
+                          <sup>đ</sup>
                         </span>
                       </div>
                       <div className={cx('content_left')}>
@@ -374,7 +395,7 @@ const PaymentPage = () => {
                         </div>
                         <div className={cx('noidung')}>{selectedItem?.name}</div>
                       </div>
-                      <div style={{ float: 'right' }}>Số lượng: {selectedItem?.amount || numProduct}</div>
+                      <div style={{ float: 'right' }}>Số lượng: {selectedAmountProduct[productId] || numProduct}</div>
                     </div>
                     <div className={cx('right-content')}>
                       <div className={cx('wrapper_icon')}>
@@ -385,7 +406,7 @@ const PaymentPage = () => {
                       </div>
                     </div>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', paddingTop: '2%' }}>
+                  <div className={cx('shop_sale')} style={{ display: 'flex', alignItems: 'center', paddingTop: '2%' }}>
                     <div>Shop khuyến mãi</div>
                     <div
                       style={{
@@ -515,7 +536,7 @@ const PaymentPage = () => {
                   </div>
                 </div>
               </Col>
-              <Col xs={0} sm={7}>
+              <Col xs={24} sm={7}>
                 <div className={cx('right')}>
                   {/* //// */}
                   <div className={cx('address')}>
@@ -656,7 +677,7 @@ const PaymentPage = () => {
               <a href="/">Chính sách bảo mật thông tin cá nhân</a>
             </p>
           </div>
-          <p>© 2019 - Bản quyền của Công Ty Cổ Phần Mạnh Dũng MD.vn</p>
+          <p>© 2019 - Bản quyền của Phan Mạnh Dũng MD.vn</p>
         </div>
         {/* modal */}
         <ModalComponent title="" footer={null} open={openSystem} onCancel={cancelOpenSystem}>
@@ -670,15 +691,24 @@ const PaymentPage = () => {
           </div>
         </ModalComponent>
         {/* modal momo */}
-        <ModalComponent title="" footer={null} open={showModalMomo} onCancel={cancelOpenSystem}>
+
+        <ModalComponent
+          className={cx('display_none')}
+          title=""
+          footer={null}
+          open={showModalMomo}
+          onCancel={cancelOpenSystem}
+        >
           <div className={cx('container_modal-momo')}>
             <div className={cx('wrapper_momo')}>
               <div className={cx('title')}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                   <img loading="lazy" alt="momo" src={arrImageWeb.momo} width={32} height={32} />
-                  <span style={{ fontSize: '17px', fontWeight: '500' }}>Thanh toán bằng momo</span>
+                  <span style={{ fontSize: '1.1em', fontWeight: '600' }}>Thanh toán bằng momo</span>
                 </div>
-                <div style={{ color: 'rgb(13, 92, 182)' }}>Đổi phương thức khác</div>
+                <div className={cx('display_none')} style={{ color: 'rgb(13, 92, 182)', fontSize: '0.875em' }}>
+                  Đổi phương thức khác
+                </div>
               </div>
               <div className={cx('qr_content')}>
                 <div className={cx('left')}>

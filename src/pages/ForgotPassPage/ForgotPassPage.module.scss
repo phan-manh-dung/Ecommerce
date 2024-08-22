@@ -18,7 +18,7 @@
     position: relative;
 
     .form_title {
-      background-image: url('../../assets/img_Global/bg-forgot.jpg');
+      background-image: url('https://res.cloudinary.com/ds3jorj8m/image/upload/v1722870478/iq4f0hf33zoirltt8wti.webp');
       display: flex;
       flex-wrap: wrap;
       flex-direction: column;
@@ -32,7 +32,7 @@
       z-index: 1;
       .content {
         font-size: 30px;
-        color: #fff;
+        color: #bbef2d;
         text-transform: uppercase;
         line-height: 1.2;
         text-align: center;
@@ -44,6 +44,34 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    .wrapper_btn {
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      .otp_container {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+      }
+
+      .btn {
+        margin-top: 10px;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        width: 100%;
+        height: 50px;
+        border-radius: 10px;
+        background-color: #37da85;
+        justify-content: center;
+      }
+      .btn:hover {
+        background-color: #2f9e6e;
+      }
+    }
+
     .input {
       padding: 10px;
       display: flex;
@@ -73,52 +101,63 @@
       padding: 10px;
       span {
         font-size: 14px;
-        color: rgb(18, 27, 163);
+        color: #ef7269;
       }
     }
-    .wrapper_home {
+  }
+  .wrapper_new-password {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+    .button_update {
+      max-width: 100%;
+      width: 100%;
+    }
+    .field {
+      position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
+      gap: 0.5em;
+      border-radius: 25px;
+      padding: 0.6em;
+      border: none;
+      outline: none;
+      color: white;
+      background-color: #171717;
+      box-shadow: inset 2px 5px 10px rgb(5, 5, 5);
 
-      span {
-        text-decoration: dashed;
-        margin-top: 10px;
-        color: #007bff;
-        padding-left: 10px;
-        cursor: pointer;
+      .input-field {
+        position: relative;
+        background: none;
+        border: none;
+        outline: none;
+        width: 100%;
+        color: rgb(0, 255, 200);
       }
-      span:hover {
-        color: #053d75;
+      .input-field::placeholder {
+        font-size: 12px;
+        color: #aaa;
       }
     }
   }
-}
-.wrapper_btn {
-  padding: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  .otp_container {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-  }
-
-  .btn {
-    margin-top: 10px;
+  .wrapper_home {
     display: flex;
     align-items: center;
-    cursor: pointer;
-    width: 100%;
-    height: 50px;
-    border-radius: 10px;
-    background-color: #37da85;
     justify-content: center;
-  }
-  .btn:hover {
-    background-color: #2f9e6e;
+
+    span {
+      text-decoration: dashed;
+      margin-top: 10px;
+      color: #de9c10;
+      padding-left: 10px;
+      cursor: pointer;
+    }
+    span:hover {
+      color: #053d75;
+    }
   }
 }
 

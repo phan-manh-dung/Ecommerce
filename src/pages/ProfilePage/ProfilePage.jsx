@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styles from './Profile.module.scss';
 import classNames from 'classnames/bind';
-import { useNavigate } from 'react-router-dom';
 import { Col, Radio, Row, Upload } from 'antd';
 import {
   faBell,
@@ -39,16 +38,22 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useDispatch, useSelector } from 'react-redux';
 import { useMutationHook } from '~/hook/useMutationHook';
 import Loading from '~/component/LoadingComponent/Loading';
-import { updateUser, updateUserSlice } from '~/redux/slide/userSlide';
+import { updateUserSlice } from '~/redux/slide/userSlide';
 import { getBase64 } from '~/utils';
 import AddressComponent from '~/component/AddressComponent/AddressComponent';
 import { Helmet } from 'react-helmet';
+import { useNavigate } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
+
+const arrImageWeb = {
+  img_left: '  https://res.cloudinary.com/ds3jorj8m/image/upload/v1722417841/uu9duh770yoc4ig0byww.png',
+};
 
 const ProfilePage = () => {
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState(user?.email || '');
@@ -135,6 +140,11 @@ const ProfilePage = () => {
       setCountry(value);
     }
   };
+
+  const handleBackClick = () => {
+    navigate(-1); // Quay lại trang trước đó
+  };
+
   const handleOnchangeNickName = (event) => {
     const value = event.target.value;
     setNickName(value);
@@ -193,9 +203,12 @@ const ProfilePage = () => {
     try {
       if (dataPhone === false) {
         alert('Bạn hãy nhập phone.');
+      } else if (country === '') {
+        message.warning('Bạn hãy cập nhật quốc gia.');
       } else {
         const countryCode = getPhoneCode(user?.country);
-        const fullPhoneNumber = `${countryCode}${phone}`;
+        let formattedPhone = phone.startsWith('0') ? phone.slice(1) : phone;
+        const fullPhoneNumber = `${countryCode}${formattedPhone}`;
         await mutationUpdate.mutate({
           id: user?.id,
           phone: fullPhoneNumber,
@@ -267,7 +280,7 @@ const ProfilePage = () => {
         phoneCode = '+91';
         break;
       default:
-        phoneCode = 'Country not found';
+        phoneCode = '';
     }
     return phoneCode;
   }
@@ -279,14 +292,27 @@ const ProfilePage = () => {
       </Helmet>
       <Loading isLoading={isLoadingUpdated}>
         <div className={cx('wrapper_profile')}>
-          <div className={cx('wrapper-type')}>
+          <div className={cx('wrapper-type', 'display_none-xs')}>
             <div className={cx('type-home')}>Trang chủ</div>
             <img alt="right_arrow" src={img_right_arrow} width={18} height={18} />
             <span className={cx('type-title')}>Thông tin tài khoản</span>
           </div>
+          <div className={cx('profile_user')}>
+            <span className={cx('icon_span')} onClick={handleBackClick}>
+              <img
+                loading="lazy"
+                alt="icon"
+                src={arrImageWeb.img_left}
+                width={24}
+                height={24}
+                style={{ filter: 'invert(100%)' }}
+              />
+            </span>
+            <span>Thông tin người dùng</span>
+          </div>
           <Row>
             <Col xs={0} sm={5}>
-              <div className={cx('container_left')}>
+              <div className={cx('container_left', 'display_none')}>
                 <div className={cx('wrapper_left')}>
                   <div className={cx('user')}>
                     <div className={cx('img')}>
@@ -301,7 +327,7 @@ const ProfilePage = () => {
                       )}
                     </div>
                     <div style={{ paddingLeft: '12px' }}>
-                      <p>Tài khoản của</p>
+                      <p className={cx('display_none-sm')}>Tài khoản của</p>
                       <p
                         style={{
                           fontWeight: 600,
@@ -339,13 +365,13 @@ const ProfilePage = () => {
                 </div>
               </div>
             </Col>
-            <Col xs={0} sm={19}>
-              <div className={cx('information')}>Thông tin tài khoản</div>
+            <Col sm={19}>
+              <div className={cx('information', 'display_none-xs')}>Thông tin tài khoản</div>
               <div className={cx('container_right')}>
                 <div className={cx('wrapper_right')}>
                   <div className={cx('wrapper_content')}>
                     <Row>
-                      <Col xs={0} sm={12}>
+                      <Col sm={12}>
                         <div className={cx('wrapper_right-left')}>
                           <div className={cx('right-left')}>
                             <span className={cx('info-title')}>Thông tin cá nhân</span>
@@ -379,7 +405,7 @@ const ProfilePage = () => {
                                   justifyContent: 'space-around',
                                 }}
                               >
-                                <div>
+                                <div className={cx('display_none-sm', 'display_none-xs')}>
                                   <label style={{ paddingRight: '40px' }}>Họ & tên</label>
                                 </div>
                                 <div>
@@ -394,7 +420,7 @@ const ProfilePage = () => {
                                   justifyContent: 'space-around',
                                 }}
                               >
-                                <div>
+                                <div className={cx('display_none-sm', 'display_none-xs')}>
                                   <label style={{ paddingRight: '40px' }}>Nickname</label>
                                 </div>
                                 <div>
@@ -450,26 +476,28 @@ const ProfilePage = () => {
                             </div>
                           </div>
                           {/* gioi tinh */}
-                          <div className={cx('wrapper-date')}>
+                          <div className={cx('wrapper-sex')}>
                             <label className={cx('title-date')}>Giới tính</label>
-                            <Radio value="Nam" checked={sex === 'Nam'} onChange={() => handleOnchangeSex('Nam')}>
-                              Nam
-                            </Radio>
+                            <div className={cx('wrapper_radio')}>
+                              <Radio value="Nam" checked={sex === 'Nam'} onChange={() => handleOnchangeSex('Nam')}>
+                                Nam
+                              </Radio>
 
-                            <Radio value="Nữ" checked={sex === 'Nữ'} onChange={() => handleOnchangeSex('Nữ')}>
-                              Nữ
-                            </Radio>
+                              <Radio value="Nữ" checked={sex === 'Nữ'} onChange={() => handleOnchangeSex('Nữ')}>
+                                Nữ
+                              </Radio>
 
-                            <Radio value="Khác" checked={sex === 'Khác'} onChange={() => handleOnchangeSex('Khác')}>
-                              Khác
-                            </Radio>
+                              <Radio value="Khác" checked={sex === 'Khác'} onChange={() => handleOnchangeSex('Khác')}>
+                                Khác
+                              </Radio>
+                            </div>
                           </div>
                           {/* component address */}
                           <div>
                             <AddressComponent />
                           </div>
                           {/* quoc tich */}
-                          <div className={cx('wrapper-date')}>
+                          <div className={cx('wrapper-country')}>
                             <label className={cx('title-date')}>Quốc tịch</label>
                             <select
                               name="country"
@@ -500,7 +528,7 @@ const ProfilePage = () => {
                           </div>
                         </div>
                       </Col>
-                      <Col xs={0} sm={12}>
+                      <Col sm={12}>
                         <div className={cx('wrapper_right-right')}>
                           <div className={cx('right-right')}>
                             <div className={cx('right-left')}>
@@ -517,7 +545,7 @@ const ProfilePage = () => {
                                 <div className={cx('detail')}>
                                   <span style={{ padding: '4px 11px' }}>Số điện thoại</span>
                                   <div>
-                                    <div style={{ padding: '0px 11px' }}>
+                                    <div>
                                       <div className={cx('style-flex')}>
                                         <span style={{ fontSize: '12px' }}>{getPhoneCode(user?.country)}</span>
                                         <Input
@@ -564,7 +592,7 @@ const ProfilePage = () => {
                                   </div>
                                 </div>
                               </div>
-                              <div className={cx('status')} onClick={handleSubmitEmail}>
+                              <div className={cx('status', 'display_none')} onClick={handleSubmitEmail}>
                                 <ButtonComponent
                                   className={cx('status-button')}
                                   textButton="Cập nhật"

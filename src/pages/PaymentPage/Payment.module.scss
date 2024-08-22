@@ -1,3 +1,4 @@
+@import '../PaymentPage//PaymentPageReponsive.scss';
 .container_payment {
   background-color: var(--primary-color-body);
   .wrapper_payment {
@@ -20,7 +21,6 @@
     }
   }
   .container_content {
-    margin-top: 1%;
     max-width: 100%;
     width: 100%;
     padding-left: 8px;
@@ -140,7 +140,7 @@
 .content {
   color: rgb(56, 56, 61);
   font-weight: 700;
-  font-size: 16px;
+  font-size: 1em;
   line-height: 22px;
   margin: 0px;
 }
@@ -154,9 +154,9 @@
   border: 1px solid rgb(11, 116, 229);
   margin-left: 2%;
   border-radius: 4px;
-
-  width: 20%;
-  height: 34px;
+  padding: 5px 0;
+  width: 150px;
+  height: auto;
   display: flex;
   align-items: center;
 }
@@ -314,11 +314,12 @@
       line-height: 16px;
       margin-bottom: 4px;
       color: black;
-      padding-right: 12px;
-      padding-left: 12px;
+      padding: 0 8px;
     }
     i {
       border: 1px solid rgb(221, 221, 227);
+      height: 14px;
+      display: inline-block;
     }
   }
   p {
@@ -327,6 +328,7 @@
     margin-left: 0px;
     margin-bottom: 0px;
     color: rgb(128, 128, 137);
+    font-size: 0.9em;
   }
 }
 

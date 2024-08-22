@@ -1,0 +1,20 @@
+/* Small devices (phones) */
+@media (max-width: 600px) {
+}
+
+/* Medium devices (tablets) */
+@media (min-width: 601px) and (max-width: 900px) {
+  .wrapper_footer {
+    .wrapper_certification {
+      flex-wrap: wrap;
+    }
+  }
+}
+
+/* Large devices (desktops) */
+@media (min-width: 901px) and (max-width: 1200px) {
+}
+
+/* Extra large devices (large desktops) */
+@media (min-width: 1201px) {
+}

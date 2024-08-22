@@ -1,3 +1,4 @@
+@import '../CartPage/CartPageReponsive.scss';
 .container_order {
   background-color: var(--primary-color-body);
   .wrapper_order {
@@ -6,9 +7,8 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding-right: 4%;
       .cart-title {
-        font-size: 20px;
+        font-size: 1.25em;
         font-weight: 500;
         margin: 0px;
         color: rgb(0, 0, 0);
@@ -39,6 +39,13 @@
     color: rgb(70, 70, 77);
     height: 36px;
     background-color: #fff;
+    .span1 {
+      width: 36%;
+    }
+
+    span {
+      font-size: 1em;
+    }
   }
   .product {
     border-radius: 4px;
@@ -53,6 +60,26 @@
   }
   .wrapper_content {
     margin-top: 2%;
+
+    .quantity {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+
+      .wrapper_increase {
+        border: 1px solid #e0e0e0;
+        padding: 0 4px;
+      }
+      .wrapper_decrease {
+        border: 1px solid #e0e0e0;
+        padding: 0 4px;
+      }
+
+      .wrapper_add {
+        max-width: 100%;
+        width: 37px;
+      }
+    }
   }
 
   .img-content {
@@ -183,6 +210,7 @@
 .scrollable-content {
   max-height: 600px; /* Điều chỉnh chiều cao tối đa của phần nội dung */
   overflow-y: auto; /* Cho phép lăn cuộn dọc khi cần */
+  scrollbar-width: none;
 }
 
 /* Ẩn thanh cuộn */

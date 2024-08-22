@@ -16,7 +16,7 @@ import * as UserService from '~/service/UserService';
 import * as OrderService from '~/service/OrderService';
 import { createCart } from '~/service/OrderService';
 
-import { Col, InputNumber, Rate, Row, Upload } from 'antd';
+import { Col, Rate, Row, Upload } from 'antd';
 import { message } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import { Button } from 'antd';
@@ -26,12 +26,11 @@ import { addProductInCart } from '~/redux/slide/cartSlide';
 import { convertPrice, getBase64 } from '~/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronRight, faComment, faPlus, faStar } from '@fortawesome/free-solid-svg-icons';
-import io from 'socket.io-client';
-import moment from 'moment';
 import { useInView } from 'react-intersection-observer';
+import ReviewComponent from '../ReviewComponent/ReviewComponent';
+import DrawerComponent from '../DrawerComponent/DrawerComponent';
 
 const cx = classNames.bind(styles);
-const socket = io('http://localhost:4000');
 
 const arrImageWeb = {
   img_right_arrow: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722415609/bnhfdz5rrple0tfmdcyt.png',
@@ -81,12 +80,11 @@ const ProductDetailComponent = ({ idProduct }) => {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
   const [images, setImages] = useState([]);
-  const [commentsSocket, setCommentsSocket] = useState([]);
   const [checkIsVote, setCheckIsVote] = useState(true);
-  const [showSocket, setShowSocket] = useState(true);
+  const [checkIsTrue, setCheckIsTrue] = useState(false);
   const [commentsDatabase, setCommentsDatabase] = useState([]);
   // trigger chỉ gọi api 1 lần duy nhất
-  const { ref, inView } = useInView({ triggerOnce: true });
+  const { ref } = useInView({ triggerOnce: true });
 
   const handleTabClickFilter = (tabFilter) => {
     setActiveTabFilter(tabFilter);
@@ -103,6 +101,9 @@ const ProductDetailComponent = ({ idProduct }) => {
     } else {
       message.warning('Không tìm thấy phần đánh giá');
     }
+
+    const isSmallScreen = window.matchMedia('(max-width: 600px)').matches;
+    setCheckIsTrue(isSmallScreen);
   };
 
   useEffect(() => {
@@ -115,12 +116,6 @@ const ProductDetailComponent = ({ idProduct }) => {
       // setErrorLimitOrder(true);
     }
   }, [numProduct, cart]);
-
-  useEffect(() => {
-    if (inView) {
-      fetchComments();
-    }
-  }, [inView]);
 
   const handleChangeCount = (type, limited) => {
     if (type === 'increase') {
@@ -292,49 +287,6 @@ const ProductDetailComponent = ({ idProduct }) => {
     message.success(msg);
   };
 
-  //lưu dữ liệu mới socket vào localStore
-  useEffect(() => {
-    socket.on('newComment', (newComment) => {
-      if (newComment.userId !== userId) {
-        setCommentsSocket((prevComments) => {
-          const updatedComments = [newComment, ...prevComments];
-          localStorage.setItem('commentsSocket', JSON.stringify(updatedComments));
-          return updatedComments;
-        });
-        setShowSocket(true);
-      }
-    });
-
-    return () => {
-      socket.off('newComment');
-    };
-  }, [userId]);
-
-  // lấy dữ liệu từ local và db khi tải lại
-  const fetchComments = async () => {
-    try {
-      if (productId) {
-        const response = await ProductService.getVoteDetail(productId);
-        if (response.status === 'OK') {
-          setCommentsDatabase(response?.data);
-        }
-      } else {
-        console.log('wating for product id');
-      }
-    } catch (error) {
-      console.error('Error fetching comments:', error);
-    }
-  };
-
-  useEffect(() => {
-    const savedComments = JSON.parse(localStorage.getItem('commentsSocket')) || [];
-    setCommentsSocket(savedComments);
-
-    if (savedComments.length === 0) {
-      fetchComments();
-    }
-  }, [productId]);
-
   const handleNavigateType = (type) => {
     navigate(
       `/product/${type
@@ -429,11 +381,18 @@ const ProductDetailComponent = ({ idProduct }) => {
           <div className={cx('wrapper_row')}>
             <Row>
               <Col sm={16}>
-                <Row>
-                  <Col xs={0} sm={12}>
+                <Row className={cx('row_user-left')}>
+                  <Col sm={12}>
                     <div className={cx('user_left')}>
                       <div className={cx('left')}>
-                        <img loading="lazy" alt="donu1" src={productsDetail?.image} width={368} height={368} />
+                        <img
+                          className={cx('img_product')}
+                          loading="lazy"
+                          alt="sanpham"
+                          src={productsDetail?.image}
+                          width={368}
+                          height={368}
+                        />
                       </div>
 
                       <div>
@@ -471,11 +430,11 @@ const ProductDetailComponent = ({ idProduct }) => {
                           )}
                         </div>
                       </div>
-                      <div className={cx('img_bottom')}>
+                      <div className={cx('img_bottom', 'display_none')}>
                         <img loading="lazy" alt="img" src={arrImageWeb.img1} width={368} height={123} />
                       </div>
                     </div>
-                    <div className={cx('img-robot')}>
+                    <div className={cx('img-robot', 'display_none')}>
                       <div style={{ display: 'flex', alignItems: 'center' }}>
                         <img loading="lazy" alt="img" src={arrImageWeb.robot} width={24} height={24} />
                         <span style={{ paddingLeft: '10px', color: '#999' }}>Xem thêm</span>
@@ -486,7 +445,7 @@ const ProductDetailComponent = ({ idProduct }) => {
                       </div>
                     </div>
                   </Col>
-                  <Col xs={0} sm={12}>
+                  <Col sm={12}>
                     <div className={cx('container_wrapper-center', 'scrollable-content')}>
                       <div className={cx('center')}>
                         <div className={cx('wrapper_center')}>
@@ -539,8 +498,8 @@ const ProductDetailComponent = ({ idProduct }) => {
                                 <div></div>
                               )}
                             </div>
-                            <div className={cx('color')}>Màu</div>
-                            <div className={cx('choose_color_container')}>
+                            <div className={cx('color', 'display_none')}>Màu</div>
+                            <div className={cx('choose_color_container', 'display_none')}>
                               <div
                                 className={cx('choose_color', {
                                   active: activeColor === 'red',
@@ -801,400 +760,149 @@ const ProductDetailComponent = ({ idProduct }) => {
                       </div>
                     </div>
                   </Col>
-                  <div style={{ flexGrow: 1, paddingRight: '14px' }}>
+                  <div style={{ flexGrow: 1, paddingRight: '10px' }} className={cx('footer_row-wr')}>
                     <Row>
                       <Col sm={24}>
                         <div className={cx('wrapper_row-footer')}>
-                          <Row>
-                            <Col sm={24}>
-                              <div className={cx('container_row-footer')}>
-                                <Row>
-                                  <Col sm={10} className={cx('wrapper_left')}>
-                                    <div className={cx('information')}>Khách hàng đánh giá</div>
-                                    <p style={{ paddingTop: '2%' }}>Tổng quan</p>
-                                    <div className={cx('wrapper-star')}>
-                                      <div className={cx('star')}>
-                                        <div className={cx('vote')}>0</div>
-                                        <div>
-                                          <StarFilled
-                                            className={cx('star_icon')}
-                                            style={{
-                                              fontSize: '20px',
-
-                                              width: 30,
-                                              height: 30,
-                                            }}
-                                          />
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <p style={{ color: '#999' }}>(Chưa có đánh giá)</p>
-                                    <div style={{ padding: '2px' }}>
-                                      {Array(5)
-                                        .fill(null)
-                                        .map((_, index) => (
-                                          <StarFilled
-                                            className={cx('star_icon')}
-                                            key={index}
-                                            style={{
-                                              fontSize: '10px',
-                                              color: index < 5 ? '#ffce3d' : 'gray',
-                                              width: 20,
-                                              height: 20,
-                                            }}
-                                          />
-                                        ))}
-                                    </div>
-                                    <div style={{ padding: '2px' }}>
-                                      {Array(5)
-                                        .fill(null)
-                                        .map((_, index) => (
-                                          <StarFilled
-                                            className={cx('star_icon')}
-                                            key={index}
-                                            style={{
-                                              fontSize: '10px',
-                                              color: index < 4 ? '#ffce3d' : 'gray',
-                                              width: 20,
-                                              height: 20,
-                                            }}
-                                          />
-                                        ))}
-                                    </div>
-                                    <div style={{ padding: '2px' }}>
-                                      {Array(5)
-                                        .fill(null)
-                                        .map((_, index) => (
-                                          <StarFilled
-                                            className={cx('star_icon')}
-                                            key={index}
-                                            style={{
-                                              fontSize: '10px',
-                                              color: index < 3 ? '#ffce3d' : 'gray',
-                                              width: 20,
-                                              height: 20,
-                                            }}
-                                          />
-                                        ))}
-                                    </div>
-                                    <div style={{ padding: '2px' }}>
-                                      {Array(5)
-                                        .fill(null)
-                                        .map((_, index) => (
-                                          <StarFilled
-                                            className={cx('star_icon')}
-                                            key={index}
-                                            style={{
-                                              fontSize: '10px',
-                                              color: index < 2 ? '#ffce3d' : 'gray',
-                                              width: 20,
-                                              height: 20,
-                                            }}
-                                          />
-                                        ))}
-                                    </div>
-                                    <div style={{ padding: '2px' }}>
-                                      {Array(5)
-                                        .fill(null)
-                                        .map((_, index) => (
-                                          <StarFilled
-                                            className={cx('star_icon')}
-                                            key={index}
-                                            style={{
-                                              fontSize: '10px',
-                                              color: index < 1 ? '#ffce3d' : 'gray',
-                                              width: 20,
-                                              height: 20,
-                                            }}
-                                          />
-                                        ))}
-                                    </div>
-                                  </Col>
-
-                                  <Col sm={14} className={cx('wrapper_right')}>
+                          <div className={cx('container_row-footer')}>
+                            <Row>
+                              <Col sm={10} className={cx('wrapper_left')}>
+                                <div className={cx('information')}>Khách hàng đánh giá</div>
+                                <p style={{ paddingTop: '2%' }}>Tổng quan</p>
+                                <div className={cx('wrapper-star')}>
+                                  <div className={cx('star')}>
+                                    <div className={cx('vote')}>{averageRating}</div>
                                     <div>
-                                      <strong>Tất cả hình ảnh ({productsDetail?.additionalImages.length})</strong>
-                                    </div>
-                                    <div className={cx('img-grid')}>
-                                      {productsDetail?.additionalImages.map((current, index) => (
-                                        <div key={index} className={cx('img-img')}>
-                                          <img loading="lazy" alt="" src={current} width={40} height={40} />
-                                        </div>
-                                      ))}
-                                    </div>
-                                  </Col>
-                                </Row>
-                              </div>
-                            </Col>
-                          </Row>
-                        </div>
+                                      <StarFilled
+                                        className={cx('star_icon')}
+                                        style={{
+                                          fontSize: '20px',
 
-                        {/* phần show đánh giá sản phẩm socket */}
-                        <div>
-                          {showSocket &&
-                            commentsSocket?.map((item, index) => (
-                              <div key={item?.data?._id} className={cx('review_comment')}>
-                                <div className={cx('review_user')}>
-                                  <div className={cx('user_inner')}>
-                                    <div className={cx('user_avatar')}>
-                                      <div>
-                                        <img
-                                          loading="lazy"
-                                          style={{ margin: '0 8px 0 0' }}
-                                          alt=""
-                                          src={arrImageWeb.userProfile || item?.data?.avatarUser}
-                                          width={40}
-                                          height={40}
-                                        />
-                                      </div>
-                                    </div>
-                                    <div className={cx('wrapper_avatar')}>
-                                      <div className={cx('user_name')}>{item?.data?.nameUser}</div>
-                                      <div className={cx('user_date')}>Đã tham gia</div>
-                                    </div>
-                                  </div>
-                                  <div className={cx('user_info')}>
-                                    <div>
-                                      <img
-                                        loading="lazy"
-                                        style={{ margin: '0 8px 0 0' }}
-                                        alt=""
-                                        src={arrImageWeb.cmt}
-                                        width={20}
-                                        height={20}
+                                          width: 30,
+                                          height: 30,
+                                        }}
                                       />
-                                      Đã viết
-                                    </div>
-                                    <span>0 đánh giá</span>
-                                  </div>
-                                  <div
-                                    style={{
-                                      border: '0.5px solid rgb(235, 235, 240)',
-                                      marginTop: '9px',
-                                    }}
-                                  ></div>
-                                  <div className={cx('user_info')}>
-                                    <div>
-                                      <img
-                                        loading="lazy"
-                                        style={{ margin: '0 8px 0 0' }}
-                                        alt=""
-                                        src={arrImageWeb.like}
-                                        width={20}
-                                        height={20}
-                                      />
-                                      Đã nhận
-                                    </div>
-                                    <span>Cảm ơn</span>
-                                  </div>
-                                  <div></div>
-                                </div>
-                                <div className={cx('review_vote')}>
-                                  <div className={cx('rating_title')}>
-                                    <div>
-                                      {Array.from({ length: 5 }, (_, index) => (
-                                        <StarFilled
-                                          key={index}
-                                          style={{
-                                            width: 20,
-                                            height: 20,
-                                            color: index < item?.data?.rating ? 'gold' : 'grey',
-                                          }}
-                                        />
-                                      ))}
-                                    </div>
-                                    <div className={cx('rating_content')}>
-                                      {item?.data?.rating === 5
-                                        ? 'Cực kì hài lòng'
-                                        : item?.data?.rating === 4
-                                        ? 'Hài lòng'
-                                        : item?.data?.rating === 3
-                                        ? 'Bình thường'
-                                        : item?.data?.rating === 2
-                                        ? 'Tệ'
-                                        : item?.data?.rating === 1
-                                        ? 'Quá tệ'
-                                        : ''}
-                                    </div>
-                                  </div>
-                                  <div className={cx('seller_name-attribute')}>
-                                    <div className={cx('seller-name')}>
-                                      <span>Đã mua hàng</span>
-                                    </div>
-                                  </div>
-                                  <div className={cx('comment_content')}>
-                                    <div className={cx('')}>
-                                      <span>{item?.data?.comment}</span>
-                                    </div>
-                                  </div>
-
-                                  <div className={cx('review_images')}>
-                                    <img loading="lazy" alt="" src={item?.data?.images} width={77} height={77} />
-                                  </div>
-                                  <div className={cx('create_date')}>
-                                    <div className={cx('comment_attribute')}>
-                                      <div className={cx('item')}>
-                                        <span>Reviewed {moment(item?.data?.createdAt).fromNow(true)} ago</span>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div className={cx('comment_share')}>
-                                    <div className={cx('wrapper_like')}>
-                                      <span className={cx('like_span')}>
-                                        <img loading="lazy" alt="" src={arrImageWeb.like} width={24} height={24} />
-                                        <span>1</span>
-                                      </span>
-                                      <span className={cx('reply_span')}>
-                                        <img loading="lazy" alt="" src={arrImageWeb.binhluan} width={24} height={24} />
-                                        Bình luận
-                                      </span>
-                                    </div>
-                                    <div className={cx('wrapper_share')}>
-                                      <img loading="lazy" alt="" src={arrImageWeb.chiase} width={24} height={24} />
-                                      Chia sẻ
                                     </div>
                                   </div>
                                 </div>
-                              </div>
-                            ))}
+                                <p style={{ color: '#999' }}>(Chưa có đánh giá)</p>
+                                <div style={{ padding: '2px' }}>
+                                  {Array(5)
+                                    .fill(null)
+                                    .map((_, index) => (
+                                      <StarFilled
+                                        className={cx('star_icon')}
+                                        key={index}
+                                        style={{
+                                          fontSize: '10px',
+                                          color: index < 5 ? '#ffce3d' : 'gray',
+                                          width: 20,
+                                          height: 20,
+                                        }}
+                                      />
+                                    ))}
+                                </div>
+                                <div style={{ padding: '2px' }}>
+                                  {Array(5)
+                                    .fill(null)
+                                    .map((_, index) => (
+                                      <StarFilled
+                                        className={cx('star_icon')}
+                                        key={index}
+                                        style={{
+                                          fontSize: '10px',
+                                          color: index < 4 ? '#ffce3d' : 'gray',
+                                          width: 20,
+                                          height: 20,
+                                        }}
+                                      />
+                                    ))}
+                                </div>
+                                <div style={{ padding: '2px' }}>
+                                  {Array(5)
+                                    .fill(null)
+                                    .map((_, index) => (
+                                      <StarFilled
+                                        className={cx('star_icon')}
+                                        key={index}
+                                        style={{
+                                          fontSize: '10px',
+                                          color: index < 3 ? '#ffce3d' : 'gray',
+                                          width: 20,
+                                          height: 20,
+                                        }}
+                                      />
+                                    ))}
+                                </div>
+                                <div style={{ padding: '2px' }}>
+                                  {Array(5)
+                                    .fill(null)
+                                    .map((_, index) => (
+                                      <StarFilled
+                                        className={cx('star_icon')}
+                                        key={index}
+                                        style={{
+                                          fontSize: '10px',
+                                          color: index < 2 ? '#ffce3d' : 'gray',
+                                          width: 20,
+                                          height: 20,
+                                        }}
+                                      />
+                                    ))}
+                                </div>
+                                <div style={{ padding: '2px' }}>
+                                  {Array(5)
+                                    .fill(null)
+                                    .map((_, index) => (
+                                      <StarFilled
+                                        className={cx('star_icon')}
+                                        key={index}
+                                        style={{
+                                          fontSize: '10px',
+                                          color: index < 1 ? '#ffce3d' : 'gray',
+                                          width: 20,
+                                          height: 20,
+                                        }}
+                                      />
+                                    ))}
+                                </div>
+                              </Col>
+
+                              <Col sm={14} className={cx('wrapper_right', 'display_none')}>
+                                <div>
+                                  <strong>Tất cả hình ảnh ({productsDetail?.additionalImages.length})</strong>
+                                </div>
+                                <div className={cx('img-grid')}>
+                                  {productsDetail?.additionalImages.map((current, index) => (
+                                    <div key={index} className={cx('img-img')}>
+                                      <img loading="lazy" alt="" src={current} width={40} height={40} />
+                                    </div>
+                                  ))}
+                                </div>
+                              </Col>
+                            </Row>
+                          </div>
                         </div>
 
-                        {/* phần show trong database */}
-                        <div ref={ref}>
+                        <div ref={ref} className={cx('display_none')}>
                           <div ref={reviewSectionRef}>
-                            {showSocket &&
-                              Array.isArray(commentsDatabase) &&
-                              commentsDatabase.map((item) => (
-                                <div key={item._id} className={cx('review_comment')}>
-                                  <div className={cx('review_user')}>
-                                    <div className={cx('user_inner')}>
-                                      <div className={cx('user_avatar')}>
-                                        <div>
-                                          <img
-                                            loading="lazy"
-                                            style={{ margin: '0 8px 0 0' }}
-                                            alt=""
-                                            src={item?.avatarUser || arrImageWeb.userProfile}
-                                            width={40}
-                                            height={40}
-                                          />
-                                        </div>
-                                      </div>
-                                      <div className={cx('wrapper_avatar')}>
-                                        <div className={cx('user_name')}>{item.nameUser}</div>
-                                        <div className={cx('user_date')}>Đã tham gia</div>
-                                      </div>
-                                    </div>
-                                    <div className={cx('user_info')}>
-                                      <div>
-                                        <img
-                                          loading="lazy"
-                                          style={{ margin: '0 8px 0 0' }}
-                                          alt=""
-                                          src={arrImageWeb.cmt}
-                                          width={20}
-                                          height={20}
-                                        />
-                                        Đã viết
-                                      </div>
-                                      <span>0 đánh giá</span>
-                                    </div>
-                                    <div
-                                      style={{
-                                        border: '0.5px solid rgb(235, 235, 240)',
-                                        marginTop: '9px',
-                                      }}
-                                    ></div>
-                                    <div className={cx('user_info')}>
-                                      <div>
-                                        <img
-                                          loading="lazy"
-                                          style={{ margin: '0 8px 0 0' }}
-                                          alt=""
-                                          src={arrImageWeb.like}
-                                          width={20}
-                                          height={20}
-                                        />
-                                        Đã nhận
-                                      </div>
-                                      <span>Cảm ơn</span>
-                                    </div>
-                                    <div></div>
-                                  </div>
-                                  <div className={cx('review_vote')}>
-                                    <div className={cx('rating_title')}>
-                                      <div>
-                                        {Array.from({ length: 5 }, (_, index) => (
-                                          <StarFilled
-                                            key={index}
-                                            style={{
-                                              width: 20,
-                                              height: 20,
-                                              color: index < item.rating ? 'gold' : 'grey',
-                                            }}
-                                          />
-                                        ))}
-                                      </div>
-                                      <div className={cx('rating_content')}>
-                                        {item?.rating === 5
-                                          ? 'Cực kì hài lòng'
-                                          : item?.rating === 4
-                                          ? 'Hài lòng'
-                                          : item?.rating === 3
-                                          ? 'Bình thường'
-                                          : item?.rating === 2
-                                          ? 'Tệ'
-                                          : item?.rating === 1
-                                          ? 'Quá tệ'
-                                          : ''}
-                                      </div>
-                                    </div>
-                                    <div className={cx('seller_name-attribute')}>
-                                      <div className={cx('seller-name')}>
-                                        <span>Đã mua hàng</span>
-                                      </div>
-                                    </div>
-                                    <div className={cx('comment_content')}>
-                                      <div className={cx('')}>
-                                        <span>{item.comment}</span>
-                                      </div>
-                                    </div>
-
-                                    <div className={cx('review_images')}>
-                                      <img loading="lazy" alt="" src={item.images} width={77} height={77} />
-                                    </div>
-                                    <div className={cx('create_date')}>
-                                      <div className={cx('comment_attribute')}>
-                                        <div className={cx('item')}>
-                                          <span>Reviewed {moment(item.createdAt).fromNow(true)} ago</span>
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <div className={cx('comment_share')}>
-                                      <div className={cx('wrapper_like')}>
-                                        <span className={cx('like_span')}>
-                                          <img loading="lazy" alt="" src={arrImageWeb.like} width={24} height={24} />
-                                          <span>1</span>
-                                        </span>
-                                        <span className={cx('reply_span')}>
-                                          <img
-                                            loading="lazy"
-                                            alt=""
-                                            src={arrImageWeb.binhluan}
-                                            width={24}
-                                            height={24}
-                                          />
-                                          Bình luận
-                                        </span>
-                                      </div>
-                                      <div className={cx('wrapper_share')}>
-                                        <img loading="lazy" alt="" src={arrImageWeb.chiase} width={24} height={24} />
-                                        Chia sẻ
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              ))}
+                            <ReviewComponent userId={userId} productId={productId} />
+                          </div>
+                          <div>
+                            {checkIsTrue && (
+                              <DrawerComponent
+                                width="100%"
+                                height="80%"
+                                placement="bottom"
+                                isOpen={checkIsTrue}
+                                closable={false}
+                                title=""
+                                maskClosable={true}
+                                onClose={() => setCheckIsTrue(false)}
+                              >
+                                <ReviewComponent userId={userId} productId={productId} />
+                              </DrawerComponent>
+                            )}
                           </div>
                         </div>
 
@@ -1314,9 +1022,9 @@ const ProductDetailComponent = ({ idProduct }) => {
                   </div>
                 </Row>
               </Col>
-              <Col sm={8}>
+              <Col sm={8} className={cx('row_right')}>
                 <Row>
-                  <Col xs={0} sm={24}>
+                  <Col sm={24} className={cx('row_right')}>
                     <div className={cx('container_right')}>
                       <div className={cx('wrapper_right')}>
                         <div className={cx('right_user')}>
@@ -1362,7 +1070,7 @@ const ProductDetailComponent = ({ idProduct }) => {
                               size="small"
                             ></div>
                             <div className={cx('input')}>
-                              <InputNumber readOnly value={numProduct} style={{ width: '90%' }} />
+                              <input value={numProduct} className={cx('input_antd')} readOnly />
                             </div>
                             <div
                               className={cx('add')}
@@ -1401,14 +1109,7 @@ const ProductDetailComponent = ({ idProduct }) => {
                       </div>
                     </div>
                     <div className={cx('img_right_footer')}>
-                      <img
-                        loading="lazy"
-                        alt="black_friday"
-                        src={arrImageWeb.black_friday}
-                        width={410}
-                        height={120}
-                        style={{ borderRadius: '6px' }}
-                      />
+                      <img loading="lazy" alt="black_friday" src={arrImageWeb.black_friday} width={410} height={120} />
                     </div>
                   </Col>
                 </Row>

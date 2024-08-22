@@ -15,6 +15,7 @@ import { Helmet } from 'react-helmet';
 import ButtonComponent from '~/component/ButtonComponent/Buttoncomponent';
 import ModalComponent from '~/component/ModalComponent/ModalComponent';
 import AddressComponent from '~/component/AddressComponent/AddressComponent';
+import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 
 const cx = classNames.bind(styles);
 
@@ -23,6 +24,8 @@ const arrImageWeb = {
   img_oto: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722421968/q6jfciympr7krkqabqgn.png',
   cart_null: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722421969/zbulzqthbd0lrng3gahd.png',
   chart: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722421968/lpcx0lbtcygr2quwhljz.png',
+  cart_null2: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1723702376/w5721egnpe6vedspek42.png',
+  img_left: '  https://res.cloudinary.com/ds3jorj8m/image/upload/v1722417841/uu9duh770yoc4ig0byww.png',
 };
 
 const CartPage = () => {
@@ -47,7 +50,6 @@ const CartPage = () => {
     }
     try {
       const cartId = await findCart(userId, productId, user?.access_token);
-      console.log('cartId', cartId);
 
       if (!cartId) {
         message.error('Không tìm thấy giỏ hàng để xóa');
@@ -156,10 +158,48 @@ const CartPage = () => {
     }
   }, [listChecked, cart]);
 
+  // lấy ra số lượng amount kiểu object
+  const [amountProduct, setAmountProduct] = useState(() => {
+    const initialAmounts = {};
+    cart?.cartItems?.forEach((item) => {
+      initialAmounts[item.product] = item.amount || 1;
+    });
+    return initialAmounts;
+  });
+
+  // lọc ra các sản phẩm được chọn cùng với số lượng
+  const selectedAmountProduct = Object.keys(amountProduct)
+    .filter((key) => listChecked.includes(key))
+    .reduce((sum, productId) => {
+      sum[productId] = amountProduct[productId];
+      return sum;
+    }, {});
+
+  const handleAddAmount = (type, productId) => {
+    setAmountProduct((prevAmount) => {
+      if (type === 'increase') {
+        return {
+          ...prevAmount,
+          [productId]: prevAmount[productId] + 1,
+        };
+      } else if (type === 'decrease') {
+        return {
+          ...prevAmount,
+          [productId]: prevAmount[productId] - 1,
+        };
+      } else {
+        return prevAmount;
+      }
+    });
+  };
+
   // price end
   const totalPrice = useMemo(() => {
-    return Number(priceMemo) - Number(priceMemo) * (Number(discountMemo) / 100);
-  }, [priceMemo, discountMemo]);
+    const amountForPrice = Object.keys(selectedAmountProduct)[0];
+    return (
+      (Number(priceMemo) - Number(priceMemo) * (Number(discountMemo) / 100)) * selectedAmountProduct[amountForPrice]
+    );
+  }, [priceMemo, discountMemo, selectedAmountProduct]);
 
   //   gửi state sang payment
 
@@ -173,7 +213,7 @@ const CartPage = () => {
       if (selectedItem) {
         try {
           const cartId = await findCart(userId, selectedItem.product, user?.access_token);
-          navigate('/payment', { state: { selectedItem, totalPrice, cartId } });
+          navigate('/payment', { state: { selectedItem, totalPrice, cartId, selectedAmountProduct } });
         } catch (error) {
           message.error('Xảy ra lỗi khi mua hàng');
         }
@@ -192,6 +232,9 @@ const CartPage = () => {
 
   const navigateUpdate = () => {
     navigate('/profile-user');
+  };
+  const handleBackClick = () => {
+    navigate(-1); // Quay lại trang trước đó
   };
 
   function getPhoneCode(country) {
@@ -226,12 +269,27 @@ const CartPage = () => {
       <Helmet>
         <title>Giỏ hàng | MD.com</title>
       </Helmet>
+      <div className={cx('confirm_cart', 'display_none-sm')}>
+        <span className={cx('icon_span')} onClick={handleBackClick}>
+          <img
+            loading="lazy"
+            alt="icon"
+            src={arrImageWeb.img_left}
+            width={24}
+            height={24}
+            style={{ filter: 'invert(100%)' }}
+          />
+        </span>
+        <span>Giỏ hàng</span>
+      </div>
       <div className={cx('wrapper_order')}>
-        <div className={cx('cart')}>
+        <div className={cx('cart', 'display_none-xs')}>
           <span className={cx('cart-title')}>Giỏ hàng</span>
-          <span>
+          <span className={cx('span_title')}>
             <FontAwesomeIcon icon={faLocationDot} style={{ color: '#999', marginRight: '3px' }} />
-            <span style={{ fontSize: '13px', color: '#808089' }}>Giao đến:</span>
+            <span className={cx('display_none-xs')} style={{ fontSize: '13px', color: '#808089' }}>
+              Giao đến:
+            </span>
             {user?.moreAddress || user?.district || user?.city ? (
               <span style={{ fontSize: '1.2rem' }}>
                 {' '}
@@ -244,19 +302,26 @@ const CartPage = () => {
             )}
           </span>
         </div>
+
         <div className={cx('create-row')}>
           {cart?.cartItems.length > 0 ? (
             <Row>
-              <Col xs={0} sm={17} style={{ paddingRight: '1%' }}>
+              <Col className={cx('col_24')} xs={24} sm={24} lg={17} style={{ paddingRight: '1%' }}>
                 <div>
                   <div className={cx('wrapper_all')}>
-                    <span style={{ width: '36%' }}>
+                    <span className={cx('span1')}>
                       <Checkbox onChange={handleCheckAll} checked={listChecked?.length === cart?.cartItems?.length} />
-                      Tất cả ({cart?.cartItems?.length}) sản phẩm
+                      <span>
+                        {' '}
+                        <span style={{ marginRight: '2px' }}>Tất cả</span>
+                        <span style={{ fontSize: '0.800em' }}>(</span>
+                        {cart?.cartItems?.length} sản phẩm
+                      </span>
+                      <span style={{ fontSize: '0.800em' }}>)</span>
                     </span>
-                    <span>Đơn giá</span>
-                    <span>Số lượng</span>
-                    <span>Thành tiền</span>
+                    <span className={cx('display_none-xs')}>Đơn giá</span>
+                    <span className={cx('display_none-xs')}>Số lượng</span>
+                    <span className={cx('display_none-xs')}>Thành tiền</span>
                     <span onClick={handleRemoveAllCart}>
                       <FontAwesomeIcon icon={faTrash} />
                     </span>
@@ -265,7 +330,7 @@ const CartPage = () => {
                     {cart?.cartItems?.map((carts, index) => {
                       return (
                         <div key={index} className={cx('product')}>
-                          <div className={cx('type')}>
+                          <div className={cx('type', 'display_none-xs')}>
                             <div>
                               <Checkbox /> Type
                             </div>
@@ -273,8 +338,8 @@ const CartPage = () => {
                             <div>{carts?.type || 'Đồ'}</div>
                           </div>
                           <div className={cx('wrapper_content')}>
-                            <Row style={{ display: 'flex', alignItems: 'center' }}>
-                              <Col sm={1}>
+                            <Row style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around' }}>
+                              <Col lg={1}>
                                 <Checkbox
                                   onChange={onChangeOne}
                                   value={carts.product}
@@ -290,41 +355,44 @@ const CartPage = () => {
                                   <div className={cx('img-title')}>
                                     <span className={cx('title_content')}>
                                       {carts?.name}
-                                      <div
-                                        style={{
-                                          color: '#999',
-                                          padding: '1% 0',
-                                          fontSize: '11px',
-                                        }}
-                                      >
-                                        100% chi tiết
-                                      </div>
-                                      <div
-                                        style={{
-                                          display: 'flex',
-                                          alignItems: 'center',
-                                        }}
-                                      >
-                                        <img
-                                          loading="lazy"
-                                          alt="oto"
-                                          src={arrImageWeb.img_oto}
-                                          width={32}
-                                          height={16}
-                                        />
-                                        <span style={{ paddingLeft: '2%' }}>Giao hàng siêu tốc</span>
+                                      <div className={cx('wrapper_detail')}>
+                                        <div
+                                          style={{
+                                            color: '#999',
+                                            padding: '1% 0',
+                                            fontSize: '11px',
+                                          }}
+                                        >
+                                          100% chi tiết
+                                        </div>
+                                        <div
+                                          style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                          }}
+                                        >
+                                          <img
+                                            loading="lazy"
+                                            alt="oto"
+                                            src={arrImageWeb.img_oto}
+                                            width={32}
+                                            height={16}
+                                          />
+                                          <span style={{ paddingLeft: '6px' }}>Giao hàng siêu tốc</span>
+                                        </div>
                                       </div>
                                     </span>
                                   </div>
                                 </div>
                               </Col>
 
-                              <Col sm={5}>
+                              <Col xs={12} sm={4}>
                                 <div
                                   style={{
                                     display: 'flex',
                                     alignItems: 'center',
-                                    fontWeight: 600,
+
+                                    color: 'rgb(255, 66, 78)',
                                   }}
                                 >
                                   {convertPrice(carts?.price)}
@@ -349,7 +417,7 @@ const CartPage = () => {
                                             color: 'rgb(0, 171, 86)',
                                           }}
                                         >
-                                          Giảm {carts?.discount} %
+                                          <span className={cx('display_none-sm1')}>Giảm</span> {carts?.discount} %
                                         </div>
                                       </div>
                                     ) : (
@@ -358,34 +426,47 @@ const CartPage = () => {
                                   </div>
                                 </div>
                               </Col>
-                              <Col sm={3}>
+                              <Col xs={8} sm={4}>
                                 <div className={cx('quantity')}>
+                                  <div
+                                    className={cx('wrapper_decrease')}
+                                    onClick={() => handleAddAmount('decrease', cart?.cartItems?.[index]?.product)}
+                                  >
+                                    <MinusOutlined />
+                                  </div>
                                   <div className={cx('wrapper_add')}>
                                     <div className={cx('input')}>
                                       <InputNumber
-                                        value={carts?.amount}
+                                        value={amountProduct[cart?.cartItems?.[index]?.product]}
                                         readOnly
-                                        style={{ width: '30%', border: 'none' }}
+                                        style={{ width: '100%', border: 'none' }}
                                       />
                                     </div>
                                   </div>
+                                  <div
+                                    className={cx('wrapper_increase')}
+                                    onClick={() => handleAddAmount('increase', cart?.cartItems?.[index]?.product)}
+                                  >
+                                    <PlusOutlined />
+                                  </div>
                                 </div>
                               </Col>
-                              <Col sm={4}>
-                                <div style={{ paddingLeft: '2%' }}>
+                              <Col xs={0} sm={4}>
+                                <div style={{ paddingLeft: '10px', color: 'rgb(255, 66, 78)', fontWeight: 600 }}>
                                   {convertPrice(carts?.price * carts?.amount)}
                                   <sup>
                                     <u>đ</u>
                                   </sup>
                                 </div>
                               </Col>
-                              <Col sm={1}>
+                              <Col xs={4} sm={1}>
                                 {/* xóa thì phải truyền đi cái id */}
 
                                 <div
                                   key={index}
                                   style={{
-                                    paddingLeft: '62%',
+                                    display: 'flex',
+                                    justifyContent: 'flex-end',
                                     cursor: 'pointer',
                                   }}
                                   onClick={() => handleDeleteProductInCart(cart?.cartItems?.[index]?.product)}
@@ -414,7 +495,7 @@ const CartPage = () => {
                   </div>
                 </div>
               </Col>
-              <Col xs={0} sm={7} style={{ paddingRight: '1%' }}>
+              <Col className={cx('col_24')} xs={24} sm={24} lg={7} style={{ paddingRight: '1%' }}>
                 <div className={cx('wrapper-right')}>
                   {/* /// */}
                   <div className={cx('address')}>
@@ -423,7 +504,8 @@ const CartPage = () => {
                       <span>Thay đổi</span>
                     </div>
                     <div className={cx('name')}>
-                      {user?.nickname || user?.name} <i className={cx('i')}></i>
+                      <span style={{ fontSize: '0.875em' }}>{user?.nickname || user?.name}</span>{' '}
+                      <i className={cx('i')}></i>
                       <span style={{ fontSize: '12px', paddingRight: '6px', color: '#777' }}>
                         {getPhoneCode(user?.country)}
                       </span>
@@ -526,12 +608,37 @@ const CartPage = () => {
             </Row>
           ) : (
             <div className={cx('cart_null')}>
-              <img loading="lazy" alt="anh" src={arrImageWeb.cart_null} width={160} height={160} />
-              <span>Giỏ hàng trống</span>
-              <p>Bạn tham khảo thêm các sản phẩm được Shop MD gợi ý bên dưới nhé!</p>
+              <img
+                loading="lazy"
+                alt="anh"
+                src={arrImageWeb.cart_null}
+                width={160}
+                height={160}
+                className={cx('display_none-xs')}
+              />
+              <img
+                className={cx('display_none-sm')}
+                loading="lazy"
+                alt="anh"
+                src={arrImageWeb.cart_null2}
+                width={170}
+                height={130}
+              />
+              <span className={cx('display_none-xs')}>Giỏ hàng trống</span>
+              <p className={cx('display_none-xs')}>Bạn tham khảo thêm các sản phẩm được Shop MD gợi ý bên dưới nhé!</p>
+              <p className={cx('display_none-sm')} style={{ fontSize: '0.875em', marginTop: '5px' }}>
+                Bạn chưa có sản phẩm nào
+              </p>
             </div>
           )}
         </div>
+        {cart?.cartItems.length > 0 ? (
+          <div></div>
+        ) : (
+          <div className={cx('display_none-sm')}>
+            <ButtonComponent textButton="Tiếp tục mua sắm" backgroundColor="rgb(255, 66, 78)" color="#fff" />
+          </div>
+        )}
         <div>
           <AddressComponent
             onSuccess={handleSuccessNotification}

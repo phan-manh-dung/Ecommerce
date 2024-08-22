@@ -1,0 +1,109 @@
+/* Small devices (phones) */
+@media (max-width: 600px) {
+  .display_none-xs {
+    display: none !important;
+  }
+
+  .profile_user {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    color: #fff;
+    background-color: rgba($color: #3160f8, $alpha: 1);
+    position: relative;
+    .icon_span {
+      position: absolute;
+      left: 0; /* Đẩy phần tử này sát bên trái */
+      text-align: left;
+      padding-left: 18px;
+    }
+
+    span {
+      font-size: 1em;
+      line-height: 1.2em;
+    }
+  }
+  .wrapper-sex {
+    padding: 0 !important;
+  }
+  .wrapper-country {
+    padding: 0 !important;
+  }
+  .input-date {
+    flex-direction: column;
+    select {
+      width: 186px !important;
+      margin: 5px 0 !important;
+    }
+  }
+  .wrapper-date {
+    justify-content: space-between !important;
+  }
+  .form-info {
+    margin: 0 !important;
+  }
+  .wrapper_right-right {
+    padding: 10px 0 !important;
+  }
+  .wrapper-sdt {
+    max-width: 100% !important;
+    width: 70% !important;
+    justify-content: flex-start !important;
+  }
+}
+
+/* Medium devices (tablets) */
+@media (min-width: 601px) and (max-width: 900px) {
+  .detail {
+    margin-left: 6px !important;
+  }
+  .display_none-sm {
+    display: none !important;
+  }
+  .wrapper_input {
+    margin-left: 14px;
+  }
+  .wrapper-date {
+    margin-top: 10px !important;
+    .input-date {
+      flex-direction: column;
+    }
+    .select-day {
+      margin: 5px 0px !important;
+    }
+  }
+  .country {
+    margin-right: 12px;
+  }
+  .profile_user {
+    display: none !important;
+  }
+
+  .left_list {
+    white-space: nowrap;
+    overflow: hidden;
+    padding: 7px 0 !important;
+    .wrapper_list {
+      span {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+}
+
+/* Large devices (desktops) */
+@media (min-width: 901px) and (max-width: 1200px) {
+  .profile_user {
+    display: none !important;
+  }
+}
+
+/* Extra large devices (large desktops) */
+@media (min-width: 1201px) {
+  .profile_user {
+    display: none !important;
+  }
+}

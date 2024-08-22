@@ -1,0 +1,75 @@
+/* Small devices (phones) */
+@media (max-width: 600px) {
+  .display_none-xs {
+    display: none !important;
+  }
+  .container_type-user {
+    padding: 5px 1px !important;
+  }
+  .sort {
+    padding: 0 !important;
+    .sort_div {
+      padding: 0 !important;
+    }
+  }
+
+  .wrapper-type {
+    background-color: rgba($color: #3160f8, $alpha: 1);
+  }
+  .type-home {
+    a {
+      color: #fff !important;
+    }
+    img {
+      color: #fff !important;
+    }
+  }
+  .type-title {
+    color: #fff !important;
+  }
+  .wrapper_slide {
+    flex-direction: column;
+    padding: 2px 0 !important;
+  }
+  .wrapper_price-price {
+    display: flex;
+    align-items: center;
+    div {
+      padding: 0 3px;
+    }
+    .active {
+      font-weight: bold;
+      color: red;
+    }
+  }
+  .container_user1 {
+    padding: 10px 6px !important;
+    .user1 {
+      flex-wrap: nowrap !important;
+    }
+  }
+}
+
+/* Medium devices (tablets) */
+@media (min-width: 601px) and (max-width: 900px) {
+  .wrapper_slide {
+    flex-direction: column;
+  }
+  .wrapper_price-price {
+    display: none !important;
+  }
+}
+
+/* Large devices (desktops) */
+@media (min-width: 901px) and (max-width: 1200px) {
+  .wrapper_price-price {
+    display: none !important;
+  }
+}
+
+/* Extra large devices (large desktops) */
+@media (min-width: 1201px) {
+  .wrapper_price-price {
+    display: none !important;
+  }
+}

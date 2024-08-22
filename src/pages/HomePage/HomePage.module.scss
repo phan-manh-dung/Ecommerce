@@ -1,7 +1,11 @@
+@import '../HomePage/HomePageReponsive.scss';
+
 .container_main {
   display: flex;
 }
 .container_main2 {
+  max-width: 100%;
+  width: 100%;
   position: relative;
   z-index: 1;
   display: flex;
@@ -28,7 +32,7 @@
     align-items: center;
     text-decoration: none;
     div {
-      font-size: 14px;
+      font-size: 0.875em;
       font-weight: 600;
       line-height: 150%;
       white-space: nowrap;

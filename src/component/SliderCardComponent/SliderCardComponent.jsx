@@ -6,38 +6,70 @@ import Slider from 'react-slick';
 const cx = classNames.bind(styles);
 
 const SliderCardComponent = ({ children, rtl = false }) => {
-  const childrenCount = React.Children.count(children);
-
-  if (childrenCount <= 1) {
-    return (
-      <div className={cx('single_item')}>
-        {React.Children.map(children, (child, index) => (
-          <div key={index} className={cx('slider_item')}>
-            {child}
-          </div>
-        ))}
-      </div>
-    );
-  }
+  const childrenArray = React.Children.toArray(children);
+  const midPoint = Math.ceil(childrenArray.length / 2);
+  const firstHalf = childrenArray.slice(0, midPoint);
+  const secondHalf = childrenArray.slice(midPoint);
 
   const settings = {
     dots: false,
     infinite: true,
     speed: 400,
-    slidesToShow: 5, //  Số lượng ảnh được hiển thị cùng một lúc là
-    slidesToScroll: 3, // Số lượng ảnh sẽ cuộn qua mỗi lần là .
+    slidesToShow: 5,
+    slidesToScroll: 3,
     autoplay: true,
     autoplaySpeed: 3000,
     arrows: false,
     lazyLoad: 'ondemand',
     cssEase: 'ease-in-out',
     rtl: rtl,
+    responsive: [
+      {
+        breakpoint: 900,
+        settings: {
+          slidesToShow: 3,
+          slidesToScroll: 2,
+        },
+      },
+      {
+        breakpoint: 600,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 1,
+        },
+      },
+    ],
   };
+
+  if (window.innerWidth <= 600) {
+    return (
+      <div className={cx('slider_container')}>
+        <div className={cx('slider_row')}>
+          <Slider {...settings}>
+            {firstHalf.map((child, index) => (
+              <div key={index} className={cx('slider_item')}>
+                {child}
+              </div>
+            ))}
+          </Slider>
+        </div>
+        <div className={cx('slider_row')}>
+          <Slider {...settings}>
+            {secondHalf.map((child, index) => (
+              <div key={index} className={cx('slider_item')}>
+                {child}
+              </div>
+            ))}
+          </Slider>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={cx('slider_container')}>
       <Slider {...settings}>
-        {React.Children.map(children, (child, index) => (
+        {childrenArray.map((child, index) => (
           <div key={index} className={cx('slider_item')}>
             {child}
           </div>

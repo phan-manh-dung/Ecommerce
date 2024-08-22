@@ -26,9 +26,6 @@ const SignInPage = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const navigate = useNavigate();
 
-  // regex  password
-  const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
-
   const onChangeEmail = (event) => {
     const value = event.target.value;
     setName(value);
@@ -59,24 +56,12 @@ const SignInPage = () => {
     }
   }, [isSuccess, isError, data, handleSignIn]);
 
-  // check chuỗi có dấu
-  const removeVietnameseTones = (str) => {
-    return str
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/đ/g, 'd')
-      .replace(/Đ/g, 'D');
-  };
-  // kiểm tra password có dấu
-  const passwordWithoutTones = removeVietnameseTones(password);
   // tạo tài khoản
   const handleSignUp = () => {
     if (name === '' || name === null || name === undefined || name.length < 6) {
       message.error('Tên người dùng trên 6 kí tự !');
     } else if (password === '' || password === null || password === undefined || password.length < 6) {
       message.error('Mật khẩu 6 kí tự chữ và số !');
-    } else if (!passwordRegex.test(passwordWithoutTones)) {
-      message.error('Mật khẩu không được có dấu');
     } else if (confirmPassword !== password) {
       message.error('Mật khẩu không khớp !');
     } else {
@@ -193,9 +178,7 @@ const SignInPage = () => {
                   <span
                     style={{ position: 'absolute', left: '85%' }}
                     onClick={() => setIsShowConfirmPassword(!isShowConfirmPassword)}
-                  >
-                    {isShowConfirmPassword ? <EyeOutlined /> : <EyeInvisibleOutlined />}
-                  </span>
+                  ></span>
                 </div>
                 <div className={cx('btn')} onClick={handleSignUp}>
                   <button type="button" className={cx('button1')}>

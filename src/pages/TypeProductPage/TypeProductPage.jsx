@@ -5,17 +5,16 @@ import classNames from 'classnames/bind';
 
 import { Checkbox, Col, InputNumber, Radio, Row } from 'antd';
 import { useSelector } from 'react-redux';
-import { CaretDownOutlined, CaretUpOutlined, StarFilled } from '@ant-design/icons';
+import { ArrowDownOutlined, ArrowUpOutlined, CaretDownOutlined, CaretUpOutlined, StarFilled } from '@ant-design/icons';
 import { useLocation } from 'react-router-dom';
 
 import ButtonComponent from '~/component/ButtonComponent/Buttoncomponent';
 import AddressComponent from '~/component/AddressComponent/AddressComponent';
 import CardComponent from '~/component/CardComponent/CardComponent';
-import Loading from '~/component/LoadingComponent/Loading';
-
 import * as ProductService from '~/service/ProductService';
 
 import find_pay from '~/assets/img_Global/find_pay.png';
+import SmallLoadingComponent from '~/component/SmallLoadingComponent/SmallLoading';
 
 const cx = classNames.bind(styles);
 
@@ -36,7 +35,7 @@ const TypeProductPage = () => {
   const [productSort, setProductSort] = useState([]);
   const [newProduct, setNewProduct] = useState([]);
   const [sellingProduct, setSellingProduct] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loadingSmall, setLoadingSmall] = useState(false);
   const [showAddressModal, setShowAddressModal] = useState(false);
   const [activeTab, setActiveTab] = useState('popular');
   const [visibleCheckboxes, setVisibleCheckboxes] = useState(4);
@@ -78,7 +77,7 @@ const TypeProductPage = () => {
   const selectedProduct = queryParams.get('name');
 
   const fetchProductType = useCallback(async (type, page, limit) => {
-    setLoading(true);
+    setLoadingSmall(true);
     try {
       const res = await ProductService.getProductType(type, page, limit);
       if (res?.status === 'OK') {
@@ -88,7 +87,7 @@ const TypeProductPage = () => {
     } catch (error) {
       console.error('Error fetching product type:', error);
     } finally {
-      setLoading(false);
+      setLoadingSmall(false);
     }
   }, []);
 
@@ -385,10 +384,10 @@ const TypeProductPage = () => {
             </div>
           </div>
         </Col>
-        <Col xs={0} sm={19}>
+        <Col xs={24} sm={19}>
           <div className={cx('wrapper_right')}>
             <div className={cx('right')}>
-              <div className={cx('search')}>
+              <div className={cx('search', 'display_none-xs')}>
                 <h2 className={cx('search-title')}>{(typeProduct[0] && typeProduct[0].type) || selectedProduct}</h2>
               </div>
               <div className={cx('slider_container')}>
@@ -435,19 +434,34 @@ const TypeProductPage = () => {
                   </div>
                   <div
                     onClick={() => clickValue('lowToHeight')}
-                    className={cx('sort_div', { active: activeTab === 'lowToHeight' })}
+                    className={cx('sort_div', 'display_none-xs', { active: activeTab === 'lowToHeight' })}
                   >
                     <a>Giá thấp đến cao</a>
                   </div>
                   <div
                     onClick={() => clickValue('hightToLow')}
-                    className={cx('sort_div', { active: activeTab === 'hightToLow' })}
+                    className={cx('sort_div', 'display_none-xs', { active: activeTab === 'hightToLow' })}
                   >
                     <a src="/">Giá cao đến thấp</a>
                   </div>
+                  <div className={cx('wrapper_price-price')}>
+                    <div
+                      onClick={() => clickValue('lowToHeight')}
+                      className={cx({ active: activeTab === 'lowToHeight' })}
+                    >
+                      <ArrowUpOutlined />
+                    </div>
+                    <div>Giá</div>
+                    <div
+                      onClick={() => clickValue('hightToLow')}
+                      className={cx({ active: activeTab === 'hightToLow' })}
+                    >
+                      <ArrowDownOutlined />
+                    </div>
+                  </div>
                 </div>
               </div>
-              <Loading isLoading={loading}>
+              <SmallLoadingComponent isLoading={loadingSmall}>
                 {productSort.length === 0 &&
                 newProduct.length === 0 &&
                 sellingProduct.length === 0 &&
@@ -563,7 +577,7 @@ const TypeProductPage = () => {
                     </div>
                   </div>
                 )}
-              </Loading>
+              </SmallLoadingComponent>
             </div>
           </div>
         </Col>

@@ -1,0 +1,26 @@
+/* Small devices (phones) */
+@media (max-width: 600px) {
+  .row {
+    p {
+      display: none;
+    }
+    select {
+      width: 100% !important;
+    }
+    textarea {
+      width: 100% !important;
+    }
+  }
+}
+
+/* Medium devices (tablets) */
+@media (min-width: 601px) and (max-width: 900px) {
+}
+
+/* Large devices (desktops) */
+@media (min-width: 901px) and (max-width: 1200px) {
+}
+
+/* Extra large devices (large desktops) */
+@media (min-width: 1201px) {
+}
