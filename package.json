@@ -75,5 +75,5 @@
     "react-app-rewired": "^2.2.1",
     "sass": "^1.68.0"
   },
-  "proxy": "http://localhost:4000"
+  "proxy": "https://ecomecer-backend.onrender.com"
 }
