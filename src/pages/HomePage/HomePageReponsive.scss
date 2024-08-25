@@ -31,14 +31,15 @@
     overflow-x: auto;
     background-color: transparent;
     scrollbar-width: none;
+    overflow: hidden;
   }
   .container_main2 {
-    max-width: 100% !important;
-    width: 100% !important;
     flex-wrap: nowrap;
-    overflow-x: auto;
     background-color: transparent;
     scrollbar-width: none;
+    .list {
+      animation: scroll-left 9s linear infinite;
+    }
   }
   .wrapper_card {
     gap: 2px !important;
@@ -110,16 +111,12 @@
 /* Medium devices (tablets) */
 @media (min-width: 601px) and (max-width: 900px) {
   .container_main {
-    max-width: 100% !important;
-    width: 100% !important;
     flex-wrap: nowrap;
     overflow-x: auto;
     background-color: transparent;
     scrollbar-width: none;
   }
   .container_main2 {
-    max-width: 100% !important;
-    width: 100% !important;
     flex-wrap: nowrap;
     scrollbar-width: none;
     overflow-x: auto;
@@ -128,6 +125,7 @@
       flex-wrap: nowrap;
     }
   }
+
   .container_home {
     padding-right: 0 !important;
     .container_imgs {
@@ -143,4 +141,13 @@
 
 /* Extra large devices (large desktops) */
 @media (min-width: 1201px) {
+}
+
+@keyframes scroll-left {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
 }

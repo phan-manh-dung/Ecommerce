@@ -161,7 +161,7 @@ const SignInPage = () => {
   }
 
   const handleSignInSocial = (type) => {
-    window.open(`http://localhost:4000/api/auth/${type}`, '_self');
+    window.open(`https://ecomecer-backend.onrender.com/api/auth/${type}`, '_self');
   };
 
   return (

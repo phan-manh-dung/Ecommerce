@@ -186,7 +186,7 @@ const HomePage = () => {
         </div>
         <div className={cx('container_main2')}>
           <a alt="r" href="https://tiki.vn/thong-tin/tiki-doi-tra-de-dang-an-tam-mua-sam" target="blank">
-            <div>Cam kết</div>
+            {/* <div className={cx('list')}>Cam kết</div> */}
             <div className={cx('list')}>
               <div className={cx('child_list')}>
                 {arrCamKet.map((item, index) => (

@@ -237,6 +237,10 @@ const CartPage = () => {
     navigate(-1); // Quay lại trang trước đó
   };
 
+  const navigateHome = () => {
+    navigate('/');
+  };
+
   function getPhoneCode(country) {
     let phoneCode = '';
     switch (country) {
@@ -636,7 +640,12 @@ const CartPage = () => {
           <div></div>
         ) : (
           <div className={cx('display_none-sm')}>
-            <ButtonComponent textButton="Tiếp tục mua sắm" backgroundColor="rgb(255, 66, 78)" color="#fff" />
+            <ButtonComponent
+              textButton="Tiếp tục mua sắm"
+              backgroundColor="rgb(255, 66, 78)"
+              color="#fff"
+              onClick={navigateHome}
+            />
           </div>
         )}
         <div>

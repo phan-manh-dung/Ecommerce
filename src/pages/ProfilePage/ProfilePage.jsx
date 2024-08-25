@@ -517,13 +517,14 @@ const ProfilePage = () => {
                             </select>
                           </div>
                           {/* button luu */}
-                          <div className={cx('save')} onClick={handleSubmit}>
+                          <div className={cx('save')}>
                             <ButtonComponent
                               className={cx('button-save')}
                               textButton="Lưu thay đổi"
                               width="38%"
                               color="#fff"
                               backgroundColor="rgb(11, 116, 229)"
+                              onClick={handleSubmit}
                             />
                           </div>
                         </div>
