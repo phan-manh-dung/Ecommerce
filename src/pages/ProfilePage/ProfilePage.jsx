@@ -72,8 +72,6 @@ const ProfilePage = () => {
     year: '',
   });
 
-  console.log('dateOfBirth', dateOfBirth);
-
   const mutationUpdate = useMutationHook(
     (data) => {
       const { id, access_token, ...rests } = data;

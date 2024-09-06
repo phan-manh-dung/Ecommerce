@@ -151,6 +151,7 @@ const PaymentPage = () => {
       user?.district &&
       user?.name &&
       user?.moreAddress &&
+      user?.phone &&
       user?.id &&
       payment === 'cash'
     ) {
@@ -694,7 +695,7 @@ const PaymentPage = () => {
           </div>
 
           <div style={{ paddingTop: '10px', textAlign: 'center' }} onClick={convertUpdate}>
-            <ButtonComponent width="20%" backgroundColor="green" textButton="Cập nhật" />
+            <ButtonComponent width="100%" backgroundColor="green" textButton="Cập nhật" />
           </div>
         </ModalComponent>
         {/* modal momo */}

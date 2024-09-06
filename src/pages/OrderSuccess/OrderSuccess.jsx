@@ -99,7 +99,7 @@ const OrderSuccess = () => {
                 </a>
               </div>
             </Col>
-            <Col sm={9}>
+            <Col xs={24} sm={9}>
               <div className={cx('container_wrapper-right')}>
                 <div className={cx('wrapper_right')}>
                   <div className={cx('wrapper_1')}>
