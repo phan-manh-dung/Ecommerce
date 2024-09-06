@@ -15,6 +15,13 @@
 
   .wrapper-type {
     background-color: rgba($color: #3160f8, $alpha: 1);
+    position: relative;
+    .left_arrow-icon {
+      position: absolute;
+      right: 0; /* Ép phần tử căn sang bên phải */
+      top: 50%; /* Căn giữa theo chiều dọc (tuỳ ý) */
+      transform: translateY(-50%);
+    }
   }
   .type-home {
     a {
@@ -45,7 +52,9 @@
   .container_user1 {
     padding: 10px 6px !important;
     .user1 {
-      flex-wrap: nowrap !important;
+      // flex-wrap: nowrap !important;
+      display: grid !important;
+      grid-template-columns: repeat(2, 1fr) !important;
     }
   }
 }
@@ -58,6 +67,9 @@
   .wrapper_price-price {
     display: none !important;
   }
+  .left_arrow-icon {
+    display: none !important;
+  }
 }
 
 /* Large devices (desktops) */
@@ -65,11 +77,17 @@
   .wrapper_price-price {
     display: none !important;
   }
+  .left_arrow-icon {
+    display: none !important;
+  }
 }
 
 /* Extra large devices (large desktops) */
 @media (min-width: 1201px) {
   .wrapper_price-price {
+    display: none !important;
+  }
+  .left_arrow-icon {
     display: none !important;
   }
 }

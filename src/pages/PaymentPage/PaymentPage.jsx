@@ -46,7 +46,6 @@ const PaymentPage = () => {
   const location = useLocation();
   const selectedItem = location.state?.selectedItem || location.state?.productsDetail;
   const selectedAmountProduct = location.state?.selectedAmountProduct;
-  const productId = Object.keys(selectedAmountProduct)[0];
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [openSystem, setOpenSystem] = useState(false);
@@ -58,6 +57,7 @@ const PaymentPage = () => {
   const idProduct = selectedItem?.product || selectedItem?._id; // lấy id
   // lấy dữ liệu từ CartPage
   const { totalPriceProduct, numProduct, cartId } = location.state || {};
+
   // lấy orderIdMoMo
   const [orderIdMoMo, setOrderIdMoMo] = useState('');
   // kiểm tra trạng thái thanh toán momo
@@ -65,6 +65,13 @@ const PaymentPage = () => {
   // check trạng thái cho momo
   const [statusMomo, setStatusMomo] = useState(false);
   const pollingRef = useRef(true);
+
+  let productId;
+  if (selectedAmountProduct && Object.keys(selectedAmountProduct).length > 0) {
+    productId = Object.keys(selectedAmountProduct)[0];
+  } else {
+    console.error('Không có sản phẩm nào được chọn hoặc dữ liệu không hợp lệ.');
+  }
 
   const initial = () => ({
     name: '',
@@ -395,7 +402,7 @@ const PaymentPage = () => {
                         </div>
                         <div className={cx('noidung')}>{selectedItem?.name}</div>
                       </div>
-                      <div style={{ float: 'right' }}>Số lượng: {selectedAmountProduct[productId] || numProduct}</div>
+                      <div style={{ float: 'right' }}>Số lượng: {numProduct || selectedAmountProduct[productId]}</div>
                     </div>
                     <div className={cx('right-content')}>
                       <div className={cx('wrapper_icon')}>

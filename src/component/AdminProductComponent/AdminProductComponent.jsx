@@ -23,8 +23,6 @@ const AdminProductComponent = () => {
   const [isOpenDrawer, setIsOpenDrawer] = useState(false);
   const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
   const [isModalOpenDelete, setIsModalOpenDelete] = useState(false);
-  const [typeSelect, setTypeSelect] = useState('');
-  const [searchChedColumn, setSearchedColumn] = useState('');
   const searchInput = useRef(null);
   const user = useSelector((state) => state?.user);
   const [fileList, setFileList] = useState([]); // Cho hình ảnh chính
@@ -760,7 +758,7 @@ const AdminProductComponent = () => {
               </Form.Item>
               {stateProduct.color === 'add_color' && (
                 <Form.Item
-                  label="New color"
+                  label="Màu mới"
                   name="newColor"
                   rules={[{ required: true, message: 'Please input your color!' }]}
                 >
@@ -912,6 +910,11 @@ const AdminProductComponent = () => {
                   <Select.Option value="vietnamese">Việt nam</Select.Option>
                   <Select.Option value="japan">Nhật bản</Select.Option>
                   <Select.Option value="china">Trung Quốc</Select.Option>
+                  <Select.Option value="usa">Hoa Kỳ</Select.Option>
+                  <Select.Option value="korea">Hàn Quốc</Select.Option>
+                  <Select.Option value="france">Pháp</Select.Option>
+                  <Select.Option value="germany">Đức</Select.Option>
+                  <Select.Option value="uk">Anh</Select.Option>
                 </Select>
               </Form.Item>
               {/* image  */}

@@ -58,6 +58,7 @@
 
   .wrapper_content {
     .wrapper_right-left {
+      padding: 0 6px;
       .right-left {
         padding-top: 8px;
         margin-bottom: 8px;
@@ -70,7 +71,6 @@
       }
       .form-info {
         display: flex;
-        margin-right: 16px;
         justify-content: space-between;
 
         .wrapper_input {
@@ -145,7 +145,6 @@
         }
       }
       .wrapper-sex {
-        padding: 0 6px;
         margin-top: 25px;
         display: flex;
         align-items: center;
@@ -176,7 +175,6 @@
       }
       .wrapper-country {
         margin-top: 25px;
-        padding: 0 14px 0 6px;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -218,6 +216,19 @@
           &:hover {
             background-color: rgb(52, 134, 223);
           }
+        }
+      }
+      .wrapper_update-address {
+        margin-top: 16px;
+        border-top: 1px solid #eee;
+        padding: 10px 0;
+        .here {
+          color: rgb(11, 116, 229);
+          font-size: 0.875em;
+        }
+        .here:hover {
+          cursor: pointer;
+          color: rgb(115, 179, 248);
         }
       }
     }

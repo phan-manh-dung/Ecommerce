@@ -291,14 +291,26 @@ const SignInPage = () => {
                 </div>
                 <div className={cx('wrapper_button-social')}>
                   <button type="button" className={cx('button_social')} onClick={() => handleSignInSocial('google')}>
-                    <img loading="lazy" alt="google" src={arrImageWeb.google} width={22} height={22} />
-                    <span className={cx('title_button')}>Google</span>
+                    <div className={cx('container_img-social')}>
+                      <div className={cx('wrapper_img-social')}>
+                        <img loading="lazy" alt="google" src={arrImageWeb.google} width={20} height={20} />
+                      </div>
+                      <div>
+                        <span className={cx('title_button')}>Google</span>
+                      </div>
+                    </div>
                   </button>
                 </div>
                 <div className={cx('wrapper_button-social')}>
                   <button type="button" className={cx('button_social')} onClick={() => handleSignInSocial('facebook')}>
-                    <img loading="lazy" alt="facebook" src={arrImageWeb.facebook} width={24} height={24} />
-                    <span className={cx('title_button')}> Facebook</span>
+                    <div className={cx('container_img-social')}>
+                      <div className={cx('wrapper_img-social')}>
+                        <img loading="lazy" alt="facebook" src={arrImageWeb.facebook} width={20} height={20} />
+                      </div>
+                      <div>
+                        <span className={cx('title_button')}> Facebook</span>
+                      </div>
+                    </div>
                   </button>
                 </div>
               </form>

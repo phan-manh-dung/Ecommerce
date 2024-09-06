@@ -64,12 +64,15 @@ const ProfilePage = () => {
   const [nickname, setNickName] = useState('');
   const [isSubmit, setIsSubmit] = useState(false);
   const [dataPhone, setDataPhone] = useState(false);
+  const [showAddressModal, setShowAddressModal] = useState(false);
 
   const [dateOfBirth, setDateOfBirth] = useState({
     day: '',
     month: '',
     year: '',
   });
+
+  console.log('dateOfBirth', dateOfBirth);
 
   const mutationUpdate = useMutationHook(
     (data) => {
@@ -113,6 +116,18 @@ const ProfilePage = () => {
     setDataPhone(value.length > 0);
   };
 
+  const handleOpenModalAddress = () => {
+    setShowAddressModal(true);
+  };
+
+  const handleSuccessNotification = (msg) => {
+    message.success(msg);
+  };
+
+  const handleCloseAddressModal = () => {
+    setShowAddressModal(false);
+  };
+
   const handleOnchangeAvatar = async ({ fileList }) => {
     const file = fileList[0];
     if (!file.url && !file.preview) {
@@ -152,6 +167,20 @@ const ProfilePage = () => {
 
   const handleSubmit = async () => {
     const convertDate = new Date(dateOfBirth.year, dateOfBirth.month, dateOfBirth.day);
+
+    const hasChanges =
+      user?.name !== name ||
+      user?.nickname !== nickname ||
+      user?.sex !== sex ||
+      user?.avatar !== avatar ||
+      user?.country !== country ||
+      user?.email !== email ||
+      user?.convertDate !== convertDate;
+
+    if (!hasChanges) {
+      message.warning('Chưa có thông tin cập nhật!');
+      return;
+    }
     await mutationUpdate.mutate({
       id: user?.id,
       name,
@@ -441,7 +470,7 @@ const ProfilePage = () => {
                                 onChange={(e) => handleOnChangeDate(e, 'day')}
                               >
                                 <option value="0">Ngày</option>
-                                {Array.from({ length: 30 }, (_, index) => (
+                                {Array.from({ length: 31 }, (_, index) => (
                                   <option key={index + 1} value={index + 1}>
                                     {index + 1}
                                   </option>
@@ -526,6 +555,12 @@ const ProfilePage = () => {
                               backgroundColor="rgb(11, 116, 229)"
                               onClick={handleSubmit}
                             />
+                          </div>
+                          <div className={cx('wrapper_update-address')}>
+                            <div>Cập nhật địa chỉ giao hàng</div>
+                            <div className={cx('here')} onClick={handleOpenModalAddress}>
+                              Tại đây
+                            </div>
                           </div>
                         </div>
                       </Col>
@@ -649,7 +684,9 @@ const ProfilePage = () => {
                               <span className={cx('info-title')}>Liên kết mạng xã hội</span>
                             </div>
                             {/* facebook */}
-                            {user?.loginType !== 'facebook' ? (
+                            {!user?.loginType ? (
+                              <div>Chưa có liên kết nào</div>
+                            ) : user?.loginType !== 'facebook' ? (
                               <div className={cx('sdt')}>
                                 <div className={cx('wrapper-sdt')}>
                                   <img alt="facebook" src={img_google} width={24} height={24} />
@@ -696,6 +733,13 @@ const ProfilePage = () => {
           </Row>
         </div>
       </Loading>
+      <div>
+        <AddressComponent
+          onSuccess={handleSuccessNotification}
+          showAddressModal={showAddressModal}
+          handleCloseAddressModal={handleCloseAddressModal}
+        />
+      </div>
     </div>
   );
 };

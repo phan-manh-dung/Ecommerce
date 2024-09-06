@@ -34,7 +34,7 @@ const SmallLoadingComponent = ({ children, isLoading }) => {
             <circle className={cx('back')} cx="17" cy="17" r="14"></circle>
             <circle className={cx('front')} cx="17" cy="17" r="14"></circle>
           </svg>
-          <div className={cx('text')} data-text="Searching"></div>
+          <div className={cx('text')} data-text="Loading"></div>
         </div>
       ) : (
         <div className={cx('content')}>{children}</div>

@@ -6,21 +6,21 @@ import classNames from 'classnames/bind';
 const cx = classNames.bind(styles);
 
 const TypeProduct = ({ name }) => {
-    const navigate = useNavigate();
-    const handleNavigateType = (type) => {
-        navigate(
-            `/product/${type
-                .normalize('NFD')
-                .replace(/[\u0300-\u036f]/g, '')
-                ?.replace(/ /g, '_')}`,
-            { state: type },
-        );
-    };
-    return (
-        <div className={cx('wrapper_type')} onClick={() => handleNavigateType(name)}>
-            {name}
-        </div>
+  const navigate = useNavigate();
+  const handleNavigateType = (type) => {
+    navigate(
+      `/product/${type
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        ?.replace(/ /g, '_')}`,
+      { state: type },
     );
+  };
+  return (
+    <div className={cx('wrapper_type')} onClick={() => handleNavigateType(name)}>
+      <span>{name}</span>
+    </div>
+  );
 };
 
 export default TypeProduct;

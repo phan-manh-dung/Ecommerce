@@ -4,7 +4,14 @@
   padding: 10px 6px;
   font-size: 1.3rem;
   cursor: pointer;
+  line-height: 150%;
   &:hover {
     background-color: rgb(119, 198, 193);
+  }
+  span {
+    white-space: nowrap;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
   }
 }

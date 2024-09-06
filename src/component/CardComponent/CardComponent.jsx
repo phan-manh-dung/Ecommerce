@@ -69,6 +69,7 @@ const CardComponent = (props) => {
   const coverStyle = {
     border: '1px solid #F0F0F0',
     overflow: 'hidden', // Để che phần border không bị hiển thị ra bên ngoài hình ảnh
+    height: '166px',
   };
 
   return (

@@ -15,6 +15,12 @@
       width: 40px;
     }
   }
+  .display_none-sm {
+    display: none;
+  }
+  .row_right {
+    justify-content: flex-start !important;
+  }
 }
 
 /* Medium devices (tablets) */
@@ -29,6 +35,9 @@
       display: none !important;
     }
   }
+  .display_none-xs {
+    display: none;
+  }
 }
 
 /* Large devices (desktops) */
@@ -41,11 +50,17 @@
       display: none !important;
     }
   }
+  .display_none-xs {
+    display: none;
+  }
 }
 
 /* Extra large devices (large desktops) */
 @media (min-width: 1201px) {
   .element_show {
     display: none !important;
+  }
+  .display_none-xs {
+    display: none;
   }
 }

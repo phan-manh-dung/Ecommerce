@@ -120,9 +120,9 @@ const HomePage = () => {
   };
 
   const fetchProductAll = async (context) => {
-    const limit = context?.queryKey && context?.queryKey[1];
+    // const limit = context?.queryKey && context?.queryKey[1];
     const search = context?.queryKey && context?.queryKey[2];
-    const res = await ProductService.getAllProduct(search, limit);
+    const res = await ProductService.getAllProduct(search);
     return res;
   };
 
@@ -147,9 +147,12 @@ const HomePage = () => {
   const filteredProducts = filterProducts();
   // điều kiện cho top deal
   const filterProductTopDeal = () => {
-    return product?.data?.filter((products) => products.type === activeTab && products.discount >= 40);
+    return product?.data?.filter(
+      (products) => products.type.toLowerCase().trim() === activeTab.toLowerCase().trim() && products.discount >= 30,
+    );
   };
   const filteredProductTopDeal = filterProductTopDeal();
+
   // điều kiện cho nhập khẩu chính hãng
   const filterProductImport = () => {
     return product?.data?.filter(
@@ -185,16 +188,23 @@ const HomePage = () => {
           })}
         </div>
         <div className={cx('container_main2')}>
-          <a alt="r" href="https://tiki.vn/thong-tin/tiki-doi-tra-de-dang-an-tam-mua-sam" target="blank">
-            {/* <div className={cx('list')}>Cam kết</div> */}
-            <div className={cx('list')}>
-              <div className={cx('child_list')}>
-                {arrCamKet.map((item, index) => (
-                  <div key={index} className={cx('item')}>
-                    <img loading="lazy" src={arrImgCamKet[index]} alt={item} width={20} height={20} />
-                    <span>{item}</span>
-                  </div>
-                ))}
+          <a
+            alt="r"
+            href="https://tiki.vn/thong-tin/tiki-doi-tra-de-dang-an-tam-mua-sam"
+            target="blank"
+            className={cx('scroll-container')}
+          >
+            <div className={cx('scroll-content')}>
+              <div className={cx('list')}>Cam kết</div>
+              <div className={cx('list')}>
+                <div className={cx('child_list')}>
+                  {arrCamKet.map((item, index) => (
+                    <div key={index} className={cx('item')}>
+                      <img loading="lazy" src={arrImgCamKet[index]} alt={item} width={20} height={20} />
+                      <span>{item}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </a>
@@ -222,7 +232,7 @@ const HomePage = () => {
               )}
             </div>
           </Col>
-          <Col sm={19} className={cx('scrollable-content')} style={{ paddingRight: '0' }}>
+          <Col sm={19} className={cx('scrollable-content')}>
             {/* slide component */}
             <div>
               <SliderComponent arrImages={[arrImageWeb.slider1, arrImageWeb.slider2, arrImageWeb.slider3]} />
@@ -258,22 +268,22 @@ const HomePage = () => {
                   <img loading="lazy" alt="" src={arrImageWeb.img34} width={146} height={146} />
                 </a>
               </div>
-              <div className={cx('item6')}>
+              <div className={cx('item6', 'display_none')}>
                 <a href="/">
                   <img loading="lazy" alt="" src={arrImageWeb.img35} width={146} height={146} />
                 </a>
               </div>
-              <div className={cx('item7')}>
+              <div className={cx('item7', 'display_none')}>
                 <a href="/">
                   <img loading="lazy" alt="" src={arrImageWeb.img36} width={146} height={146} />
                 </a>
               </div>
-              <div className={cx('item8')}>
+              <div className={cx('item8', 'display_none')}>
                 <a href="/">
                   <img loading="lazy" alt="" src={arrImageWeb.img37} width={146} height={146} />
                 </a>
               </div>
-              <div className={cx('item9')}>
+              <div className={cx('item9', 'display_none')}>
                 <a href="/">
                   <img loading="lazy" alt="" src={arrImageWeb.img38} width={146} height={146} />
                 </a>
@@ -302,13 +312,14 @@ const HomePage = () => {
                   className={cx('category_product', { active: activeTab === 'Đồ điện tử' })}
                   onClick={() => handleTabClick('Đồ điện tử')}
                 >
-                  <span>Đồ điện tử</span>
+                  <span>Đồ điện tử </span>
                 </div>
+
                 <div
                   className={cx('category_product', { active: activeTab === 'Làm đẹp sức khỏe' })}
                   onClick={() => handleTabClick('Làm đẹp sức khỏe')}
                 >
-                  <span>Làm đẹp - sức khỏe</span>
+                  <span>Làm đẹp sức khỏe</span>
                 </div>
               </div>
               {filteredProductTopDeal?.length === 0 ? (
@@ -358,9 +369,9 @@ const HomePage = () => {
                 </div>
                 <div
                   className={cx('category_product', 'ct_import', {
-                    activeImport: activeTabImport === 'Thực phẩm chức năng',
+                    activeImport: activeTabImport === 'Thực phẩm - CN',
                   })}
-                  onClick={() => handleTabClickImport('Thực phẩm chức năng')}
+                  onClick={() => handleTabClickImport('Thực phẩm - CN')}
                 >
                   <span>Thực phẩm chức năng</span>
                 </div>
@@ -381,7 +392,7 @@ const HomePage = () => {
                   <span>Mỹ phẩm</span>
                 </div>
               </div>
-              {filterProductImport?.length === 0 ? (
+              {filteredProductImport?.length === 0 ? (
                 <div className={cx('wrapper')}>
                   <div>
                     <img alt="find_pay" src={find_pay} width={200} height={200} />

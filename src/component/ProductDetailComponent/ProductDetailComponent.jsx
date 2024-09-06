@@ -242,6 +242,25 @@ const ProductDetailComponent = ({ idProduct }) => {
     fetchPurchaseStatus();
   }, [userId, productId, accessToken]);
 
+  const fetchComments = async () => {
+    try {
+      if (productId) {
+        const response = await ProductService.getVoteDetail(productId);
+        if (response.status === 'OK') {
+          setCommentsDatabase(response?.data);
+        }
+      } else {
+        console.log('Waiting...');
+      }
+    } catch (error) {
+      console.error('Error fetching comments:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchComments();
+  });
+
   // submit đánh giá
   const handleSubmitVote = async () => {
     if (rating === 0 || comment.trim() === '') {

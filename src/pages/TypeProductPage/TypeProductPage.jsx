@@ -6,7 +6,7 @@ import classNames from 'classnames/bind';
 import { Checkbox, Col, InputNumber, Radio, Row } from 'antd';
 import { useSelector } from 'react-redux';
 import { ArrowDownOutlined, ArrowUpOutlined, CaretDownOutlined, CaretUpOutlined, StarFilled } from '@ant-design/icons';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import ButtonComponent from '~/component/ButtonComponent/Buttoncomponent';
 import AddressComponent from '~/component/AddressComponent/AddressComponent';
@@ -26,10 +26,12 @@ const arrImageWeb = {
   img_durex: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722415609/nphw5loetv441xo69odg.jpg',
   img_tulanh: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722415616/wzw5x3esg0eioj1vlxny.png',
   img_tulanh2: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722415613/nnecwsnsxgmpqs6bhrti.jpg',
+  img_left_arrow: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722417841/uu9duh770yoc4ig0byww.png',
 };
 
 const TypeProductPage = () => {
   const user = useSelector((state) => state.user);
+  const navigate = useNavigate();
   const { state } = useLocation();
   const [typeProduct, setTypeProduct] = useState([]);
   const [productSort, setProductSort] = useState([]);
@@ -135,6 +137,10 @@ const TypeProductPage = () => {
     setShowAddressModal(false);
   };
 
+  const handleBackClick = () => {
+    navigate(-1);
+  };
+
   const clickValue = (value) => {
     setActiveTab(value);
     if (value === 'lowToHeight') {
@@ -169,8 +175,17 @@ const TypeProductPage = () => {
         </div>
         <img loading="lazy" alt="right_arrow" src={arrImageWeb.img_right_arrow} width={18} height={18} />
         <span className={cx('type-title')}> {(typeProduct[0] && typeProduct[0].type) || selectedProduct} </span>
-      </div>
 
+        <img
+          onClick={handleBackClick}
+          alt="left_arrow"
+          loading="lazy"
+          src={arrImageWeb.img_left_arrow}
+          width={26}
+          height={26}
+          className={cx('left_arrow-icon')}
+        />
+      </div>
       <Row>
         <Col xs={0} sm={5}>
           <div className={cx('wrapper_left')}>

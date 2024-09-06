@@ -31,6 +31,7 @@ const arrImageWeb = {
   homeBold: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722416900/ihwhjf3pleusyukcpvd8.png',
   logo_user: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722416900/dirveyzqgqtychfk4zcp.png',
   logo_astra: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722416900/mi6ztrbfouxfljcra9yi.png',
+  user_xs: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1725464277/fsxihlkwencstui80ktf.png',
 };
 
 function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
@@ -212,20 +213,24 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
                 </span>
               </div>
               {user?.access_token ? (
-                <>
+                <div className={cx('wrapper-name_name')}>
                   <Popover content={content} trigger="hover">
                     <div
                       style={{
                         cursor: 'pointer',
                         display: 'flex',
                         alignItems: 'center',
+                        justifyContent: 'center',
                       }}
                       className={cx('name_name')}
                     >
-                      {user?.nickname || user?.name}
+                      <span className={cx('display_none-sm')}>{user?.nickname || user?.name}</span>
+                      <span className={cx('display_none-xs')}>
+                        <img alt="user_xs" src={arrImageWeb.user_xs} loading="lazy" width={26} height={26} />
+                      </span>
                     </div>
                   </Popover>
-                </>
+                </div>
               ) : (
                 <div className={cx('row_right-list')} onClick={handleNavigate}>
                   <img
