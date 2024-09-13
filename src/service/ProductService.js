@@ -22,6 +22,21 @@ export const getProductType = async (type, page, limit) => {
   }
 };
 
+export const searchProductsByTypeAndName = async (type, name) => {
+  try {
+    const res = await axios.get(`${process.env.REACT_APP_API_URL}/product/search-product-type-name`, {
+      params: {
+        type: type,
+        name: name,
+      },
+    });
+    return res.data;
+  } catch (error) {
+    console.error('Error fetching products:', error);
+    throw error;
+  }
+};
+
 export const createProduct = async (data) => {
   const res = await axios.post(`${process.env.REACT_APP_API_URL}/product/create`, data);
   return res.data;

@@ -32,6 +32,7 @@ const arrImageWeb = {
   logo_user: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722416900/dirveyzqgqtychfk4zcp.png',
   logo_astra: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722416900/mi6ztrbfouxfljcra9yi.png',
   user_xs: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1725464277/fsxihlkwencstui80ktf.png',
+  img_left_arrow: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722417841/uu9duh770yoc4ig0byww.png',
 };
 
 function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
@@ -41,6 +42,7 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
   const user = useSelector((state) => state.user);
   const cart = useSelector((state) => state.cart);
   const [search, setSearch] = useState('');
+
   // kiểm tra đã useEffect hay chưa
   const [hasFetchedCartData, setHasFetchedCartData] = useState(false);
   const location = useLocation();
@@ -51,6 +53,10 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
 
   const handleNavigate = () => {
     navigate('/sign-in');
+  };
+
+  const handleBackClick = () => {
+    navigate(-1); // Quay lại trang trước đó
   };
 
   useEffect(() => {
@@ -156,9 +162,15 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
                 <img loading="lazy" style={{ width: '20%', height: '100%' }} src={arrImageWeb.logo_shop} alt="logo" />
               </a>
             </div>
-            <div className={cx('element_show')} onClick={toggleState}>
-              <img alt="menu" loading="lazy" width={30} height={30} src={menu} />
-            </div>
+            {location.pathname === '/' ? (
+              <div className={cx('element_show')} onClick={toggleState}>
+                <img alt="menu" loading="lazy" width={30} height={30} src={menu} />
+              </div>
+            ) : (
+              <div onClick={handleBackClick} className={cx('display_none-xs')}>
+                <img alt="right_arrow" src={arrImageWeb.img_left_arrow} width={30} height={30} />
+              </div>
+            )}
           </Col>
           {!isHiddenSearch && (
             <Col xs={16} lg={8}>

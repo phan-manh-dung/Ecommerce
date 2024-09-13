@@ -40,7 +40,7 @@ const CartPage = () => {
   const [showAddressModal, setShowAddressModal] = useState(false);
   // mảng ids cart dùng để xóa
   const [dataDeleteMany, setDataDeleteMany] = useState([]);
-
+  // id
   const userId = user?.id;
 
   const handleDeleteProductInCart = async (productId) => {

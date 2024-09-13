@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useCallback, useEffect, useState } from 'react';
 import styles from './TypeProduct.module.scss';
 import classNames from 'classnames/bind';
@@ -6,15 +5,18 @@ import classNames from 'classnames/bind';
 import { Checkbox, Col, InputNumber, Radio, Row } from 'antd';
 import { useSelector } from 'react-redux';
 import { ArrowDownOutlined, ArrowUpOutlined, CaretDownOutlined, CaretUpOutlined, StarFilled } from '@ant-design/icons';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 import ButtonComponent from '~/component/ButtonComponent/Buttoncomponent';
 import AddressComponent from '~/component/AddressComponent/AddressComponent';
 import CardComponent from '~/component/CardComponent/CardComponent';
 import * as ProductService from '~/service/ProductService';
 
+import { useDebounce } from '~/hooks/useDebounce';
+
 import find_pay from '~/assets/img_Global/find_pay.png';
 import SmallLoadingComponent from '~/component/SmallLoadingComponent/SmallLoading';
+import { useQuery } from '@tanstack/react-query';
 
 const cx = classNames.bind(styles);
 
@@ -26,15 +28,16 @@ const arrImageWeb = {
   img_durex: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722415609/nphw5loetv441xo69odg.jpg',
   img_tulanh: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722415616/wzw5x3esg0eioj1vlxny.png',
   img_tulanh2: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722415613/nnecwsnsxgmpqs6bhrti.jpg',
-  img_left_arrow: 'https://res.cloudinary.com/ds3jorj8m/image/upload/v1722417841/uu9duh770yoc4ig0byww.png',
 };
 
 const TypeProductPage = () => {
   const user = useSelector((state) => state.user);
-  const navigate = useNavigate();
+  const searchProduct = useSelector((state) => state?.product?.search);
+  const searchDebounce = useDebounce(searchProduct, 500);
   const { state } = useLocation();
   const [typeProduct, setTypeProduct] = useState([]);
-  const [productSort, setProductSort] = useState([]);
+  const [productSortLowToHeight, setProductSortLowToHeight] = useState([]);
+  const [productSortHeightToLow, setProductSortHeightToLow] = useState([]);
   const [newProduct, setNewProduct] = useState([]);
   const [sellingProduct, setSellingProduct] = useState([]);
   const [loadingSmall, setLoadingSmall] = useState(false);
@@ -93,21 +96,43 @@ const TypeProductPage = () => {
     }
   }, []);
 
+  const searchProductsByTypeAndName = async (typeOfProduct, name) => {
+    const res = await ProductService.searchProductsByTypeAndName(typeOfProduct, name);
+    return res;
+  };
+
+  const { isLoading, data: dataSearchProduct } = useQuery(
+    ['product', searchDebounce],
+    () => searchProductsByTypeAndName(typeOfProduct, searchDebounce), // Truyền typeOfProduct vào đây
+    {
+      enabled: !!searchDebounce, // Chỉ gọi hàm khi có từ khóa
+      retry: 2,
+      retryDelay: 1000,
+      keepPreviousData: true,
+    },
+  );
+
   // api sort product low to height
   const filterByPriceLowToHeight = async (type) => {
     const res = await ProductService.filterByPriceLowToHeight(type);
     if (res?.status === 'OK') {
       const sortedProducts = res?.data.sort((a, b) => a.price - b.price);
-      setProductSort(sortedProducts);
+      setProductSortLowToHeight(sortedProducts);
     }
   };
 
   // api sort product height to low
   const filterByPriceHeightToLow = async (type) => {
-    const res = await ProductService.filterByPriceHeightToLow(type);
-    if (res?.status === 'OK') {
-      const sortedProducts = res?.data.sort((a, b) => b.price - a.price);
-      setProductSort(sortedProducts);
+    try {
+      const res = await ProductService.filterByPriceHeightToLow(type);
+      if (res?.status === 'OK') {
+        const sortedProducts = res.data.sort((a, b) => b.price - a.price);
+        setProductSortHeightToLow(sortedProducts);
+      } else {
+        console.error('Error:', res?.message);
+      }
+    } catch (error) {
+      console.error('An error occurred:', error);
     }
   };
 
@@ -135,10 +160,6 @@ const TypeProductPage = () => {
 
   const handleCloseAddressModal = () => {
     setShowAddressModal(false);
-  };
-
-  const handleBackClick = () => {
-    navigate(-1);
   };
 
   const clickValue = (value) => {
@@ -175,16 +196,6 @@ const TypeProductPage = () => {
         </div>
         <img loading="lazy" alt="right_arrow" src={arrImageWeb.img_right_arrow} width={18} height={18} />
         <span className={cx('type-title')}> {(typeProduct[0] && typeProduct[0].type) || selectedProduct} </span>
-
-        <img
-          onClick={handleBackClick}
-          alt="left_arrow"
-          loading="lazy"
-          src={arrImageWeb.img_left_arrow}
-          width={26}
-          height={26}
-          className={cx('left_arrow-icon')}
-        />
       </div>
       <Row>
         <Col xs={0} sm={5}>
@@ -433,19 +444,19 @@ const TypeProductPage = () => {
                     onClick={() => clickValue('popular')}
                     className={cx('sort_div', { active: activeTab === 'popular' })}
                   >
-                    <a src="/">Phổ biến</a>
+                    <a>Phổ biến</a>
                   </div>
                   <div
                     onClick={() => clickValue('selling')}
                     className={cx('sort_div', { active: activeTab === 'selling' })}
                   >
-                    <a src="/">Bán chạy</a>
+                    <a>Bán chạy</a>
                   </div>
                   <div
                     onClick={() => clickValue('newProduct')}
                     className={cx('sort_div', { active: activeTab === 'newProduct' })}
                   >
-                    <a src="/">Hàng mới</a>
+                    <a>Hàng mới</a>
                   </div>
                   <div
                     onClick={() => clickValue('lowToHeight')}
@@ -457,7 +468,7 @@ const TypeProductPage = () => {
                     onClick={() => clickValue('hightToLow')}
                     className={cx('sort_div', 'display_none-xs', { active: activeTab === 'hightToLow' })}
                   >
-                    <a src="/">Giá cao đến thấp</a>
+                    <a>Giá cao đến thấp</a>
                   </div>
                   <div className={cx('wrapper_price-price')}>
                     <div
@@ -476,11 +487,44 @@ const TypeProductPage = () => {
                   </div>
                 </div>
               </div>
+
               <SmallLoadingComponent isLoading={loadingSmall}>
-                {productSort.length === 0 &&
-                newProduct.length === 0 &&
-                sellingProduct.length === 0 &&
-                typeProduct.length === 0 ? (
+                {searchDebounce ? (
+                  dataSearchProduct?.data?.length > 0 ? (
+                    <div className={cx('container_user1')}>
+                      <div className={cx('user1')}>
+                        {dataSearchProduct.data.map((product) => (
+                          <React.Fragment key={product._id}>
+                            <CardComponent
+                              countInStock={product.countInStock}
+                              description={product.description}
+                              image={product.image}
+                              name={product.name}
+                              price={product.price}
+                              rating={product.rating}
+                              type={product.type}
+                              discount={product.discount}
+                              sold={product.sold}
+                              id={product._id}
+                            />
+                          </React.Fragment>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className={cx('wrapper')}>
+                      <div>
+                        <img alt="find_pay" src={find_pay} width={200} height={200} />
+                      </div>
+                      <div style={{ fontSize: '16px' }}>Không tìm thấy sản phẩm</div>
+                    </div>
+                  )
+                ) : // Nếu không có từ khóa tìm kiếm
+                productSortLowToHeight.length === 0 &&
+                  productSortHeightToLow.length === 0 &&
+                  newProduct.length === 0 &&
+                  sellingProduct.length === 0 &&
+                  typeProduct.length === 0 ? (
                   <div className={cx('wrapper')}>
                     <div>
                       <img alt="find_pay" src={find_pay} width={200} height={200} />
@@ -491,104 +535,89 @@ const TypeProductPage = () => {
                   <div className={cx('container_user1')}>
                     <div className={cx('user1')}>
                       {activeTab === 'lowToHeight'
-                        ? productSort?.map((products, index) => {
-                            return (
-                              <React.Fragment key={index}>
-                                <CardComponent
-                                  key={products._id}
-                                  countInStock={products.countInStock}
-                                  description={products.description}
-                                  image={products.image}
-                                  name={products.name}
-                                  price={products.price}
-                                  rating={products.rating}
-                                  type={products.type}
-                                  discount={products.discount}
-                                  sold={products.sold}
-                                  id={products._id}
-                                />
-                              </React.Fragment>
-                            );
-                          })
+                        ? productSortLowToHeight.map((product) => (
+                            <React.Fragment key={product._id}>
+                              <CardComponent
+                                countInStock={product.countInStock}
+                                description={product.description}
+                                image={product.image}
+                                name={product.name}
+                                price={product.price}
+                                rating={product.rating}
+                                type={product.type}
+                                discount={product.discount}
+                                sold={product.sold}
+                                id={product._id}
+                              />
+                            </React.Fragment>
+                          ))
                         : activeTab === 'heightToLow'
-                        ? productSort?.map((products, index) => {
-                            return (
-                              <React.Fragment key={index}>
-                                <CardComponent
-                                  key={products._id}
-                                  countInStock={products.countInStock}
-                                  description={products.description}
-                                  image={products.image}
-                                  name={products.name}
-                                  price={products.price}
-                                  rating={products.rating}
-                                  type={products.type}
-                                  discount={products.discount}
-                                  sold={products.sold}
-                                  id={products._id}
-                                />
-                              </React.Fragment>
-                            );
-                          })
+                        ? productSortHeightToLow.map((product) => (
+                            <React.Fragment key={product._id}>
+                              <CardComponent
+                                countInStock={product.countInStock}
+                                description={product.description}
+                                image={product.image}
+                                name={product.name}
+                                price={product.price}
+                                rating={product.rating}
+                                type={product.type}
+                                discount={product.discount}
+                                sold={product.sold}
+                                id={product._id}
+                              />
+                            </React.Fragment>
+                          ))
                         : activeTab === 'newProduct'
-                        ? newProduct?.map((products, index) => {
-                            return (
-                              <React.Fragment key={index}>
-                                <CardComponent
-                                  key={products._id}
-                                  countInStock={products.countInStock}
-                                  description={products.description}
-                                  image={products.image}
-                                  name={products.name}
-                                  price={products.price}
-                                  rating={products.rating}
-                                  type={products.type}
-                                  discount={products.discount}
-                                  sold={products.sold}
-                                  id={products._id}
-                                />
-                              </React.Fragment>
-                            );
-                          })
+                        ? newProduct.map((product) => (
+                            <React.Fragment key={product._id}>
+                              <CardComponent
+                                countInStock={product.countInStock}
+                                description={product.description}
+                                image={product.image}
+                                name={product.name}
+                                price={product.price}
+                                rating={product.rating}
+                                type={product.type}
+                                discount={product.discount}
+                                sold={product.sold}
+                                id={product._id}
+                              />
+                            </React.Fragment>
+                          ))
                         : activeTab === 'selling'
-                        ? sellingProduct?.map((products, index) => {
-                            return (
-                              <React.Fragment key={index}>
-                                <CardComponent
-                                  key={products._id}
-                                  countInStock={products.countInStock}
-                                  description={products.description}
-                                  image={products.image}
-                                  name={products.name}
-                                  price={products.price}
-                                  rating={products.rating}
-                                  type={products.type}
-                                  discount={products.discount}
-                                  sold={products.sold}
-                                  id={products._id}
-                                />
-                              </React.Fragment>
-                            );
-                          })
-                        : typeProduct?.map((products, index) => {
-                            return (
-                              <React.Fragment key={index}>
-                                <CardComponent
-                                  key={products._id}
-                                  countInStock={products.countInStock}
-                                  description={products.description}
-                                  image={products.image}
-                                  name={products.name}
-                                  price={products.price}
-                                  rating={products.rating}
-                                  type={products.type}
-                                  discount={products.discount}
-                                  sold={products.sold}
-                                  id={products._id}
-                                />
-                              </React.Fragment>
-                            );
-                          })}
+                        ? sellingProduct.map((product) => (
+                            <React.Fragment key={product._id}>
+                              <CardComponent
+                                countInStock={product.countInStock}
+                                description={product.description}
+                                image={product.image}
+                                name={product.name}
+                                price={product.price}
+                                rating={product.rating}
+                                type={product.type}
+                                discount={product.discount}
+                                sold={product.sold}
+                                id={product._id}
+                              />
+                            </React.Fragment>
+                          ))
+                        : typeProduct.map((product) => (
+                            <React.Fragment key={product._id}>
+                              <CardComponent
+                                countInStock={product.countInStock}
+                                description={product.description}
+                                image={product.image}
+                                name={product.name}
+                                price={product.price}
+                                rating={product.rating}
+                                type={product.type}
+                                discount={product.discount}
+                                sold={product.sold}
+                                id={product._id}
+                              />
+                            </React.Fragment>
+                          ))}
                     </div>
                   </div>
                 )}

@@ -165,7 +165,7 @@ const ProfilePage = () => {
 
   const handleSubmit = async () => {
     const convertDate = new Date(dateOfBirth.year, dateOfBirth.month, dateOfBirth.day);
-
+    const regex = /^[a-zA-Z0-9_-]{3,20}$/;
     const hasChanges =
       user?.name !== name ||
       user?.nickname !== nickname ||
@@ -174,34 +174,37 @@ const ProfilePage = () => {
       user?.country !== country ||
       user?.email !== email ||
       user?.convertDate !== convertDate;
-
-    if (!hasChanges) {
-      message.warning('Chưa có thông tin cập nhật!');
-      return;
-    }
-    await mutationUpdate.mutate({
-      id: user?.id,
-      name,
-      nickname,
-      dateOfBirth: convertDate,
-      sex,
-      avatar,
-      country,
-      email,
-      access_token: user?.access_token,
-    });
-    dispatch(
-      updateUserSlice({
+    if (nickname && !regex.test(nickname)) {
+      message.warning('Nick name từ 3 - 15 kí tự');
+    } else {
+      await mutationUpdate.mutate({
         id: user?.id,
-        token: user?.access_token,
         name,
         nickname,
         dateOfBirth: convertDate,
         sex,
         avatar,
         country,
-      }),
-    );
+        email,
+        access_token: user?.access_token,
+      });
+      dispatch(
+        updateUserSlice({
+          id: user?.id,
+          token: user?.access_token,
+          name,
+          nickname,
+          dateOfBirth: convertDate,
+          sex,
+          avatar,
+          country,
+        }),
+      );
+    }
+    if (!hasChanges) {
+      message.warning('Chưa có thông tin cập nhật!');
+      return;
+    }
   };
 
   useEffect(() => {
@@ -228,10 +231,12 @@ const ProfilePage = () => {
 
   const handleSubmitPhone = async () => {
     try {
-      if (dataPhone === false) {
+      if (dataPhone === false || !dataPhone) {
         alert('Bạn hãy nhập phone.');
       } else if (country === '') {
         message.warning('Bạn hãy cập nhật quốc gia.');
+      } else if (dataPhone.length < 10 || dataPhone.length > 12) {
+        message.warning('Số điện thoại sai định dạng !');
       } else {
         const countryCode = getPhoneCode(user?.country);
         let formattedPhone = phone.startsWith('0') ? phone.slice(1) : phone;
@@ -246,8 +251,11 @@ const ProfilePage = () => {
   };
 
   const handleSubmitEmail = async () => {
-    if (email === false) {
-      alert('Bạn hãy nhập email');
+    const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (email === false || !email) {
+      message.warning('Bạn chưa nhập email !');
+    } else if (!regex.test(email)) {
+      message.warning('Email không đúng định dạng !');
     } else {
       await mutationUpdate.mutate({
         id: user?.id,

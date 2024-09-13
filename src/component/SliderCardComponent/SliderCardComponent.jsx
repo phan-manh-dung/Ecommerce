@@ -7,6 +7,9 @@ const cx = classNames.bind(styles);
 
 const SliderCardComponent = ({ children, rtl = false }) => {
   const childrenArray = React.Children.toArray(children);
+  // Kiểm tra số lượng sản phẩm
+  const hasSingleProduct = childrenArray.length === 1;
+  console.log('hasSingleProduct', hasSingleProduct);
   const midPoint = Math.ceil(childrenArray.length / 2);
   const firstHalf = childrenArray.slice(0, midPoint);
   const secondHalf = childrenArray.slice(midPoint);
@@ -15,8 +18,8 @@ const SliderCardComponent = ({ children, rtl = false }) => {
     dots: false,
     infinite: true,
     speed: 400,
-    slidesToShow: 5,
-    slidesToScroll: 3,
+    slidesToShow: hasSingleProduct ? 1 : 5,
+    slidesToScroll: hasSingleProduct ? 1 : 3,
     autoplay: true,
     autoplaySpeed: 3000,
     arrows: false,
@@ -27,21 +30,37 @@ const SliderCardComponent = ({ children, rtl = false }) => {
       {
         breakpoint: 900,
         settings: {
-          slidesToShow: 3,
-          slidesToScroll: 2,
+          slidesToShow: hasSingleProduct ? 1 : 3, // Điều chỉnh cho breakpoint 900
+          slidesToScroll: hasSingleProduct ? 1 : 2,
         },
       },
       {
         breakpoint: 600,
         settings: {
-          slidesToShow: 2,
-          slidesToScroll: 1,
+          slidesToShow: hasSingleProduct ? 1 : 2, // Điều chỉnh cho breakpoint 600
+          slidesToScroll: hasSingleProduct ? 1 : 1,
         },
       },
     ],
   };
 
+  // Nếu có duy nhất 1 sản phẩm và ở màn hình nhỏ hơn 600px
   if (window.innerWidth <= 600) {
+    if (hasSingleProduct) {
+      return (
+        <div className={cx('slider_container')}>
+          <Slider {...settings}>
+            {childrenArray.map((child, index) => (
+              <div key={index} className={cx('slider_item')}>
+                {child}
+              </div>
+            ))}
+          </Slider>
+        </div>
+      );
+    }
+
+    // Nếu có nhiều sản phẩm, chia thành 2 hàng
     return (
       <div className={cx('slider_container')}>
         <div className={cx('slider_row')}>

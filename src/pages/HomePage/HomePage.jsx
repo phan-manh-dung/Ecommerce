@@ -126,11 +126,7 @@ const HomePage = () => {
     return res;
   };
 
-  const {
-    isLoading,
-    data: product,
-    isPreviousData,
-  } = useQuery(['product', limit, searchDebounce], fetchProductAll, {
+  const { isLoading, data: product } = useQuery(['product', limit, searchDebounce], fetchProductAll, {
     retry: 2,
     retryDelay: 1000,
     keepPreviousData: true,

@@ -10,11 +10,15 @@ import { isJsonString } from './utils';
 import { updateUser, resetUser } from './redux/slide/userSlide';
 import Loading from './component/LoadingComponent/Loading';
 import { StateProvider } from './component/StateProviderComponent/StateProviderComponent';
+import useWindowSize from './hook/useWindowSize';
+import HeaderComponent from './component/HeaderComponent/HeaderComponent';
+import FooterComponent from './component/FooterComponent/FooterComponent';
 
 function App() {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const user = useSelector((state) => state.user);
+  const { width } = useWindowSize();
 
   useEffect(() => {
     setIsLoading(true);
@@ -83,18 +87,20 @@ function App() {
               {routes.map((route) => {
                 const Page = route.page;
                 const isCheckAuth = !route?.isPrivate || user?.isAdmin;
-                const isShowHeader = route.isShowHeader;
-                const isShowFooter = route.isShowFooter;
-                const Layout = isShowHeader && isShowFooter ? DefaultComponent : Fragment;
+                const isHomepage = route.path === '/';
+                const isProductPage = route.path.startsWith('/product');
+                const isShowHeader = isHomepage || isProductPage || (route.isShowHeader && width >= 600);
+                const isShowFooter = isHomepage || (route.isShowFooter && width >= 600);
+
                 return (
                   <Route
                     key={route?.path}
                     path={route?.path}
                     element={
                       <>
-                        <Layout>
-                          <Page />
-                        </Layout>
+                        {isShowHeader && <HeaderComponent />}
+                        <Page />
+                        {isShowFooter && <FooterComponent />}
                       </>
                     }
                   />
